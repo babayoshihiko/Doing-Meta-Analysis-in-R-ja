@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>D R およびパッケージ情報 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="本書は、macOS Catalina 10.15.4 (Apple Darwin 17.0 64-bit x86-64) で動作する R バージョン 4.0.3 (“Bunny-Wunnies Freak Out”, 2020-10-10) を使ってコンパイルされている。本書では、以下のパッケージバージョンを使用している。(訳注: 翻訳は、macOS および Windows の R 3.6...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="D R およびパッケージ情報 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="本書は、macOS Catalina 10.15.4 (Apple Darwin 17.0 64-bit x86-64) で動作する R バージョン 4.0.3 (“Bunny-Wunnies Freak Out”, 2020-10-10) を使ってコンパイルされている。本書では、以下のパッケージバージョンを使用している。(訳注: 翻訳は、macOS および Windows の R 3.6...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="D R およびパッケージ情報 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="本書は、macOS Catalina 10.15.4 (Apple Darwin 17.0 64-bit x86-64) で動作する R バージョン 4.0.3 (“Bunny-Wunnies Freak Out”, 2020-10-10) を使ってコンパイルされている。本書では、以下のパッケージバージョンを使用している。(訳注: 翻訳は、macOS および Windows の R 3.6...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="active" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="attr" class="section level1" number="21">
+<h1>
+<span class="header-section-number">D</span> <em>R</em> およびパッケージ情報<a class="anchor" aria-label="anchor" href="#attr"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<p><br></p>
+<p>本書は、macOS Catalina 10.15.4 (Apple Darwin 17.0 64-bit x86-64) で動作する <em>R</em> バージョン 4.0.3 (“Bunny-Wunnies Freak Out”, 2020-10-10) を使ってコンパイルされている。本書では、以下のパッケージバージョンを使用している。(訳注: 翻訳は、macOS および Windows の <em>R</em> 3.6 から 4.3 で検証した。)</p>
+<pre><code>brms 2.13.0                 clubSandwich 0.5.5
+dmetar 0.0.9000             dplyr 1.0.1                 
+esc 0.5.1                   extraDistr 1.9.1            
+forcats 0.5.0               gemtc 0.8-6                 
+ggplot2 3.3.2               ggridges 0.5.2              
+glue 1.4.1                  igraph 1.2.5                
+meta 5.0-0                  metafor 2.5-62              
+metaSEM 1.2.5               metasens 0.5-0              
+netmeta 2.0-0               openxlsx 4.1.5              
+osfr 0.2.8                  PerformanceAnalytics 2.0.4  
+rjags 4-10                  robvis 0.3.0                
+semPlot 1.1.2               stringr 1.4.0               
+tidybayes 2.1.1             tidyverse 1.3.0
+wildmeta 0.1.0</code></pre>
+<p>付属のベースパッケージ</p>
+<pre><code>base 4.0.3        datasets 4.0.3    graphics 4.0.3      
+grDevices 4.0.3   methods 4.0.3     stats 4.0.3
+utils 4.0.3</code></pre>
+<p>ロケール: <code>en_US.UTF-8</code> (訳注: 日本語は <code>ja_JP.UTF-8</code>)</p>
+<p><br></p>
+<p><strong>属性</strong></p>
+<p>Figure <a href="intro.html#fig:eysenck">1.2</a> :Sirswindon at <a href="https://commons.wikimedia.org/wiki/File:Hans.Eysenck.jpg">英語版ウィキペディア</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>。Wikimedia Commons 経由。オリジナルから脱色している。</p>
+<p><br></p>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></div>
+<div class="next"><a href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#attr"><span class="header-section-number">D</span> R およびパッケージ情報</a></li></ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>2 R の発見 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="こ の章では、 R の世界への旅行を始めよう。初めてプログラミングに触れる読者、少し不安かもしれない。その気持ちはよく分かる。しかし、それほど心配する必要はない。この 20 年間、世界中の何千人もの知的な人々が、 R をより簡単に、より便利に使えるようにするための方法を提供してきた。また、 R...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="2 R の発見 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="こ の章では、 R の世界への旅行を始めよう。初めてプログラミングに触れる読者、少し不安かもしれない。その気持ちはよく分かる。しかし、それほど心配する必要はない。この 20 年間、世界中の何千人もの知的な人々が、 R をより簡単に、より便利に使えるようにするための方法を提供してきた。また、 R...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2 R の発見 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="こ の章では、 R の世界への旅行を始めよう。初めてプログラミングに触れる読者、少し不安かもしれない。その気持ちはよく分かる。しかし、それほど心配する必要はない。この 20 年間、世界中の何千人もの知的な人々が、 R をより簡単に、より便利に使えるようにするための方法を提供してきた。また、 R...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="active" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="discovering-R" class="section level1" number="2">
+<h1>
+<span class="header-section-number">2</span> R の発見<a class="anchor" aria-label="anchor" href="#discovering-R"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/discover.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">こ</span>
+の章では、 <em>R</em> の世界への旅行を始めよう。初めてプログラミングに触れる読者、少し不安かもしれない。その気持ちはよく分かる。しかし、それほど心配する必要はない。この 20 年間、世界中の何千人もの知的な人々が、 <em>R</em> をより簡単に、より便利に使えるようにするための方法を提供してきた。また、 <em>R</em> のコードの記述と実行をより簡単にするために使用できる、非常に強力なコンピュータプログラムについても紹介する。</p>
+<p>とはいえ、これまで使ってきた他のデータ解析プログラムと比べると、 <em>R</em> で作業するのはやはり難しいのも事実である。 <em>R</em> コミュニティの最も重要な人物の一人である Hadley Wickham は、かつて <em>R</em> は <strong>GUI</strong> (Graphical User Interface) ベースの統計用ソフトウェアとは根本的に異なることを強調した <span class="citation">(<a href="references.html#ref-grolemund2014hands">Grolemund 2014</a>, Foreword)</span>。GUI では、いくつかのボタンをクリックするだけでデータ分析を行うことが可能であるが、最終的には開発者が重要と判断した機能に限定されてしまう。</p>
+<p>一方、 <em>R</em> はこのような制限はない。しかし、より多くの背景知識を必要とする場合がある。他の言語と同様に、 <em>R</em> も学習が必要であり、熟練したユーザーになるためには練習が必要である。この過程では、不満が生じることもあるが、それは当然のことである。序章では、「行き詰まったら」という節で、できることをいくつか紹介している。</p>
+<p><em>R</em> には、学ぶ<strong>価値がある</strong>ことを保証しよう。 <em>R</em> は、最も汎用性が高く、包括的で、最も頻繁に使用されている統計プログラミング言語である。 <em>R</em> のコミュニティは毎年急速に拡大しており、 <em>R</em> の魅力は非常に大きいので、ニューヨークタイムズでさえもニュースとして報道する価値があると判断した <span class="citation">(<a href="references.html#ref-vance2009data">Vance 2009</a>)</span>。</p>
+<p>大学や研究機関で働いていようが、一般企業で働いていようが、 <em>R</em> でできることは、他人から見れば超能力に見えることが多いだろう。しかし、多少の時間と努力さえあれば、誰でも習得できる超能力なのである。では、そろそろ始めよう。</p>
+<p><br></p>
+<div id="install-R" class="section level2" number="2.1">
+<h2>
+<span class="header-section-number">2.1</span> <em>R</em> と R Studio のインストール<a class="anchor" aria-label="anchor" href="#install-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>開始する前に、統計解析のために <em>R</em> を便利に使えるコンピュータ・プログラムをダウンロードし、用意しなければならない。現時点での最良の選択肢は、おそらく <a href="https://rstudio.com/"><strong>R Studio</strong></a> だろう。このプログラムは、データ、パッケージ、出力の取り扱いを容易にするユーザー・インタフェースを提供してくれる。R Studio は完全に無料で、インターネットからいつでもダウンロードできるのが最大の魅力である。最近では、R Studio のオンライン版もリリースされ (<a href="https://rstudio.cloud/" class="uri">https://rstudio.cloud/</a>)、ウェブブラウザを通してほぼ同じインターフェースと機能を利用できるようになった。しかし、本書では、コンピュータに直接インストールする R Studio のバージョンに焦点を当てる。</p>
+<div class="boxinfo">
+<p>
+この章では、 <em>R</em> と R Studio 各自のコンピュータに
+<strong>インストール</strong>する方法に焦点を当てている。すでに R Studio
+をコンピュータにインストールしており、 <em>R</em>
+の経験豊富なユーザーであれば、<strong>どれも目新しいものではないだろう</strong>。その場合は、この章を読み飛ばしてよい。
+<em>R</em> を使ったことがない人は、しばらくお付き合い願いたい。
+</p>
+</div>
+<p>それでは、初めてのコーディングに向けて、 <em>R</em> と R Studio の設定に必要なステップに進んでいこう。</p>
+<p></p>
+<ol style="list-style-type: decimal">
+<li><p>R Studio は、 <em>R</em> のコードを書き、それを簡単に実行できるようにするインターフェイスである。しかし、R Studioは <em>R</em> と同一ではなく、 <em>R</em> のソフトウェアがすでにコンピュータにインストールされている必要がある。したがって、まず、 <em>R</em> の最新版をインストールする必要がある。R Studio と同様、 <em>R</em> は完全に無料である。<strong>Comprehensive R Archive Network</strong> (CRAN)というウェブサイトからダウンロード可能である。<a href="https://cran.r-project.org/bin/windows/base/">Windows PC</a> か <a href="https://cran.r-project.org/bin/macosx/">Mac</a> かによって、ダウンロードする <em>R</em> の種類は異なる。 <em>R</em> の重要な点は、その <strong>バージョン</strong> である。 <em>R</em> は定期的に更新され、新しいバージョンが利用できるようになる。 <em>R</em> のバージョンが古くなりすぎると、一部の機能が動作しなくなることがある。そのため、 <em>R</em> を再インストールして、定期的 (だいたい1年ごと) に <em>R</em> のバージョンを更新することが有効である。この本では 、 <em>R</em> のバージョン 4.0.3 を使用している。 <em>R</em> をインストールした時点で、すでに上位のバージョンがある可能性もあるので、常に最新のバージョンをインストールすることを勧める。</p></li>
+<li><p><em>R</em> をダウンロードしてインストールした後、<a href="https://rstudio.com/products/rstudio/download/">R Studioのウェブサイト</a>から “R Studio Desktop” をダウンロードする。R Studio にはライセンスを購入しなければならないバージョンもあるが、今回の目的では必要ではない。R Studio Desktop の無料版をダウンロードしてインストールするだけである。</p></li>
+<li><p>R Studio を初めて開くと、Figure <a href="discovering-R.html#fig:rstudio-1">2.1</a> のような画面になると思われる。R Studio には、3 つのペインがある。右上には <strong>Environment</strong> ペインがあり、 <em>R</em> で内部的に定義した (＝保存した) オブジェクトが表示される。右下には、<strong>Files, Plots, Packages, Help</strong> ペインがある。このペインにはいくつかの機能があり、例えば、コンピュータ上のファイルを表示したり、プロットやインストールされたパッケージを表示したり、ヘルプページにアクセスするために使用される。しかし、R Studio の中心は左側の <strong>Console</strong> である。Console は、 <em>R</em> コードを入力し、実行する場所である。</p></li>
+</ol>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-1"></span>
+<img src="images/rstudio_1_col_sep.png" alt="R Studio のペイン" width="100%"><p class="caption">
+Figure 2.1: R Studio のペイン
+</p>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>R Studioには、通常はじめに表示されない4番目のペインとして、<strong>Source</strong> ペインがある。メニューの <strong>File</strong> &gt; <strong>New File</strong> &gt; <strong>R Script</strong> をクリックすると、Source ペインを開くことが可能である。すると、左上に空の <em>R</em> <strong>スクリプト</strong>を含む新しいペインが開く。 <em>R</em> スクリプトは、コードを1つの場所に集めるのに最適な方法である。また、拡張子が “.R” のファイル (例: <strong>myscript.R</strong>) として、コンピュータに保存することも可能である。 <em>R</em> スクリプトのコードを実行するには、関連するすべての行にカーソルをドラッグして選択し、右側にある “Run” ボタンをクリックする。これにより、コードがコンソールに送信され、そこで評価される。ショートカットは、Ctrl + R (Windows) または Cmd + R (Mac)である。</li>
+</ol>
+</div>
+<div id="packages" class="section level2" number="2.2">
+<h2>
+<span class="header-section-number">2.2</span> パッケージ<a class="anchor" aria-label="anchor" href="#packages"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p></p>
+<p></p>
+<p>ここでは、 <em>R</em> のコードを使用して、いくつかの<strong>パッケージ</strong>をインストールする。パッケージは <em>R</em> が非常に強力である主な理由の1つである。パッケージによって、世界中の専門家が一連の<strong>関数</strong>を開発し、他の人がそれをダウンロードして <em>R</em> で使用できるようになる。関数は <em>R</em> の中核的な要素であり、事前に定義された種類の操作を、通常は自分のデータに対して実行できるようにする。</p>
+<p>関数 <span class="math inline">\(f(x)\)</span> の数学的定式化と <em>R</em> における関数の定義の仕方は並行している。 <em>R</em> では、関数はまずその名前を書き、その後に入力や関数の指定 (いわゆる<strong>引数</strong>) を括弧で囲んでコーディングされる。</p>
+<p>例えば、9の平方根が何であるかを知りたいとする。 <em>R</em> では、 <code>sqrt</code> 関数を使用することが可能である。結果を得るためには、関数への入力として <code>9</code> を与えるだけでよいのである。自分で試してみてみよう。コンソールの小さな矢印(<code>&gt;</code>)の横に <code>sqrt(9)</code> と書いて、Enter キーを押してみてみよう。何が起こるか見てみよう。</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<p>これで <em>R</em> から最初の<strong>出力</strong>が得られた。 <em>R</em> にはこれよりはるかに複雑な関数があるが、すべて同じ原理で支配されている。関数が必要とするパラメータの情報を提供すると、関数はその情報を使って計算を行い、最終的に出力を提供する。</p>
+<p>
+</p>
+<p><em>R</em> では、<code>install.packages</code> という関数を使って、パッケージの<strong>インストール</strong> を行う。この関数に伝えるべきことは、インストールしたいパッケージの名前だけである。とりあえず、後々役に立つ３つのパッケージをインストールしておこう。</p>
+<ul>
+<li><p><strong>{tidyverse}</strong>. <strong>{tidyverse}</strong> <span class="citation">(<a href="references.html#ref-tidyverse">Wickham et al. 2019</a>)</span> は単一のパッケージではなく、実際には <em>R</em> でのデータの操作と視覚化を容易にするパッケージのバンドルである。<strong>{tidyverse}</strong> パッケージをインストールすると、同時に <strong>{ggplot2}</strong>, <strong>{dplyr}</strong>, <strong>{tidyr}</strong>, <strong>{readr}</strong>, <strong>{purr}</strong>, <strong>{stringr}</strong>, <strong>{forcats}</strong> パッケージが提供される。tidyverse に含まれる関数は、近年 <em>R</em> コミュニティで非常に人気があり、多くの研究者、プログラマ、データ科学者に利用されている。tidyverse についてもっと知りたい方は、公式<a href="https://www.tidyverse.org/">ウェブサイト</a>を参照。</p></li>
+<li><p><strong>{meta}</strong>. このパッケージには、様々なタイプのメタアナリシスを簡単に実行するための関数が含まれている <span class="citation">(<a href="references.html#ref-meta">Balduzzi, Rücker, and Schwarzer 2019</a>)</span>。このガイドでは主にこのパッケージに焦点を当てる。なぜなら、このパッケージは使いやすく、よく文書化されており、非常に汎用性が高いからである。<strong>{meta}</strong> パッケージの詳細については、 <a href="http://www.imbi.uni-freiburg.de/lehre/lehrbuecher/meta-analysis-with-r">ウェブサイト</a>を参照。</p></li>
+<li><p><strong>{metafor}</strong>. <strong>{metafor}</strong> パッケージ <span class="citation">(<a href="references.html#ref-urviecht">Viechtbauer 2010</a>)</span> もメタアナリシスの実施に特化したパッケージで、機能面ではまさに強豪と言える。このパッケージは後の章で時々使用するし、<strong>{meta}</strong> パッケージが多くの応用で <strong>{metafor}</strong> を使用するため、インストールしておくとよいだろう (訳注: 通常、<code>meta</code> をインストールすると自動的に <code>metafor</code> もインストールされる。)。また、<strong>{metafor}</strong> パッケージには、メタ分析関連の様々なトピックに関する優れた<a href="http://www.metafor-project.org/doku.php/metafor">ドキュメント</a>がある。</p></li>
+</ul>
+<p><code>install.packages</code> 関数は、インストールしたいパッケージの名前のみを入力として要求する。ひとつずつパッケージを追加するコードは次のようになるはずである。</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"meta"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"metafor"</span><span class="op">)</span></span></code></pre></div>
+<p>コンソールに上記のコードを入力し、Enter キーを押すだけでインストールが開始される (Figure <a href="discovering-R.html#fig:rstudio-1">2.1</a>)。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-2"></span>
+<img src="images/rstudio_2_col.png" alt="パッケージをインストールする。" width="75%"><p class="caption">
+Figure 2.2: パッケージをインストールする。
+</p>
+</div>
+
+<div class="boximportant">
+パッケージ名を<strong>引用符</strong> (<code>""</code>) で囲むことを忘れないように。これを忘れると、エラーメッセージが表示される。
+</div>
+<p>Enter を押すと、 <em>R</em> はパッケージのインストールを開始し、インストールの進行状況についての情報を表示する。<code>install.packages</code> 関数が終了すると、そのパッケージを使用する準備が整ったことになる (訳注: この際のメッセージが赤字の英語で表示されるため、エラーが出たと勘違いする人が多い。じっくり読んで、successful とあれば成功である。)。インストールされたパッケージは、 <em>R</em> の <strong>システム・ライブラリ</strong> に追加される。このシステムライブラリは、R Studio の画面左下にある<strong>パッケージ</strong>ペインでアクセス可能である。インストールされたパッケージを使いたいときは、<code>library</code> 関数を使ってライブラリから読み込むことが可能である。試しに、<strong>{tidyverse}</strong> パッケージをロードしてみよう。</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="dmetar" class="section level2" number="2.3">
+<h2>
+<span class="header-section-number">2.3</span> <strong>{dmetar}</strong> パッケージ<a class="anchor" aria-label="anchor" href="#dmetar"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>このガイドでは、研究者としてメタアナリシスの実施をできるだけアクセスしやすく、簡単にできるようにしたい。メタ分析には <strong>{meta}</strong> や <strong>{metafor}</strong> パッケージのような素晴らしいパッケージがあり、ほとんどの重労働をこなしてくれるが、メタ分析にはまだいくつかの重要な側面があり、現在 <em>R</em> で行うのは簡単ではない。</p>
+<p>不足している機能を補うため、我々は本書のコンパニオン <em>R</em> パッケージとして、<strong>{dmetar}</strong> パッケージを開発した。<strong>{dmetar}</strong> パッケージは独自のドキュメントを持っており、<a href="https://dmetar.protectlab.org/">オンライン</a>で見ることが可能である。<strong>{dmetar}</strong> パッケージの関数は、このガイドで頻繁に使用する <strong>{meta}</strong> と <strong>{metafor}</strong> パッケージ (と、より高度な他のいくつかのパッケージ) のための追加機能を提供している。<strong>{dmetar}</strong> パッケージに含まれる関数がどのようにメタ分析のワークフローを改善するかを、この本を通じて詳細に説明していこう。このガイドで使用するサンプルデータセットのほとんどは、<strong>{dmetar}</strong> に含まれている。</p>
+
+<div class="boxinfo">
+<p>このガイドを読み進めていくためには、<strong>{dmetar}</strong> パッケージをインストールすることを強く推奨するが、<strong>必須ではない</strong>。パッケージの各関数について、ソースコード (関数をローカルに保存するために使用可能) と、それらの関数が依存する追加の <em>R</em> パッケージも提供している。また、パッケージに含まれるデータセットの補足的なダウンロードリンクも提供する。</p>
+しかし、あらかじめ <strong>{dmetar}</strong> パッケージをインストールしておくと、すべての機能、データセットがコンピュータにプリインストールされるので、より便利である。
+</div>
+<p></p>
+<p><strong>{dmetar}</strong> パッケージをインストールするには、 <em>R</em> のバージョンが 3.6 以降である必要がある。最近 <em>R</em> を (再) インストールしたのであれば、おそらく大丈夫だろう。 <em>R</em> のバージョンが十分に新しいかどうかを確認するには、次のコード行をコンソールに貼り付けて、Enterキーを押す。</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Version.html">R.Version</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">version.string</span></span></code></pre></div>
+<p>これにより、現在の <em>R</em> バージョンが表示される。もし、 <em>R</em> のバージョンが3.6以下であれば、アップデートする必要がある。この方法については、インターネット上に良い<a href="https://www.linkedin.com/pulse/3-methods-update-r-rstudio-windows-mac-woratana-ngarmtrakulchol/">ブログ記事</a>があり、案内されている。</p>
+<p><strong>{dmetar}</strong> をインストールする場合、先にインストールしなければならないパッケージがある。このパッケージは <strong>{devtools}</strong> と呼ばれている。<strong>{devtools}</strong> がまだコンピュータにインストールされていない場合は、先程と同じようにインストールしておこう。</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
+<p>そして、この行を使って <strong>{dmetar}</strong> をインストールすることが可能である。</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"MathiasHarrer/dmetar"</span><span class="op">)</span></span></code></pre></div>
+<p>これでインストールが開始される。<strong>{dmetar}</strong> パッケージが正しく機能するためには、他のパッケージも一緒にインストー ルする必要があるため、インストールに時間がかかる可能性がある。インストール中に、インストールマネージャが以下のように訪ねてくることがあるがこれは、すでにインストール済みの <em>R</em> パッケージを更新するかどうか尋ねている。</p>
+<pre><code>## These packages have more recent versions available.
+## Which would you like to update?
+## 
+## 1: All                          
+## 2: CRAN packages only            
+## 3: None                          
+## 4: ggpubr (0.2.2 -&gt; 0.2.3) [CRAN]
+## 5: zip    (2.0.3 -&gt; 2.0.4) [CRAN]
+## 
+## Enter one or more numbers, or an empty line to skip updates:</code></pre>
+<p>このメッセージが表示されたら、パッケージ更新をしたくないことをインストールマネージャに伝えるとよい。この例では、コンソールに <code>3</code> を貼り付けて Enter キーを押す。同じように、インストールマネージャが、</p>
+<pre><code>## There are binary versions available but the source versions are later:
+##  
+##  [...]
+##  
+##   Do you want to install from sources the package which needs compilation?
+##   y/n: </code></pre>
+<p>このような質問をした場合、<code>n</code> (いいえ) を選ぶとよいだろう。この方法でインストールに失敗した場合 (つまり <code>Error</code> が表示された場合)、もう一度インストールを実行し、今度はすべてのパッケージをアップデートする。</p>
+<p>本書を執筆し、パッケージを開発する際には、誰もがエラーなくインストールできるように配慮した。とはいえ、初回でパッケージのインストールがうまくいかない可能性もある。それでもインストールに問題がある場合は、本書のまえがきにある「問い合わせ」の項を参照されたい。</p>
+<p><br></p>
+</div>
+<div id="data-prep-R" class="section level2" number="2.4">
+<h2>
+<span class="header-section-number">2.4</span> データ準備とインポート<a class="anchor" aria-label="anchor" href="#data-prep-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>この章では、R Studio を使用してデータを <em>R</em> にインポートする方法について説明する。データの準備は、面倒で疲れるものではあるが、後のすべてのステップの基礎となる。したがって、先に進む前にデータを正しい形式にすることに細心の注意を払わなければならない。</p>
+<p>通常、 <em>R</em> に取り込んだデータは、 <strong>Microsoft Excel</strong> のスプレッドシートに格納されている。インポートを非常に簡単に行うことができるため、データを <em>Excel</em> に保存することを勧める。 <em>Excel</em> でデータを準備する際には、いくつかの「すべきこと」と「してはいけないこと」がある。</p>
+<ul>
+<li><p><em>Excel</em> シートの列にどのように名前を付けるかは非常に重要である。列に正しく名前を付けておけば、 <em>R</em> を使用してデータを変換する必要がないため、後で時間を大幅に節約することが可能である。スプレッドシートの列に「名前を付ける」とは、単に変数の名前を列の最初の行に書き込むことである。(訳注: 日本では２行目以降にも列名を書くことがあるが、あまりよい習慣とは言えない。)</p></li>
+<li><p>列名にはスペースを含めてはいけない。列名の2つの単語を区切るには、アンダースコアまたはポイントを使用した(例: “column_name”)。</p></li>
+<li><p><em>Excel</em> のスプレッドシートで列をどのように並べるかは重要ではない。ただ、正しくラベル付けされている必要がある。</p></li>
+<li><p>また、列の書式設定も必要ない。スプレッドシートの最初の行に列名を入力すると、 <em>R</em> はそれを列名として自動的に検出する。</p></li>
+<li><p>インポート時に、ä、ü、ö、á、é、ê などの特殊文字が文字化けする可能性があることも知っておくとよいだろう。インポートする前に、これらの文字を「通常の」文字に変換しておくとよいだろう。(訳注: 列名に日本語を使っても問題ないが、英語論文作成を意図している場合は英語にしておく方が良いだろう。)</p></li>
+<li><p><em>Excel</em> ファイルにシートが1つだけ入っていることを確認する。</p></li>
+<li><p>もし、以前にデータを含んでいて現在空になっている行や列が1つまたはいくつかある場合、それらの列や行を完全に削除することを確認する。</p></li>
+</ul>
+<p>まず、データセットの例から見てみよう。これから、自殺防止プログラムのメタアナリシスを実施する予定だとする。研究で注目したいアウトカムは、質問票によって評価された自殺念慮の重症度 (すなわち、個人がどの程度、自分の人生を終わらせることを考え、検討し、計画するか) である。あなたはすでに研究の検索とデータ抽出を完了し、次に <em>R</em> でメタ分析データをインポートしたいと思っている。</p>
+<p>したがって、次の作業は、関連するすべてのデータを含む <em>Excel</em> シートを準備することである。Table <a href="discovering-R.html#tab:suicidedata">2.1</a> は、インポートするすべてのデータを示している。この表の最初の行には、上で挙げたルールに基づき、 <em>Excel</em> ファイル内の列にどのような名前を付けるかも示されている。スプレッドシートには、各研究が1行にリストされていることがわかる。各研究について、介入群と対照群の両方のサンプルサイズ (<span class="math inline">\(n\)</span>)、平均値、標準偏差 (<span class="math inline">\(SD\)</span>) が含まれている。これは効果の大きさを計算するために必要なアウトカムデータで、詳しくは Chapter <a href="effects.html#effects">3</a> で説明する。次の3列は、後でメタ分析で分析したい変数である。</p>
+<p>このデータをまとめた <strong>“SuicidePrevention.xlsx”</strong>という <em>Excel</em> ファイルを用意した。このファイルは、<a href="https://protectlab.org/en/datasets/suicide-prevention/">インターネット</a>からダウンロードすることが可能である。</p>
+<div class="inline-table"><table class="table table-striped table-condensed table-responsive table-hover" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+<span id="tab:suicidedata">Table 2.1: </span>Suicide Prevention データセット
+</caption>
+<thead>
+<tr>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘author’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘n.e’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘mean.e’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘sd.e’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘n.c’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘mean.c’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘sd.c’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘pubyear’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘age_group’
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+‘control’
+</div>
+</th>
+</tr>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Intervention Group
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Control Group
+</div>
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Subgroups
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+N
+</th>
+<th style="text-align:left;">
+Mean
+</th>
+<th style="text-align:left;">
+SD
+</th>
+<th style="text-align:left;">
+N
+</th>
+<th style="text-align:left;">
+Mean
+</th>
+<th style="text-align:left;">
+SD
+</th>
+<th style="text-align:left;">
+Year
+</th>
+<th style="text-align:left;">
+Age Group
+</th>
+<th style="text-align:left;">
+Control Group
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Berry et al. 
+</td>
+<td style="text-align:left;">
+90
+</td>
+<td style="text-align:left;">
+14.98
+</td>
+<td style="text-align:left;">
+3.29
+</td>
+<td style="text-align:left;">
+95
+</td>
+<td style="text-align:left;">
+15.54
+</td>
+<td style="text-align:left;">
+4.41
+</td>
+<td style="text-align:left;">
+2006
+</td>
+<td style="text-align:left;">
+general
+</td>
+<td style="text-align:left;">
+WLC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DeVries et al. 
+</td>
+<td style="text-align:left;">
+77
+</td>
+<td style="text-align:left;">
+16.21
+</td>
+<td style="text-align:left;">
+5.35
+</td>
+<td style="text-align:left;">
+69
+</td>
+<td style="text-align:left;">
+20.13
+</td>
+<td style="text-align:left;">
+7.43
+</td>
+<td style="text-align:left;">
+2019
+</td>
+<td style="text-align:left;">
+older adult
+</td>
+<td style="text-align:left;">
+no intervention
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fleming et al. 
+</td>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+3.01
+</td>
+<td style="text-align:left;">
+0.87
+</td>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+3.13
+</td>
+<td style="text-align:left;">
+1.23
+</td>
+<td style="text-align:left;">
+2006
+</td>
+<td style="text-align:left;">
+general
+</td>
+<td style="text-align:left;">
+no intervention
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hunt &amp; Burke
+</td>
+<td style="text-align:left;">
+64
+</td>
+<td style="text-align:left;">
+19.32
+</td>
+<td style="text-align:left;">
+6.41
+</td>
+<td style="text-align:left;">
+65
+</td>
+<td style="text-align:left;">
+20.22
+</td>
+<td style="text-align:left;">
+7.62
+</td>
+<td style="text-align:left;">
+2011
+</td>
+<td style="text-align:left;">
+general
+</td>
+<td style="text-align:left;">
+WLC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+McCarthy et al. 
+</td>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+4.54
+</td>
+<td style="text-align:left;">
+2.75
+</td>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+5.61
+</td>
+<td style="text-align:left;">
+2.66
+</td>
+<td style="text-align:left;">
+1997
+</td>
+<td style="text-align:left;">
+general
+</td>
+<td style="text-align:left;">
+WLC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+</tbody>
+</table></div>
+<p>R Studioで <em>Excel</em> ファイルをインポートするには、まず<strong>作業ディレクトリ</strong>を設定する必要がある。作業ディレクトリとは、 <em>R</em> がデータを使用することができ、出力が保存されるコンピュータ上のフォルダのことである。作業ディレクトリを設定するには、まず、メタアナリシスのデータと結果をすべて保存するフォルダをコンピュータ上に作成する必要がある。また、インポートしたい <strong>“SuicidePrevention.xlsx”</strong> ファイルもこのフォルダに保存する。</p>
+<p>R Studio を起動し、左下の <strong>Files</strong> ペインに新しく作成したフォルダを開く。フォルダを開くと、先ほど保存した <em>Excel</em> ファイルが表示されているはずである。次に、ペイン上部の小さな歯車をクリックし、ポップアップメニューの <strong>Set as working directory</strong> をクリックして、このフォルダを作業ディレクトリとして設定する。これで、現在開いているフォルダが作業ディレクトリになる。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:wd"></span>
+<img src="images/wd_col_sep.png" alt="作業ディレクトリを設定し、R 環境にデータセットを読み込む。" width="100%"><p class="caption">
+Figure 2.3: 作業ディレクトリを設定し、R 環境にデータセットを読み込む。
+</p>
+</div>
+<p>これで、 <em>R</em> にデータをインポートできるようになった。<strong>Files</strong> ペインで、<strong>“SuicidePrevention.xlsx”</strong> ファイルをクリックしよう。次に、<strong>Import Dataset…</strong> をクリックする。インポートアシスタントがポップアップ表示され、データのプレビューが読み込まれるはずである。これは時間がかかる場合があるので、このステップをスキップして、そのまま <strong>Import</strong> をクリックする。</p>
+<p></p>
+<p>すると、右上の <strong>Environment</strong> ペインに <code>SuicidePrevention</code> という名前でデータセットが表示されるはずである。これは、データが読み込まれ、 <em>R</em> コードで使用できるようになったことを意味している。今回インポートしたような表形式のデータセットは、 <em>R</em> では <strong>データフレーム</strong> (<code>data.frame</code>) と呼ばれている。データフレームは、先ほどインポートした <em>Excel</em> のシートのように、列と行を持つデータセットである。</p>
+<p></p>
+
+<div class="boxinfo">
+<p><strong>{openxlsx}</strong></p>
+<p>また、コードを使用してデータファイルを直接インポートすることも可能である。このために使える良いパッケージは <strong>{openxslx}</strong> <span class="citation">(<a href="references.html#ref-openxlsx">Schauberger and Walker 2020</a>)</span> と呼ばれるものである。他の <em>R</em> パッケージと同様に、最初にこれをインストールする必要がある。それから <code>read.xlsx</code> 関数を使って <em>Excel</em> シートをインポートすることが可能である。</p>
+<p>ファイルが作業ディレクトリに保存されている場合、関数にファイル名を与え、インポートしたデータを <em>R</em> のオブジェクトに代入するだけでよい。例えば、データセットが <em>R</em> 内で <code>data</code> という名前になるようにしたい場合は、次のようなコードを使用する。</p>
+<code><a href="https://ycphs.github.io/openxlsx/index.html">library(openxlsx)</a></code> <br><code>data &lt;- read.xlsx("SuicidePrevention.xlsx")</code>
+</div>
+<p><br></p>
+</div>
+<div id="data-manip-R" class="section level2" number="2.5">
+<h2>
+<span class="header-section-number">2.5</span> データ操作<a class="anchor" aria-label="anchor" href="#data-manip-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>R Studio を使って最初のデータセットをインポートしたので、いくつかの操作を行ってみよう。<strong>データ操作</strong>とは、さらなる分析に使えるようにデータを変換することであり、すべてのデータ分析に不可欠な作業である。データサイエンティストのような職業は、生の「整頓されていない」データを「整頓された」(tidy) データセットに変えることに大半の時間を費やしている。<strong>{tidyverse}</strong> の関数は、データ操作のための優れたツールボックスを提供している。もしまだパッケージをライブラリからロードしていないなら、次の例のために今ロードすべきである。</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<div id="class-conversion" class="section level3" number="2.5.1">
+<h3>
+<span class="header-section-number">2.5.1</span> クラス変換<a class="anchor" aria-label="anchor" href="#class-conversion"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>まず、前章でインポートした <code>SuicidePrevention</code> データセットを覗いてみよう。これを行うには、 <strong>{tidyverse}</strong> が提供する <code>glimpse</code> 関数を使用する。(訳注: あるいは <code>Environment</code> ペイン内の <code>SuicidePrevention</code> の左にある丸印をクリックすれば表示される。)</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 9
+## Columns: 10
+## $ author    &lt;chr&gt; "Berry et al.", "DeVries et al.", "Fleming et al.", "Hunt &amp; …
+## $ n.e       &lt;chr&gt; "90", "77", "30", "64", "50", "109", "60", "40", "51"
+## $ mean.e    &lt;chr&gt; "14.98", "16.21", "3.01", "19.32", "4.54", "15.11", "3.44", …
+## $ sd.e      &lt;chr&gt; "3.29", "5.35", "0.87", "6.41", "2.75", "4.63", "1.26", "0.7…
+## $ n.c       &lt;dbl&gt; 95, 69, 30, 65, 50, 111, 60, 40, 56
+## $ mean.c    &lt;chr&gt; "15.54", "20.13", "3.13", "20.22", "5.61", "16.46", "3.42", …
+## $ sd.c      &lt;chr&gt; "4.41", "7.43", "1.23", "7.62", "2.66", "5.39", "1.88", "1.4…
+## $ pubyear   &lt;dbl&gt; 2006, 2019, 2006, 2011, 1997, 2000, 2013, 2015, 2014
+## $ age_group &lt;chr&gt; "general", "older adult", "general", "general", "general", "…
+## $ control   &lt;chr&gt; "WLC", "no intervention", "no intervention", "WLC", "WLC", "…</code></pre>
+<p>これにより、データセットの各列に格納されているデータの種類の詳細を知ることができる。データの種類を示す略語はさまざまである。 <em>R</em> では、これらは<strong>クラス</strong>と呼ばれている (訳注: クラスではなく型である)。</p>
+<ul>
+<li><p><code>&lt;num&gt;</code> は <strong>numeric</strong> の略である。これは、数字として格納されているすべてのデータである (例: 1.02)。(訳注: 実際は <dbl> と表示されているはずである。)</dbl></p></li>
+<li><p><code>&lt;chr&gt;</code> は <strong>character</strong> の略である。これは、単語として格納されているすべてのデータである。</p></li>
+<li><p><code>&lt;log&gt;</code> は <strong>logical</strong> の略で、ある条件が <code>TRUE</code> または <code>FALSE</code> のいずれかであることを示すバイナリ変数である。</p></li>
+<li><p><code>&lt;factor&gt;</code> は数値として保存され、各数値は変数の異なる水準を意味する。変数の因子水準は、1 = “low”、2 = “medium”、3 = “high” とすることができる。</p></li>
+</ul>
+<p>また、 <code>class</code> 関数を使用して、列のクラスを確認することも可能である。データフレームの列の名前に <code>$</code> 演算子を付けて、列の名前を指定すれば、データフレーム内の列に直接アクセスすることが可能である。これを試してみよう。まず、 <em>R</em> に <code>n.e</code> という列に含まれるデータを提供させる。その後、その列のクラスを確認する。</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.e</span></span></code></pre></div>
+<pre><code>## [1] "90"  "77"  "30"  "64"  "50"  "109" "60"  "40"  "51"</code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.e</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] "character"</code></pre>
+<p>介入グループのサンプルサイズを含む列 <code>n.e</code> は、クラス <code>character</code> を持っていることがわかる。しかし、待ってみよう、これは間違ったクラスである。インポート時に、この列は誤って <code>character</code> 変数として分類されたが、実際には <code>numeric</code> クラスであるべきである。この間違いは、今後の分析段階に影響を与える。例えば、サンプルサイズの平均を計算したい場合、このような警告が表示される。</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.e</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Warning in mean.default(SuicidePrevention$n.e): argument is not numeric or
+## logical: returning NA</code></pre>
+<pre><code>## [1] NA</code></pre>
+<p>データセットを使えるようにするためには、まず列を正しいクラスに変換しなければならないことがよくある。これを行うには、すべて “<code>as.</code>” で始まる一連の関数を使用することが可能である。すなわち、 <code>as.numeric</code>, <code>as.character</code>, <code>as.logical</code> そして <code>as.factor</code> である。それでは、いくつかの例を見てみよう。</p>
+<p>先ほどの <code>glimpse</code> 関数の出力では、いくつかの列が <code>numeric</code> であるべきなのに <code>character</code> クラスに設定されていることがわかる。これは <code>n.e</code>, <code>mean.e</code>, <code>sd.e</code>, <code>mean.c</code>, <code>sd.c</code> という列に関係している。出版年 <code>pubyear</code> は <code>&lt;dbl&gt;</code> というクラスを持っていることがわかる。これは <strong>double</strong> の略で、列が数値ベクトルであることを意味する。 <em>R</em> では、数値データ型を参照するために <code>double</code> と <code>numeric</code> の両方が使用されるのは歴史的な例外である。しかし、通常、これは実際のところ何の意味もない。</p>
+<p>しかし、このデータセットでは、いくつかの数値が<strong>文字</strong> (character) としてコード化されているため、今後問題が発生することが予想される。したがって、 <code>as.numeric</code> 関数を使用してクラスを変更する必要がある。この関数に変更したい列を指定し、<strong>代入演算子</strong> (<code>&lt;-</code>) を使って出力を元の場所に保存する。これは次のようなコードになる。</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.e</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">sd.e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">sd.e</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.c</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.c</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">sd.c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">sd.c</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.c</span><span class="op">)</span></span></code></pre></div>
+<p>また、<code>glimpse</code> の出力では、データのサブグループである <code>age_group</code> と <code>control</code> が文字としてコード化されていることがわかる。しかし、実際には、それぞれ2つの因子水準を持つ因子としてエンコードする方が適切である。クラスを変更するには、 <code>as.factor</code> 関数を使用する。</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">age_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">age_group</span><span class="op">)</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">control</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">control</span><span class="op">)</span></span></code></pre></div>
+<p><code>levels</code> と <code>nlevels</code> 関数を使用すると、因子のラベルと因子の水準数を確認することも可能である。</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">age_group</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] "general"     "older adult"</code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html">nlevels</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">age_group</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<p>また、<code>levels</code> 関数を使用して、因子ラベルの名前を変更することが可能である。単に、元のラベルに新しい名前を割り当てるだけである。これを <em>R</em> で行うには、 <strong>concatenate</strong> または <code>c</code> 関数を使用する必要がある。この関数は2つ以上の単語や数字を結びつけて、1つの要素を作ることが可能である。これを試してみよう。</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new.factor.levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gen"</span>, <span class="st">"older"</span><span class="op">)</span></span>
+<span><span class="va">new.factor.levels</span></span></code></pre></div>
+<pre><code>## [1] "gen"   "older"</code></pre>
+<p>完璧である。これで、新しく作成した <code>new.factor.levels</code> オブジェクトを使用して、<code>age_group</code> 列の因子ラベルに割り当てることができるようになった。</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">age_group</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">new.factor.levels</span></span></code></pre></div>
+<p>リネームがうまくいったかどうか、確認してみよう。</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">age_group</span></span></code></pre></div>
+<pre><code>## [1] gen   older gen   gen   gen   gen   gen   older older
+## Levels: gen older</code></pre>
+<p>また、<code>as.logical</code> を使用して論理値を作成することも可能である。例えば、 <code>pubyear</code> 列を再コード化し、2009年以降に発表された研究のみを表示するようにしたいとしよう。これを行うには、コードでイエス/ノーのルールを定義する必要がある。「以上」演算子 <code>&gt;=</code> を使用し、<code>as.logical</code> 関数の入力として使用する。</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">pubyear</span></span></code></pre></div>
+<pre><code>## [1] 2006 2019 2006 2011 1997 2000 2013 2015 2014</code></pre>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/logical.html">as.logical</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">pubyear</span> <span class="op">&gt;=</span> <span class="fl">2010</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] FALSE  TRUE FALSE  TRUE FALSE FALSE  TRUE  TRUE  TRUE</code></pre>
+<p>これは <code>pubyear</code> の各要素を、出版年が2010年以上かそうでないかによって <code>TRUE</code> または <code>FALSE</code> としてエンコードしていることがわかる。</p>
+<p><br></p>
+</div>
+<div id="data-slicing" class="section level3" number="2.5.2">
+<h3>
+<span class="header-section-number">2.5.2</span> データのスライス<a class="anchor" aria-label="anchor" href="#data-slicing"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><em>R</em> では、データフレームの部分集合を抽出する方法がいくつかある。そのうちのひとつである <code>$</code> 演算子を使って列を抽出する方法についてすでに説明した。データセットからスライスを抽出する、より一般的な方法は、角括弧を使用することである。角括弧を使用する一般的な形式は、 <code>data.frame[rows, columns]</code> である。行と列は、データセットに現れる番号を使って抽出することができる。例えば、データフレームの2行目のデータを取り出すには、以下のようなコードを使用する。</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span></code></pre></div>
+<pre><code>##           author n.e mean.e sd.e n.c mean.c sd.c pubyear age_group
+## 2 DeVries et al.  77  16.21 5.35  69  20.13 7.43    2019     older
+##           control
+## 2 no intervention</code></pre>
+<p>さらに具体的に、2行目の1列目の情報だけが欲しいと <em>R</em> に伝えることが可能である。</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">]</span></span></code></pre></div>
+<pre><code>## [1] "DeVries et al."</code></pre>
+<p>特定のスライスを選択するには、再び concatenate (<code>c</code>) 関数を使用する必要がある。たとえば、2行目と3行目、および4列目と6列目を抽出したい場合は、次のようなコードを使用する。</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code>##   sd.e mean.c
+## 2 5.35  20.13
+## 3 0.87   3.13</code></pre>
+<p>通常、行は番号によってのみ選択することができる。しかし、列の場合は、番号の代わりに列の<strong>名前</strong>を指定することも可能である。</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"author"</span>, <span class="st">"control"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code>##            author         control
+## 1    Berry et al.             WLC
+## 2  DeVries et al. no intervention
+## 3  Fleming et al. no intervention
+## 4    Hunt &amp; Burke             WLC
+## 5 McCarthy et al.             WLC
+## 6   Meijer et al. no intervention
+## 7   Rivera et al. no intervention
+## 8  Watkins et al. no intervention
+## 9  Zaytsev et al. no intervention</code></pre>
+<p>別の方法として、行の値に基づいてデータセットに<strong>フィルタ</strong>を行うこともできる。これを行うには、関数 <code>filter</code> を使用する。この関数では、データセット名とフィルタ条件を指定する必要がある。比較的簡単な例として、<code>n.e</code> が50以下である研究をすべてフィルタしてみよう。</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">SuicidePrevention</span>, <span class="va">n.e</span> <span class="op">&lt;=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##            author n.e mean.e sd.e n.c mean.c sd.c pubyear age_group
+## 1  Fleming et al.  30   3.01 0.87  30   3.13 1.23    2006       gen
+## 2 McCarthy et al.  50   4.54 2.75  50   5.61 2.66    1997       gen
+## 3  Watkins et al.  40   7.10 0.76  40   7.38 1.41    2015     older
+##           control
+## 1 no intervention
+## 2             WLC
+## 3 no intervention</code></pre>
+<p>名前によるフィルタも可能である。例えば、著者である <strong>Meijer</strong> と <strong>Zaytsev</strong> による研究を抽出したいとする。そのためには、<code>%in%</code>演算子と concatenate 関数を用いて、フィルタ条件を定義する必要がある。</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">SuicidePrevention</span>, <span class="va">author</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Meijer et al."</span>,</span>
+<span>                                        <span class="st">"Zaytsev et al."</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##           author n.e mean.e sd.e n.c mean.c  sd.c pubyear age_group
+## 1  Meijer et al. 109  15.11 4.63 111  16.46  5.39    2000       gen
+## 2 Zaytsev et al.  51  23.74 7.24  56  24.91 10.65    2014     older
+##           control
+## 1 no intervention
+## 2 no intervention</code></pre>
+<p>逆に、フィルタの論理式の前に感嘆符 (<code>!</code>) をつけることで、<strong>Meijer</strong> と <strong>Zaytsev</strong> による研究を<strong>除く</strong>すべての研究を抽出することも可能である。</p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">SuicidePrevention</span>, <span class="op">!</span><span class="va">author</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Meijer et al."</span>, </span>
+<span>                                         <span class="st">"Zaytsev et al."</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="data-transform" class="section level3" number="2.5.3">
+<h3>
+<span class="header-section-number">2.5.3</span> データ変換<a class="anchor" aria-label="anchor" href="#data-transform"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>もちろん、 <em>R</em> のデータフレーム内の特定の値を変更したり、拡張したりすることも可能である。 <em>R</em> で内部保存したデータを変更するには、<strong>代入演算子</strong>を使用する必要がある。以前、データスライスについて学んだことを再利用して、データセットの特定の値を変更することにしよう。私たちが間違いを犯し、<strong>DeVries et al.</strong> による研究の出版年が、2018であるべきところを2019と誤って報告されたとする。データセットを適宜スライスし、新しい値を割り当てることで、値を変更することが可能である。<strong>DeVries et al.</strong> の結果は、データセットの2行目に報告されていることを忘れないように。</p>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">[</span><span class="fl">2</span>, <span class="st">"pubyear"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2018</span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">[</span><span class="fl">2</span>, <span class="st">"pubyear"</span><span class="op">]</span></span></code></pre></div>
+<pre><code>## [1] 2018</code></pre>
+<p>また、一度に複数の値を変更することもできる。例えば、データセットのすべての介入グループの平均に5を加えたい場合、次のコードで可能である。</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span> <span class="op">+</span> <span class="fl">5</span></span></code></pre></div>
+<pre><code>## [1] 19.98 21.21  8.01 24.32  9.54 20.11  8.44 12.10 28.74</code></pre>
+<p>また、2つ以上の列を使用して計算を行うこともできる。実用的な例としては、各研究の介入群の平均と対照群の平均の<strong>平均差</strong> (mean difference) を計算したいとする。他のプログラミング言語と比較すると、 <em>R</em> では、これは驚くほど簡単である。</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span> <span class="op">-</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.c</span></span></code></pre></div>
+<pre><code>## [1] -0.56 -3.92 -0.12 -0.90 -1.07 -1.35  0.02 -0.28 -1.17</code></pre>
+<p>今見たように、これは各研究の介入群の平均から対照群の平均を引くが、毎回同じ行の値を使用する。この平均差 (<strong>m</strong>ean <strong>d</strong>ifference) を後で利用することにしよう。そこで、これを <code>md</code> というオブジェクトとして保存し、 <code>SuicidePrevention</code> データフレームに新しい列として追加したいと思ったとする。どちらも代入演算子を使えば簡単にできる。</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">md</span> <span class="op">&lt;-</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span> <span class="op">-</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.c</span></span>
+<span></span>
+<span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">md</span> <span class="op">&lt;-</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span> <span class="op">-</span> </span>
+<span>                            <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.c</span></span></code></pre></div>
+<p></p>
+<p>最後に紹介するのは、<strong>パイプ演算子</strong>である。 <em>R</em> では、パイプは <code>%&gt;%</code> と表記される (訳注: R 4.2 から、<code>|&gt;</code> というパイプも導入された)。パイプを使うと、関数を呼び出す際にオブジェクト名を直接指定することなく、オブジェクトに関数を適用することが可能である。単に、オブジェクトと関数をパイプ演算子でつなげるだけである。簡単な例を挙げてみよう。対照群のサンプル数の平均を計算したい場合、<code>mean</code> 関数とパイプ演算子を次のように使用する。</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.c</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 64</code></pre>
+<p>この例では、パイプの価値を見ることは困難である。パイプの特別な強みは、多くの関数を<strong>連結</strong>することができる点にある。例えば、2009年以降に発表された研究のみを対象として、対照群サンプルサイズの平均値の平方根を知りたいとする。パイプを使えば、これを1ステップで簡単に行うことが可能である。</p>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SuicidePrevention</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">pubyear</span> <span class="op">&gt;</span> <span class="fl">2009</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">n.c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 7.615773</code></pre>
+<p>パイプの中では、これまで取り上げていない関数として、<code>pull</code> 関数を使った。この関数は、パイプで使用できる <code>$</code> 演算子と同等と見なすことができる。この関数は、関数内で指定した変数を単に「引き出す」だけで、パイプの次の部分に送り込むことが可能である。</p>
+<div class="boxinfo">
+<p>
+<strong><em>R</em> のドキュメントにアクセス</strong>
+</p>
+<p>
+<em>R</em>
+の多くの関数は複数の引数を必要とし、全ての関数の使い方を正しく記憶することは不可能である。ありがたいことに、各関数の使い方を丸暗記する必要はない。R
+Studio では、 <em>R</em>
+のドキュメントに簡単にアクセスでき、各関数には詳細な説明ページが用意されている。
+</p>
+<p>
+関数のドキュメントページを検索するには、2つの方法がある。一つは、R
+Studio の左下 (訳注: 「右下」にあることの方が多い。) にある
+<strong>Help</strong>
+ペインにアクセスし、検索バーを使って特定の関数に関する情報を見つける方法である。もっと便利な方法は、コンソールで
+<code>?</code> の後に関数名をつけて、例えば <code><a href="https://rdrr.io/r/base/mean.html">?mean</a></code>
+のように実行することである。これで自動的にこの関数のドキュメントのエントリーが開かれる。
+</p>
+<p>
+関数の <em>R</em>
+ドキュメントには通常、少なくとも<strong>使用法</strong>
+(Usage)、<strong>引数</strong> (Arguments)、<strong>例</strong>
+(Examples)
+のセクションがある。特に、<strong>引数</strong>と<strong>例</strong>のセクションは、関数がどのように使用されるかを理解するのに役立つことが多いだろう。
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="saving-data" class="section level3" number="2.5.4">
+<h3>
+<span class="header-section-number">2.5.4</span> データの保存<a class="anchor" aria-label="anchor" href="#saving-data"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>データを変換して <em>R</em> に内部保存した後、ある時点で<strong>エクスポート</strong>する必要がある。 <em>R</em> のデータフレームを保存する際には、2種類のファイル形式を使用することをお勧めする。 <em>.rda</em> と <em>.csv</em> である。</p>
+<p>ファイルの末尾 <em>.rda</em> は、 <em>R</em> <strong>Data</strong> の略である。これは <em>R</em> 専用のファイル タイプで、すべての利点と欠点がある。 <em>.rda</em> ファイルの利点は、 <em>R</em> で簡単に再オープンできることと、エクスポート中にデータが歪む心配がないことである。また、汎用性が高く、表計算ソフトの形式に収まらないデータも保存可能である。欠点は、 <em>R</em> でしか開けないことであるが、プロジェクトによっては、これで十分である。</p>
+<p>オブジェクトを <em>.rda</em> データファイルとして保存するには、 <code>save</code> 関数を使用する。この関数では、(1) オブジェクトの名前、(2) ファイルの末尾を含めた<strong>正確な</strong>ファイル名、を指定する必要がある。この関数を実行すると、ファイルが作業ディレクトリに保存される。</p>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">SuicidePrevention</span>, file <span class="op">=</span> <span class="st">"suicideprevention.rda"</span><span class="op">)</span></span></code></pre></div>
+<p>ファイルの末尾 <em>.csv</em> は <strong>comma-separated values</strong> の略である。この形式は、一般的なデータで最もよく使用されるものの1つである。これは、<em>Excel_を含む多くのプログラムで開くことが可能である。データを </em>.csv_ として保存するには、 <code>write.csv</code> 関数を使用する。コードの構成や動作は <code>save</code> とほぼ同じであるが、提供するオブジェクトはデータフレームなどの表形式データオブジェクトである<strong>必要</strong>がある。そしてもちろん、ファイルタイプは “.csv” を指定する必要がある。</p>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.csv</a></span><span class="op">(</span><span class="va">SuicidePrevention</span>, file <span class="op">=</span> <span class="st">"suicideprevention.csv"</span><span class="op">)</span></span></code></pre></div>
+<p>ここでは、 <em>R</em> におけるデータ操作の戦略について簡単に説明する。特に、データの操作のように簡単だと思われるものを扱う場合、 <em>R</em> をゼロから学ぶのは疲れることがある。しかし、 <em>R</em> の動作に慣れるには、練習するのが一番である。しばらくすると、 <em>R</em> の一般的なコマンドは自然に使えるようになる。</p>
+<p>学習を続けるには、Hadley Wickham and Garrett Grolemund の著書 <strong>R for Data Science</strong> <span class="citation">(<a href="references.html#ref-wickham2016r">2016</a>)</span> に目を通しておくとよいだろう。このガイドと同様に、この本もオンラインで完全に<a href="https://r4ds.had.co.nz/transform.html">無料</a>で読むことが可能である 。さらに、次のページでいくつかの演習も集めたので、ここで学んだことを実践するために使うことを勧める。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+</div>
+<div id="演習問題-1" class="section level2" number="2.6">
+<h2>
+<span class="header-section-number">2.6</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-1"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>データ操作の演習</strong>
+</p>
+<p>
+この演習では、<code>data</code>
+という新しいデータセットを使用する。このデータセットは、以下のコードを使って
+<em>R</em> で直接作成することが可能である。
+</p>
+</div>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"Author"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Jones"</span>, <span class="st">"Goldman"</span>, </span>
+<span>                                <span class="st">"Townsend"</span>, <span class="st">"Martin"</span>, </span>
+<span>                                <span class="st">"Rose"</span><span class="op">)</span>,</span>
+<span>                   <span class="st">"TE"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.23</span>, <span class="fl">0.56</span>, </span>
+<span>                            <span class="fl">0.78</span>, <span class="fl">0.23</span>, </span>
+<span>                            <span class="fl">0.33</span><span class="op">)</span>,</span>
+<span>                  <span class="st">"seTE"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.324</span>, <span class="fl">0.235</span>, </span>
+<span>                             <span class="fl">0.394</span>, <span class="fl">0.275</span>, </span>
+<span>                             <span class="fl">0.348</span><span class="op">)</span>,</span>
+<span>                  <span class="st">"subgroup"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"one"</span>, </span>
+<span>                                 <span class="st">"two"</span>, <span class="st">"two"</span>, </span>
+<span>                                 <span class="st">"three"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="boxempty">
+<p>
+このデータセットの演習を紹介する。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+変数 <code>Author</code> を表示しなさい。
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+<code>subgroup</code> を因子型 (factor) に変換しなさい。
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+“Jones” と “Martin” の研究のデータをすべて選択しなさい。
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+研究名 “Rose” を “Bloom” に変更しなさい。
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+<code>TE</code> から <code>seTE</code> を引いて、新しい変数
+<code>TE_seTE_diff</code> を作成し、結果を <code>data</code>
+に保存しなさい。
+</li>
+</ol>
+<ol start="6" style="list-style-type: decimal">
+<li>
+パイプを使用して、(1) <code>subgroup</code> が”one” または “two”
+に属するすべての研究をフィルタし、(2) 変数 <code>TE_seTE_diff</code>
+を選択し、(3) その変数の平均をとり、それに <code>exp</code>
+関数を適用しなさい。 <em>R</em>
+のドキュメントにアクセスして、<code>exp</code>
+関数が何をするのか調べてみなさい。
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda2">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="概要-1" class="section level2" number="2.7">
+<h2>
+<span class="header-section-number">2.7</span> 概要<a class="anchor" aria-label="anchor" href="#%E6%A6%82%E8%A6%81-1"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><em>R</em> は、世界で最も強力かつ頻繁に使用される統計プログラミング言語の1つとなっている。</p></li>
+<li><p><em>R</em> は、グラフィカル・ユーザー・インターフェースとあらかじめ定義された機能を持つコンピュータ・プログラムではない。世界中の人々が自由に利用できるアドオン、いわゆる<strong>パッケージ</strong>を提供できる完全なプログラミング言語である。</p></li>
+<li><p>R Studio は、 <em>R</em> を使った統計解析を便利に行うためのコンピュータ・プログラムである。</p></li>
+<li><p><em>R</em> の基本的な構成要素は関数である。これらの関数の多くは、インターネットからインストールできるパッケージを通じてインポートすることが可能である。</p></li>
+<li><p><em>R</em> を使ったデータの取り込み、操作、解析、保存に関数を使用することが可能である。</p></li>
+</ul>
+</div>
+</div>
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="intro.html"><span class="header-section-number">1</span> はじめに</a></div>
+<div class="next"><a href="effects.html"><span class="header-section-number">3</span> 効果量</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#discovering-R"><span class="header-section-number">2</span> R の発見</a></li>
+<li><a class="nav-link" href="#install-R"><span class="header-section-number">2.1</span> R と R Studio のインストール</a></li>
+<li><a class="nav-link" href="#packages"><span class="header-section-number">2.2</span> パッケージ</a></li>
+<li><a class="nav-link" href="#dmetar"><span class="header-section-number">2.3</span> {dmetar} パッケージ</a></li>
+<li><a class="nav-link" href="#data-prep-R"><span class="header-section-number">2.4</span> データ準備とインポート</a></li>
+<li>
+<a class="nav-link" href="#data-manip-R"><span class="header-section-number">2.5</span> データ操作</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#class-conversion"><span class="header-section-number">2.5.1</span> クラス変換</a></li>
+<li><a class="nav-link" href="#data-slicing"><span class="header-section-number">2.5.2</span> データのスライス</a></li>
+<li><a class="nav-link" href="#data-transform"><span class="header-section-number">2.5.3</span> データ変換</a></li>
+<li><a class="nav-link" href="#saving-data"><span class="header-section-number">2.5.4</span> データの保存</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-1"><span class="header-section-number">2.6</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E6%A6%82%E8%A6%81-1"><span class="header-section-number">2.7</span> 概要</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

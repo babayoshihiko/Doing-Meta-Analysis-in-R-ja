@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>17 効果量の計算と換算 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="メタ分析が頻繁に直面する問題は、適切な「生の」効果量データが、含まれるすべての研究から抽出できるとは限らないことである。metacont (Chapter 4.2.2) や metabin (Chapter 4.2.3.1) などの {meta} パッケージのほとんどの関数は、生の効果量データが完全に利用可能な場合にのみ使用することができる。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="17 効果量の計算と換算 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="メタ分析が頻繁に直面する問題は、適切な「生の」効果量データが、含まれるすべての研究から抽出できるとは限らないことである。metacont (Chapter 4.2.2) や metabin (Chapter 4.2.3.1) などの {meta} パッケージのほとんどの関数は、生の効果量データが完全に利用可能な場合にのみ使用することができる。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="17 効果量の計算と換算 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="メタ分析が頻繁に直面する問題は、適切な「生の」効果量データが、含まれるすべての研究から抽出できるとは限らないことである。metacont (Chapter 4.2.2) や metabin (Chapter 4.2.3.1) などの {meta} パッケージのほとんどの関数は、生の効果量データが完全に利用可能な場合にのみ使用することができる。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="active" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="es-calc" class="section level1" number="17">
+<h1>
+<span class="header-section-number">17</span> 効果量の計算と換算<a class="anchor" aria-label="anchor" href="#es-calc"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/effect_size_calculation.jpg"></div>
+<p><br></p>
+<p></p>
+<p>メタ分析が頻繁に直面する問題は、適切な「生の」効果量データが、含まれるすべての研究から抽出できるとは限らないことである。<code>metacont</code> (Chapter <a href="pooling-es.html#pooling-smd">4.2.2</a>) や <code>metabin</code> (Chapter <a href="pooling-es.html#pooling-or-rr">4.2.3.1</a>) などの <strong>{meta}</strong> パッケージのほとんどの関数は、生の効果量データが完全に利用可能な場合にのみ使用することができる。</p>
+<p>実際には、これは困難につながることも多い。出版された論文の中には、特に古いものでは、必要な (生の) 効果量データを抽出できるような方法で結果を報告していないものがある。<span class="math inline">\(t\)</span>-検定、one-way ANOVA、<span class="math inline">\(\chi^2\)</span>-検定 の結果は報告されていても、メタ分析に必要なグループごとの平均や標準偏差、研究条件におけるイベント数が報告されていないことはよくあることである。</p>
+<p></p>
+<p>幸いなことに、報告された情報を望ましい効果量フォーマットに<strong>変換</strong>できる場合がある。これにより、<code>metagen</code> を用いた<strong>事前計算</strong>データ (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a>) によるメタ分析で、影響を受けた研究を含めることができるようになる。例えば、2標本の <span class="math inline">\(t\)</span>-検定 の結果を標準化平均差 (SMD) とその標準誤差に変換し、<code>metagen</code> を用いて事前に計算された SMD のメタ分析を行うことができる。<strong>{esc}</strong> パッケージ <span class="citation">(<a href="references.html#ref-esc">Lüdecke 2019</a>)</span> には、このような変換を <em>R</em> 内で直接行うことができる便利な関数がいくつか用意されている。</p>
+<p><br></p>
+<div id="平均値および標準誤差" class="section level2" number="17.1">
+<h2>
+<span class="header-section-number">17.1</span> 平均値および標準誤差<a class="anchor" aria-label="anchor" href="#%E5%B9%B3%E5%9D%87%E5%80%A4%E3%81%8A%E3%82%88%E3%81%B3%E6%A8%99%E6%BA%96%E8%AA%A4%E5%B7%AE"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>
+</p>
+<p>平均と<strong>標準誤差</strong>から SMD や Hedges’ <span class="math inline">\(g\)</span> を計算するとき、平均の標準偏差はサンプルサイズの平方根を「割り算」して標準誤差として定義されることを利用することができる <span class="citation">(<a href="references.html#ref-thalheimer2002calculate">Thalheimer and Cook 2002</a>)</span>。</p>
+<p><span class="math display" id="eq:esc1">\[\begin{equation}
+\text{SD} =\text{SE}\sqrt{n}
+\tag{17.1}
+\end{equation}\]</span></p>
+<p>SMD や Hedges’ <span class="math inline">\(g\)</span> は <code>esc_mean_se</code>関数を使って計算することができる。以下はその例である。</p>
+<div class="sourceCode" id="cb515"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_mean_se.html">esc_mean_se</a></span><span class="op">(</span>grp1m <span class="op">=</span> <span class="fl">8.5</span>,   <span class="co"># group 1 の平均</span></span>
+<span>            grp1se <span class="op">=</span> <span class="fl">1.5</span>,  <span class="co"># group 1 の標準誤差</span></span>
+<span>            grp1n <span class="op">=</span> <span class="fl">50</span>,    <span class="co"># group 1 のサンプル</span></span>
+<span>            grp2m <span class="op">=</span> <span class="fl">11</span>,    <span class="co"># group 2 の平均</span></span>
+<span>            grp2se <span class="op">=</span> <span class="fl">1.8</span>,  <span class="co"># group 2 の標準誤差</span></span>
+<span>            grp2n <span class="op">=</span> <span class="fl">60</span>,    <span class="co"># group 2 のサンプル</span></span>
+<span>            es.type <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="co"># SMD に変換; Hedges' g を使う場合は "g"</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: mean and se to effect size d
+##     Effect Size:  -0.2012
+##  Standard Error:   0.1920
+##        Variance:   0.0369
+##        Lower CI:  -0.5774
+##        Upper CI:   0.1751
+##          Weight:  27.1366</code></pre>
+<p><br></p>
+</div>
+<div id="回帰係数" class="section level2" number="17.2">
+<h2>
+<span class="header-section-number">17.2</span> 回帰係数<a class="anchor" aria-label="anchor" href="#%E5%9B%9E%E5%B8%B0%E4%BF%82%E6%95%B0"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>標準化または非標準化回帰係数から SMD、Hedges’ <span class="math inline">\(g\)</span> または相関 <span class="math inline">\(r\)</span> を計算することができる <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001</a>、Appendix B)</span>。標準化されていない係数に対しては、<strong>{esc}</strong> の <code>esc_B</code> 関数を使用することができる。以下はその例である。</p>
+<p></p>
+<div class="sourceCode" id="cb517"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_B.html">esc_B</a></span><span class="op">(</span>b <span class="op">=</span> <span class="fl">3.3</span>,       <span class="co"># 標準化されていない回帰係数</span></span>
+<span>      sdy <span class="op">=</span> <span class="fl">5</span>,       <span class="co"># 予測変数 y の標準偏差</span></span>
+<span>      grp1n <span class="op">=</span> <span class="fl">100</span>,   <span class="co"># group 1 のサンプルサイズ</span></span>
+<span>      grp2n <span class="op">=</span> <span class="fl">150</span>,   <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>      es.type <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="co"># SMD に変換; Hedges' g を使う場合は "g"</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: unstandardized regression coefficient to effect size d
+##     Effect Size:   0.6962
+##  Standard Error:   0.1328
+##        Variance:   0.0176
+##        Lower CI:   0.4359
+##        Upper CI:   0.9565
+##          Weight:  56.7018</code></pre>
+<div class="sourceCode" id="cb519"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_B.html">esc_B</a></span><span class="op">(</span>b <span class="op">=</span> <span class="fl">2.9</span>,       <span class="co"># 標準化されていない回帰係数</span></span>
+<span>      sdy <span class="op">=</span> <span class="fl">4</span>,       <span class="co"># 予測変数 y の標準偏差</span></span>
+<span>      grp1n <span class="op">=</span> <span class="fl">50</span>,    <span class="co"># group 1 のサンプルサイズ</span></span>
+<span>      grp2n <span class="op">=</span> <span class="fl">50</span>,    <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>      es.type <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span> <span class="co"># 相関係数に変換</span></span></code></pre></div>
+<pre><code>## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: unstandardized regression coefficient 
+##                  to effect size correlation
+##     Effect Size:   0.3611
+##  Standard Error:   0.1031
+##        Variance:   0.0106
+##        Lower CI:   0.1743
+##        Upper CI:   0.5229
+##          Weight:  94.0238
+##      Fisher's z:   0.3782
+##       Lower CIz:   0.1761
+##       Upper CIz:   0.5803</code></pre>
+<p>標準化された回帰係数は <code>esc_beta</code> を用いて変換することができる。</p>
+<div class="sourceCode" id="cb521"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_beta.html">esc_beta</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.32</span>,   <span class="co"># 標準化されていない回帰係数</span></span>
+<span>         sdy <span class="op">=</span> <span class="fl">5</span>,       <span class="co"># 予測変数 y の標準偏差</span></span>
+<span>         grp1n <span class="op">=</span> <span class="fl">100</span>,   <span class="co"># group 1 のサンプルサイズ</span></span>
+<span>         grp2n <span class="op">=</span> <span class="fl">150</span>,   <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>         es.type <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="co"># SMD に変換; Hedges' g を使う場合は "g"</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: standardized regression coefficient to effect size d
+##     Effect Size:   0.6867
+##  Standard Error:   0.1327
+##        Variance:   0.0176
+##        Lower CI:   0.4266
+##        Upper CI:   0.9468
+##          Weight:  56.7867</code></pre>
+<div class="sourceCode" id="cb523"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_beta.html">esc_beta</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.37</span>,   <span class="co"># 標準化されていない回帰係数</span></span>
+<span>         sdy <span class="op">=</span> <span class="fl">4</span>,       <span class="co"># 予測変数 y の標準偏差</span></span>
+<span>         grp1n <span class="op">=</span> <span class="fl">50</span>,    <span class="co"># group 1 のサンプルサイズ</span></span>
+<span>         grp2n <span class="op">=</span> <span class="fl">50</span>,    <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>         es.type <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span> <span class="co"># 相関係数に変換</span></span></code></pre></div>
+<pre><code>## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: standardized regression coefficient 
+##                  to effect size correlation
+##     Effect Size:   0.3668
+##  Standard Error:   0.1033
+##        Variance:   0.0107
+##        Lower CI:   0.1803
+##        Upper CI:   0.5278
+##          Weight:  93.7884
+##      Fisher's z:   0.3847
+##       Lower CIz:   0.1823
+##       Upper CIz:   0.5871</code></pre>
+<p>メタ分析で回帰係数を用いることは、すべての研究で同じモデルを仮定するため注意が必要である。特に、複数の回帰モデルから係数が抽出された場合には、各モデルで異なる共分散に対して調整されているかもしれず、この場合 <span class="math inline">\(b\)</span> 値が直接比較できないため問題となる。</p>
+<p><br></p>
+</div>
+<div id="convert-corr" class="section level2" number="17.3">
+<h2>
+<span class="header-section-number">17.3</span> 相関関係<a class="anchor" aria-label="anchor" href="#convert-corr"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>
+</p>
+<p><strong>同じ</strong>大きさの群 (<span class="math inline">\(n_1=n_2\)</span>) の場合、以下の式で<strong>点-双列</strong>相関から SMD を導き出すことができる <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001, chap. 3</a>)</span>。</p>
+<p><span class="math display" id="eq:esc2">\[\begin{equation}
+r_{pb} = \frac{\text{SMD}}{\sqrt{\text{SMD}^2+4}} ~~~~~~~~
+\text{SMD}=\frac{2r_{pb}}{\sqrt{1-r^2_{pb}}} \tag{17.2}
+\end{equation}\]</span></p>
+<p><strong>不均等</strong>な大きさの群には、別の数式を使用する必要がある <span class="citation">(<a href="references.html#ref-aaron1998equating">Aaron, Kromrey, and Ferron 1998</a>)</span>。</p>
+<p><span class="math display" id="eq:esc3">\[\begin{align}
+r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \notag \\
+\text{SMD} &amp;= \dfrac{r_{pb}}{\sqrt{(1-r^2)\left(\frac{n_1}{N}\times\left(1-\frac{n_1}{N}\right)\right)}} \tag{17.3}
+\end{align}\]</span></p>
+<p><span class="math inline">\(r_{pb}\)</span> を SMD や Hedges’ <span class="math inline">\(g\)</span> に変換するには、<code>esc_rpb</code> 関数を使用する。</p>
+<div class="sourceCode" id="cb525"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_rpb.html">esc_rpb</a></span><span class="op">(</span>r <span class="op">=</span> <span class="fl">0.25</span>,      <span class="co"># 点-双列相関</span></span>
+<span>        grp1n <span class="op">=</span> <span class="fl">99</span>,    <span class="co"># group 1 のサンプルサイズ</span></span>
+<span>        grp2n <span class="op">=</span> <span class="fl">120</span>,   <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>        es.type <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="co"># SMD に変換; Hedges' g を使う場合は "g"</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: point-biserial r to effect size d
+##     Effect Size:   0.5188
+##  Standard Error:   0.1380
+##        Variance:   0.0190
+##        Lower CI:   0.2483
+##        Upper CI:   0.7893
+##          Weight:  52.4967</code></pre>
+<p><br></p>
+</div>
+<div id="一元配置分散分析" class="section level2" number="17.4">
+<h2>
+<span class="header-section-number">17.4</span> 一元配置分散分析<a class="anchor" aria-label="anchor" href="#%E4%B8%80%E5%85%83%E9%85%8D%E7%BD%AE%E5%88%86%E6%95%A3%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>また、<strong>2群</strong>の一元配置 ANOVA の <span class="math inline">\(F\)</span>-値から SMD を導き出すこともできる。そのような ANOVA は、<strong>自由度</strong>を見ることで識別できる。2群の一元配置ANOVAでは、自由度は常に1から始まるはずである (例: <span class="math inline">\(F_{\text{1,147}}\)</span> =5.31)。</p>
+<p>変換に使う式は次のようなものである <span class="citation">(<a href="references.html#ref-rosnow1996computing">Rosnow and Rosenthal 1996</a>; <a href="references.html#ref-rosnow2000contrasts">Rosnow, Rosenthal, and Rubin 2000</a>; <a href="references.html#ref-thalheimer2002calculate">Thalheimer and Cook 2002</a> を参照)</span>。</p>
+<p><span class="math display" id="eq:esc4">\[\begin{equation}
+\text{SMD} = \sqrt{  F\left(\frac{n_1+n_2}{n_1 n_2}\right)\left(\frac{n_1+n_2}{n_1+n_2-2}\right)}
+\tag{17.4}
+\end{equation}\]</span></p>
+<p><span class="math inline">\(F\)</span>-値 から SMD や Hedges’ <span class="math inline">\(g\)</span> を計算するには、<code>esc_f</code> 関数を使用する。以下はその例である。</p>
+<div class="sourceCode" id="cb527"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_f.html">esc_f</a></span><span class="op">(</span>f <span class="op">=</span> <span class="fl">5.04</span>,      <span class="co"># one-way anova の F-値</span></span>
+<span>      grp1n <span class="op">=</span> <span class="fl">519</span>,   <span class="co"># group 1 のサンプルサイズ </span></span>
+<span>      grp2n <span class="op">=</span> <span class="fl">528</span>,   <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>      es.type <span class="op">=</span> <span class="st">"g"</span><span class="op">)</span> <span class="co"># Hedges' g　に変換; SMD の場合は "d"</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: F-value (one-way-Anova) to effect size Hedges' g
+##     Effect Size:   0.1387
+##  Standard Error:   0.0619
+##        Variance:   0.0038
+##        Lower CI:   0.0174
+##        Upper CI:   0.2600
+##          Weight: 261.1022</code></pre>
+<p><br></p>
+</div>
+<div id="標本の-t-検定" class="section level2" number="17.5">
+<h2>
+<span class="header-section-number">17.5</span> 2標本の <span class="math inline">\(t\)</span> 検定<a class="anchor" aria-label="anchor" href="#%E6%A8%99%E6%9C%AC%E3%81%AE-t-%E6%A4%9C%E5%AE%9A"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>標準化平均差として表現される効果量は、以下の式 <span class="citation">(<a href="references.html#ref-rosnow2000contrasts">Rosnow, Rosenthal, and Rubin 2000</a>; <a href="references.html#ref-thalheimer2002calculate">Thalheimer and Cook 2002</a>)</span> を用いて、<strong>独立</strong>2標本 <span class="math inline">\(t\)</span> -検定値からも導き出すことができる。</p>
+<p><span class="math display" id="eq:esc5">\[\begin{equation}
+\text{SMD} = \frac {t(n_1+n_2)}{\sqrt{(n_1+n_2-2)(n_1n_2)}}
+\tag{17.5}
+\end{equation}\]</span></p>
+<p><em>R</em> では、<code>esc_t</code> 関数を使って <span class="math inline">\(t\)</span>-値から SMD や Hedges’ <code>g</code> を計算することができる。以下はその例である。</p>
+<div class="sourceCode" id="cb529"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_t.html">esc_t</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fl">3.3</span>,     <span class="co"># t-値</span></span>
+<span>      grp1n <span class="op">=</span> <span class="fl">100</span>, <span class="co"># group 1 のサンプルサイズ</span></span>
+<span>      grp2n <span class="op">=</span> <span class="fl">150</span>, <span class="co"># group 2 のサンプルサイズ</span></span>
+<span>      es.type<span class="op">=</span><span class="st">"d"</span><span class="op">)</span> <span class="co"># SMD に変換; Hedges' g を使う場合は "g"</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: t-value to effect size d
+##     Effect Size:   0.4260
+##  Standard Error:   0.1305
+##        Variance:   0.0170
+##        Lower CI:   0.1703
+##        Upper CI:   0.6818
+##          Weight:  58.7211</code></pre>
+<p><br></p>
+</div>
+<div id="p-値" class="section level2" number="17.6">
+<h2>
+<span class="header-section-number">17.6</span> <span class="math inline">\(p\)</span> 値<a class="anchor" aria-label="anchor" href="#p-%E5%80%A4"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>研究では、効果の大きさ (例えば、Cohen’s <span class="math inline">\(d\)</span> 値)、その効果の <span class="math inline">\(p\)</span> -値のみを報告し、それ以上のことは報告しないことがある。しかし、メタ分析で結果をプールするためには、効果量の<strong>精度</strong>の指標、できれば標準誤差が必要である。</p>
+<p>そのような場合、効果量の <span class="math inline">\(p\)</span> -値から標準誤差を推定しなければならない。これは、Altman and Bland <span class="citation">(<a href="references.html#ref-altman2011obtain">2011</a>)</span> による公式を用いれば、<strong>差分</strong> (すなわち SMD) または<strong>比</strong> (すなわちリスク比またはオッズ比) に基づく効果量に対して可能である。これらの公式は、 <em>R</em> の <code>se.from.p</code> 関数で実装されている。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“se.from.p” 関数</strong>
+</p>
+<p>
+<code>se.from.p</code> 関数は、<strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+がインストールされ、コンピュータに読み込まれると、この関数を使用できるようになる。もし、<strong>{dmetar}</strong>
+をインストールして<strong>いない</strong>場合は、以下の手順でインストールできる。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+関数のソースコードに <a href="https://raw.githubusercontent.com/MathiasHarrer/dmetar/master/R/power.analysis.subgroup.R">オンライン</a>
+でアクセスする。
+</li>
+<li>
+ソースコード全体をコンソール (R Studio の左下ペイン)
+にコピー＆ペーストし、Enterキーを押して、 <em>R</em>
+に関数を「学習」させる。
+</li>
+</ol>
+</div>
+<p><span class="math inline">\(N=\)</span> 71人の参加者を持つ研究で、<span class="math inline">\(d=\)</span> 0.71 の効果量を報告していると仮定すると、<span class="math inline">\(p=\)</span> 0.013 のように標準誤差を計算することができる。</p>
+<div class="sourceCode" id="cb531"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="http://dmetar.protectlab.org/reference/se.from.p.html">se.from.p</a></span><span class="op">(</span><span class="fl">0.71</span>,</span>
+<span>          p <span class="op">=</span> <span class="fl">0.013</span>,</span>
+<span>          N <span class="op">=</span> <span class="fl">71</span>,</span>
+<span>          effect.size.type <span class="op">=</span> <span class="st">"difference"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##   EffectSize StandardError StandardDeviation  LLCI  ULCI
+## 1       0.71         0.286             2.410 0.149 1.270</code></pre>
+<p><span class="math inline">\(N=\)</span> 200人の参加者が、OR=0.91、<span class="math inline">\(p=\)</span> 0.38の効果量を報告した研究については、標準誤差はこのように計算される。</p>
+<div class="sourceCode" id="cb533"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span> <span class="co"># pipe を使う</span></span>
+<span></span>
+<span><span class="fu"><a href="http://dmetar.protectlab.org/reference/se.from.p.html">se.from.p</a></span><span class="op">(</span><span class="fl">0.91</span>, p <span class="op">=</span> <span class="fl">0.38</span>, N <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>          effect.size.type <span class="op">=</span> <span class="st">"ratio"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##                        [,1]
+## logEffectSize        -0.094
+## logStandardError      0.105
+## logStandardDeviation  1.498
+## logLLCI              -0.302
+## logULCI               0.113
+## EffectSize            0.910
+## LLCI                  0.739
+## ULCI                  1.120</code></pre>
+<p>また、 <code>effect.size.type = "ratio"</code> の場合、自動的に <strong>対数変換</strong>効果量と標準誤差も計算する。これは、<code>metagen</code> 関数 (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a>) を使う際に必要なものである。</p>
+<p><br></p>
+</div>
+<div id="chi2-検定" class="section level2" number="17.7">
+<h2>
+<span class="header-section-number">17.7</span> <span class="math inline">\(\chi^2\)</span> 検定<a class="anchor" aria-label="anchor" href="#chi2-%E6%A4%9C%E5%AE%9A"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>統計量 <span class="math inline">\(\chi^2\)</span> をオッズ比に変換するには、<code>esc_chisq</code> 関数を使用する (d.f. = 1と仮定する；例: <span class="math inline">\(\chi^2_1\)</span> = 8.7)。以下はその例である。</p>
+<div class="sourceCode" id="cb535"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_chisq.html">esc_chisq</a></span><span class="op">(</span>chisq <span class="op">=</span> <span class="fl">7.9</span>,        <span class="co"># カイ二乗値</span></span>
+<span>          totaln <span class="op">=</span> <span class="fl">100</span>,       <span class="co"># 全体のサンプルサイズ</span></span>
+<span>          es.type <span class="op">=</span> <span class="st">"cox.or"</span><span class="op">)</span> <span class="co"># オッズ比へ変換</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: chi-squared-value to effect size Cox odds ratios
+##     Effect Size:   2.6287
+##  Standard Error:   0.3440
+##        Variance:   0.1183
+##        Lower CI:   1.3394
+##        Upper CI:   5.1589
+##          Weight:   8.4502</code></pre>
+<p><br></p>
+</div>
+<div id="nnt" class="section level2" number="17.8">
+<h2>
+<span class="header-section-number">17.8</span> 治療必要例数<a class="anchor" aria-label="anchor" href="#nnt"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>Cohen’s <span class="math inline">\(d\)</span> や Hedges’ <span class="math inline">\(g\)</span> のような効果量は、実用的な観点からは解釈が難しいことが多い。メタ分析で介入効果が <span class="math inline">\(g=\)</span> 0.35 であることを発見したとする。このような効果が何を意味するのか、患者、公務員、医療関係者、その他の利害関係者にどのように伝えればよいのだろうか。</p>
+<p>また、他の人が結果を理解しやすいように、メタ分析ではしばしば<strong>治療必要例数</strong> (Number Needed to Treat, NNT) を報告している。この指標は、医学研究において最も一般的に使用されている。これは、1つの<strong>ネガティブな事象</strong> (例: 再発) を<strong>予防</strong>するため、あるいは1つの<strong>ポジティブ</strong>な事象 (例: 症状の寛解、反応) を<strong>達成</strong>するために、研究対象の治療を何人の患者が追加で受けなければならないかを意味する。例えば、NNT = 3 の場合、研究課題に応じて、追加で1件の再発を回避するために3人が治療を受けなければならない、あるいは、確実に1件の症状寛解を達成するために3人の患者が治療を受けなければならないと言うことができる。</p>
+<p>二値効果量データを扱う場合、NNT の算出は比較的容易である。式は次のようになる。</p>
+<p><span class="math display" id="eq:esc6">\[\begin{equation}
+\text{NNT} = (p_{e_{\text{treat}}}-p_{e_{\text{control}}})^{-1}
+\tag{17.6}
+\end{equation}\]</span></p>
+<p>この式で、<span class="math inline">\(p_{e_{\text{treat}}}\)</span> と <span class="math inline">\(p_{e_{\text{control}}}\)</span> は、それぞれ治療群と対照群でイベントを経験した参加者の割合である。これらの割合は、リスク比 (Chapter <a href="effects.html#rr">3.3.2.1</a> ) を計算するのに使われる「リスク」と同じで、<strong>実験群イベント率</strong> (experimental group event rate, EER) および<strong>対照群イベント率</strong> (control group event rate, CER) としても知られている。この式から、NTT は (絶対) リスク差の逆数と表現することもできる。</p>
+<p>標準化平均差または Hedges’ <span class="math inline">\(g\)</span> を NNT に変換するのはより複雑である。よく使われる方法は2つある。</p>
+<p></p>
+<ul>
+<li><p>治療群の患者が対照群の患者より好ましいアウトカムを得る確率として定義される<strong>曲線下面積</strong> (area under the curve, AUC) から NNT を計算する <strong>Kraemer and Kupfer</strong> <span class="citation">(<a href="references.html#ref-kraemer2006size">2006</a>)</span> による方法である。この方法は、余分な情報がなくても SMD または <span class="math inline">\(g\)</span> から直接 NNT を計算することができる。</p></li>
+<li><p><strong>Furukawa and Leucht</strong> の方法は、CER またはその合理的な推定値を用いて SMD から NNT 値を計算するものである。Furukawa 法は、Kraemer &amp; Kupfer 法 <span class="citation">(<a href="references.html#ref-furukawa2011obtain">Furukawa and Leucht 2011</a>)</span> と比較して、真の NNT 値を推定するのに優れていることが示されている。したがって、CER を合理的に推定できるのであれば、常に Furukawa 式が優先されるべきである。</p></li>
+</ul>
+<p>効果量としてリスク比やオッズ比を使用する場合、NNT は <code>nnt</code> 関数を使用して <strong>{meta}</strong> オブジェクトから直接計算することができる。<code>metabin</code> (Chapter <a href="pooling-es.html#pooling-or-rr">4.2.3.1</a>) を使ってメタ分析を行った後、その結果を <code>nnt</code> 関数に代入するだけである。以下はその例である。</p>
+<div class="sourceCode" id="cb537"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">Olkin1995</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 二値効果量データを使ってメタ分析を実行</span></span>
+<span><span class="va">m.b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metabin.html">metabin</a></span><span class="op">(</span><span class="va">ev.exp</span>, <span class="va">n.exp</span>, <span class="va">ev.cont</span>, <span class="va">n.cont</span>, </span>
+<span>               data <span class="op">=</span> <span class="va">Olkin1995</span>,</span>
+<span>               sm <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/nnt.html">nnt</a></span><span class="op">(</span><span class="va">m.b</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Number needed to treat (common effect model): 
+## 
+##      RR    p.c    NNTB             95%-CI
+##  0.7728 0.1440 30.5677 [26.1222; 37.2386]
+##  0.7728 0.3750 11.7383 [10.0312; 14.3001]
+## 
+## Number needed to treat (random effects model): 
+## 
+##      RR    p.c    NNTB             95%-CI
+##  0.7694 0.1440 30.1139 [24.0662; 41.3519]
+##  0.7694 0.3750 11.5641 [ 9.2417; 15.8796]</code></pre>
+<p><code>nnt</code> 関数は、異なる CER を仮定した場合の治療に必要な数を提供する。結果の3行は、このデータセットにおける最小、平均、最大の CER の結果を示している。CER の平均値が、通常報告される「典型的な」NNT である。</p>
+<p>また、要約指標 <code>sm</code> が <code>"RR"</code> または <code>"OR"</code> であれば、<code>nnt</code> を <code>metagen</code> モデルで使用することも可能である。このようなモデルでは、<code>nnt</code> の <code>p.c</code> 引数で想定される CER を指定する必要がある。以下は、Chapter <a href="pooling-es.html#m-gen-bin">4.2.3.1.5</a> で作成した <code>m.gen_bin</code> メタ分析オブジェクトを使用した例である。</p>
+<div class="sourceCode" id="cb539"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 固定効果モデルの結果も示す</span></span>
+<span><span class="va">m.gen_bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/update.meta.html">update.meta</a></span><span class="op">(</span><span class="va">m.gen_bin</span>, </span>
+<span>                         fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/nnt.html">nnt</a></span><span class="op">(</span><span class="va">m.gen_bin</span>, </span>
+<span>    p.c <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="co"># CER 0.1 を使用</span></span></code></pre></div>
+<pre><code>## Number needed to treat (common effect model): 
+## 
+##      RR    p.c   NNTH            95%-CI
+##  2.0319 0.1000 9.6906 [8.2116; 11.6058]
+## 
+## Number needed to treat (random effects model): 
+## 
+##      RR    p.c   NNTH            95%-CI
+##  2.0218 0.1000 9.7870 [6.4761; 16.4843]</code></pre>
+<p></p>
+<p>標準化平均差または Hedges’ <span class="math inline">\(g\)</span> は、<strong>{dmetar}</strong> の <code>NNT</code> 関数を使用して NNT に変換することができる。</p>
+<div class="boxdmetar">
+<p>
+<strong>“NNT” 関数</strong>
+</p>
+<p>
+もし、<strong>{dmetar}</strong>
+をインストールして<strong>いない</strong>場合は、以下の手順でインストールできる。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+関数のソースコードに <a href="https://raw.githubusercontent.com/MathiasHarrer/dmetar/master/R/power.analysis.subgroup.R">オンライン</a>
+でアクセスする。
+</li>
+<li>
+ソースコード全体をコンソール (R Studio の左下ペイン)
+にコピー＆ペーストし、Enterキーを押して、 <em>R</em>
+に関数を「学習」させる。
+</li>
+</ol>
+</div>
+<p>Kraemer &amp; Kupfer 法を使うには、<code>NNT</code> 関数に効果量 (SMD または <span class="math inline">\(g\)</span>) を与えるだけでよい。Furukawa 法は、<code>CER</code> の値が与えられるとすぐに自動的に使用される。</p>
+<div class="sourceCode" id="cb541"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="http://dmetar.protectlab.org/reference/NNT.html">NNT</a></span><span class="op">(</span>d <span class="op">=</span> <span class="fl">0.245</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Kraemer &amp; Kupfer method used. 
+## [1] 7.270711</code></pre>
+<div class="sourceCode" id="cb543"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="http://dmetar.protectlab.org/reference/NNT.html">NNT</a></span><span class="op">(</span>d <span class="op">=</span> <span class="fl">0.245</span>, CER <span class="op">=</span> <span class="fl">0.35</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Furukawa &amp; Leucht method used. 
+## [1] 10.61533</code></pre>
+<div class="boximportant">
+<p>
+<strong>注意して扱うべき数字: NNT への批判</strong>
+</p>
+<p>
+NNT の使用は一般的ではあるが、臨床試験の結果を伝えるために NNT
+を使用することは議論の余地がないわけではない。批判としては、一般人がしばしば誤解すること
+(他の効果量の指標に代わる「直感的な」指標とされているにもかかわらず
+<span class="citation"><span class="citation">Christensen and Kristiansen (<a href="references.html#ref-christensen2006number">2006</a>)</span></span>)、研究者がよく NNT
+を不正確に計算することが挙げられる <span class="citation"><span class="citation">(<a href="references.html#ref-mendes2017number">Mendes, Alves, and Batel-Marques 2017</a>)</span></span>。
+</p>
+<p>
+さらに、NNT の信頼できる標準誤差 (および信頼区間)
+を計算することはできないので、メタアナリシスでは使用できないことになる
+<span class="citation"><span class="citation">(<a href="references.html#ref-hutton2010misleading">Hutton 2010</a>)</span></span>。別の効果量指標を用いてプールを行った後に初めて、結果を
+NNT に変換することが可能である。
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="pool-groups" class="section level2" number="17.9">
+<h2>
+<span class="header-section-number">17.9</span> マルチアーム研究<a class="anchor" aria-label="anchor" href="#pool-groups"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>解析単位誤差 (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a>) を避けるために、(標準化) 平均差を計算する前に、2つ以上の試験群の平均と標準偏差をプールする必要がある場合がある。2群の連続効果量データをプールするには、以下の式を用いることができる。</p>
+<p><span class="math display">\[\begin{align}
+n_{\text{pooled}} &amp;= n_1 + n_2  \\
+m_{\text{pooled}} &amp;= \frac{n_1m_1+n_2m_2}{n_1+n_2} \\
+SD_{\text{pooled}} &amp;= \sqrt{\frac{(n_1-1)SD^{2}_{1}+ (n_2-1)SD^{2}_{2}+\frac{n_1n_2}{n_1+n_2}(m^{2}_1+m^{2}_2-2m_1m_2)} {n_1+n_2-1}}
+\end{align}\]</span></p>
+<p>この式を <em>R</em> で適用するには、<code>pool.groups</code> 関数を使用する。</p>
+<div class="boxdmetar">
+<p>
+<strong>“pool.groups” 関数</strong>
+</p>
+<p>
+<code>pool.groups</code> 関数は、<strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+がインストールされ、コンピュータに読み込まれると、この関数を使用できるようになる。もし、<strong>{dmetar}</strong>
+をインストールして<strong>いない</strong>場合は、以下の手順でインストールできる。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+関数のソースコードに <a href="https://raw.githubusercontent.com/MathiasHarrer/dmetar/master/R/power.analysis.subgroup.R">オンライン</a>
+でアクセスする。
+</li>
+<li>
+ソースコード全体をコンソール (R Studio の左下ペイン)
+にコピー＆ペーストし、Enterキーを押して、 <em>R</em>
+に関数を「学習」させる。
+</li>
+</ol>
+</div>
+<p>以下はその一例である。</p>
+<div class="sourceCode" id="cb545"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="http://dmetar.protectlab.org/reference/pool.groups.html">pool.groups</a></span><span class="op">(</span>n1 <span class="op">=</span> <span class="fl">50</span>,   <span class="co"># group 1 サンプルサイズ</span></span>
+<span>            n2 <span class="op">=</span> <span class="fl">50</span>,   <span class="co"># group 2 サンプルサイズ</span></span>
+<span>            m1 <span class="op">=</span> <span class="fl">3.5</span>,  <span class="co"># group 1 平均</span></span>
+<span>            m2 <span class="op">=</span> <span class="fl">4</span>,    <span class="co"># group 2 平均</span></span>
+<span>            sd1 <span class="op">=</span> <span class="fl">3</span>,   <span class="co"># group 1 標準偏差</span></span>
+<span>            sd2 <span class="op">=</span> <span class="fl">3.8</span><span class="op">)</span> <span class="co"># group 2 標準偏差</span></span></code></pre></div>
+<pre><code>##   Mpooled SDpooled Npooled
+## 1    3.75 3.415369     100</code></pre>
+<p><br></p>
+</div>
+<div id="aggregate-es" class="section level2" number="17.10">
+<h2>
+<span class="header-section-number">17.10</span> 効果量の集約<a class="anchor" aria-label="anchor" href="#aggregate-es"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>{metafor}</strong> の <code>aggregate</code> 関数を使うと、例えば、同じ研究やクラスターの一部であるという理由で、いくつかの従属する <strong>事前に計算された効果量</strong> を一つの推定値に集約することが可能である。これは、<strong>解析単位エラー</strong> (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a> 参照) を回避する方法であるが、研究内相関の値を仮定する必要があり、これは通常未知である。効果量依存性を扱うもう一つの (そしてしばしば望ましい) 方法は、(相関) 階層モデルで、これは Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で説明されている。</p>
+<p>この例では、<code>Chernobyl</code> データセット (Chapter <a href="multilevel-ma.html#multilevel-R">10.2</a> 参照) の効果量を集約し、各研究が1つの効果量のみを提供するようにする。</p>
+<div class="sourceCode" id="cb547"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.metafor-project.org">metafor</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"Chernobyl"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 'Chernobyl' データを 'escalc' オブジェクトに変換</span></span>
+<span><span class="va">Chernobyl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/escalc.html">escalc</a></span><span class="op">(</span>yi <span class="op">=</span> <span class="va">z</span>,           <span class="co"># 効果量</span></span>
+<span>                    sei <span class="op">=</span> <span class="va">se.z</span>,       <span class="co"># 標準誤差</span></span>
+<span>                    data <span class="op">=</span> <span class="va">Chernobyl</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 研究レベルで効果量を集約</span></span>
+<span><span class="co"># 相関 rho=0.6 を仮定</span></span>
+<span><span class="va">Chernobyl.agg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span><span class="va">Chernobyl</span>, </span>
+<span>                           cluster <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                           rho <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 集約結果を表示</span></span>
+<span><span class="va">Chernobyl.agg</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"author"</span>, <span class="st">"yi"</span>, <span class="st">"vi"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code>##                       author     yi     vi 
+## 1 Aghajanyan &amp; Suskov (2009) 0.2415 0.0079 
+## 2     Alexanin et al. (2010) 1.3659 0.0012 
+## 3             Bochkov (1993) 0.2081 0.0014 
+## 4      Dubrova et al. (1996) 0.3068 0.0132 
+## 5      Dubrova et al. (1997) 0.4453 0.0110
+## [...]</code></pre>
+<p>なお、<code>aggregate</code> は集約された効果量 <code>yi</code> とその<strong>分散</strong> (variance) <code>vi</code> (標準誤差の平方根) を返す。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+
+</div>
+</div>
+
+
+
+<div class="chapter-nav">
+<div class="prev"><a href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></div>
+<div class="next"><a href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#es-calc"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li><a class="nav-link" href="#%E5%B9%B3%E5%9D%87%E5%80%A4%E3%81%8A%E3%82%88%E3%81%B3%E6%A8%99%E6%BA%96%E8%AA%A4%E5%B7%AE"><span class="header-section-number">17.1</span> 平均値および標準誤差</a></li>
+<li><a class="nav-link" href="#%E5%9B%9E%E5%B8%B0%E4%BF%82%E6%95%B0"><span class="header-section-number">17.2</span> 回帰係数</a></li>
+<li><a class="nav-link" href="#convert-corr"><span class="header-section-number">17.3</span> 相関関係</a></li>
+<li><a class="nav-link" href="#%E4%B8%80%E5%85%83%E9%85%8D%E7%BD%AE%E5%88%86%E6%95%A3%E5%88%86%E6%9E%90"><span class="header-section-number">17.4</span> 一元配置分散分析</a></li>
+<li><a class="nav-link" href="#%E6%A8%99%E6%9C%AC%E3%81%AE-t-%E6%A4%9C%E5%AE%9A"><span class="header-section-number">17.5</span> 2標本の \(t\) 検定</a></li>
+<li><a class="nav-link" href="#p-%E5%80%A4"><span class="header-section-number">17.6</span> \(p\) 値</a></li>
+<li><a class="nav-link" href="#chi2-%E6%A4%9C%E5%AE%9A"><span class="header-section-number">17.7</span> \(\chi^2\) 検定</a></li>
+<li><a class="nav-link" href="#nnt"><span class="header-section-number">17.8</span> 治療必要例数</a></li>
+<li><a class="nav-link" href="#pool-groups"><span class="header-section-number">17.9</span> マルチアーム研究</a></li>
+<li><a class="nav-link" href="#aggregate-es"><span class="header-section-number">17.10</span> 効果量の集約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+</div>
+  
+
+  
+
+</div>
+ <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

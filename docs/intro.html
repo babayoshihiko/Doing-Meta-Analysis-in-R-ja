@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>1 はじめに | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="科 学は一般に、蓄積されたプロセスであると考えられている。研究者は、何世代も前の科学者が積み上げてきた証拠を基に、科学的な努力を積み重ねている。アイザック・ニュートンの有名な言葉に「巨人の肩の上に立つことで、より遠くを見ることができる」というのがある。多くの人が科学に魅了されるのは、科学が進歩的であり、世界への理解を深めたり、より良い決断を下すのに役立つからである。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="1 はじめに | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="科 学は一般に、蓄積されたプロセスであると考えられている。研究者は、何世代も前の科学者が積み上げてきた証拠を基に、科学的な努力を積み重ねている。アイザック・ニュートンの有名な言葉に「巨人の肩の上に立つことで、より遠くを見ることができる」というのがある。多くの人が科学に魅了されるのは、科学が進歩的であり、世界への理解を深めたり、より良い決断を下すのに役立つからである。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1 はじめに | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="科 学は一般に、蓄積されたプロセスであると考えられている。研究者は、何世代も前の科学者が積み上げてきた証拠を基に、科学的な努力を積み重ねている。アイザック・ニュートンの有名な言葉に「巨人の肩の上に立つことで、より遠くを見ることができる」というのがある。多くの人が科学に魅了されるのは、科学が進歩的であり、世界への理解を深めたり、より良い決断を下すのに役立つからである。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="active" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="intro" class="section level1" number="1">
+<h1>
+<span class="header-section-number">1</span> はじめに<a class="anchor" aria-label="anchor" href="#intro"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/balloon.jpg" alt="balloons"></div>
+<p><br></p>
+<p><span class="firstcharacter">科</span>
+学は一般に、蓄積されたプロセスであると考えられている。研究者は、何世代も前の科学者が積み上げてきた証拠を基に、科学的な努力を積み重ねている。アイザック・ニュートンの有名な言葉に「巨人の肩の上に立つことで、より遠くを見ることができる」というのがある。多くの人が科学に魅了されるのは、科学が進歩的であり、世界への理解を深めたり、より良い決断を下すのに役立つからである。</p>
+<p>これは直感的な考えであるが、少なくとも数字上は正当化される。歴史上、今日ほど研究論文の発表という形で多くの証拠にアクセスできる時代はなかった。ペタバイト級の研究成果が、世界中で毎日生み出されているのである。生物医学だけでも、毎年100万件以上の査読付き論文が出版されている <span class="citation">(<a href="references.html#ref-bjork2008global">Björk, Roos, and Lauri 2008</a>)</span>。</p>
+<p>発表される研究成果の量は、ほぼ指数関数的に増加している。最大の書誌データベースの一つである <a href="pubmed.ncbi.nlm.nih.gov/"><strong>PubMed</strong></a> の各年度の索引論文数は、このことを模範的に象徴しているといえるだろう。20世紀の半ばまで、各年度の研究論文は数百件しか掲載されていなかった。それが、その後の数十年で大幅に増え、21世紀に入ってから急増している (Figure <a href="intro.html#fig:pubmed">1.1</a> 参照)。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:pubmed"></span>
+<img src="Doing_Meta_Analysis_in_R_files/figure-html/pubmed-1.png" alt="PubMed にインデックスされた論文数 (年別)、1781年～2019年" width="432"><p class="caption">
+Figure 1.1: PubMed にインデックスされた論文数 (年別)、1781年～2019年
+</p>
+</div>
+<p>原理的には、科学の発展により、科学の将来性が加速されるはずである。科学が蓄積されるものであるならば、より多くの研究が発表されるということは、より多くの証拠が得られることに等しい。そうすれば、より強力な理論を構築し、過去の誤謬を取り除くことができるはずである。</p>
+<p>しかし、もちろん、そう簡単にはいかない。スタンフォード大学の John Ioannidis は、非常に影響力のある論文の中で、科学は自動的に蓄積され、常に改善されるという考え方を批判した。彼の論文には、「科学は、なぜ必ずしも自己修正しないのか」 (“Why Science Is Not Necessarily Self-Correcting”) という分かりやすいタイトルがつけられている <span class="citation">(<a href="references.html#ref-ioannidis2012science">Ioannidis 2012</a>)</span>。彼は、研究分野では、特定のトピックや理論について膨大な研究成果が生み出される一方、根本的な誤謬に対しては検証されずに永続する状態が存在することもよくあると主張している。</p>
+<p>1970年代にさかのぼるが、優れた心理学者である Paul Meehl は、ある研究分野において、理論とファッションのトレンドが酷似していることに気づき観察していた。Meehl は、多くの理論は継続的に改良されたり反論されたりするのではなく、人々が興味を失い始めると、単に「消えていく」のだと主張した <span class="citation">(<a href="references.html#ref-meehl1978theoretical">Meehl 1978</a>)</span>。</p>
+<p>科学的なプロセスだけでは、自動的に最善の世界へと導かれることはない。これは、不都合な真実である。日々、前例のない量の研究結果が生み出される中、証拠となるものを<strong>全体として</strong>捉え、批判的に評価することがより一層重要になっている。メタ分析は、メタ分析自体の限界とバイアスを認識する限り、最善の世界に達するために非常に役立つものである。</p>
+<p><br></p>
+<div id="what-are-mas" class="section level2" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> メタ分析とは？<a class="anchor" aria-label="anchor" href="#what-are-mas"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>
+</p>
+<p>メタ分析の創始者の一人である Gene V. Glass は、メタ分析を「分析の分析」<span class="citation">(<a href="references.html#ref-glass1976primary">Glass 1976</a>)</span> と表現した。この単純な定義が、すでに多くのことを物語っている。従来の研究では、分析の単位は、多数の人、標本、国、または物である。メタ分析では、<strong>一次研究</strong>そのものが分析の要素になるのである。</p>
+<p>メタ分析の目的は、明確に定義された研究分野や研究課題に関連する利用可能なすべての証拠を組み合わせ、要約し、解釈することである <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001, chap. 1</a>)</span>。しかし、メタ分析はこれを行うための1つの手法に過ぎない。複数の研究からのエビデンスを合成する方法には、少なくとも3つの異なる方法がある <span class="citation">(<a href="references.html#ref-cuijpers2016meta">Pim Cuijpers 2016</a>)</span>。</p>
+<ul>
+<li><p><strong>伝統的/ナラティブレビュー</strong>: 1980年代に入るまで、研究分野を要約する方法としては、<strong>ナラティブレビュー</strong> (narrative review) が最も一般的であった。ナラティブ (訳注: 「物語り」の意) レビューは、その分野の専門家や権威によって書かれることが多い。ナラティブレビューに含まれる研究をどのように選択しなければならないか、またレビューの範囲をどのように定義するかについて、厳密なルールはない。また、レビューされたエビデンスからどのように結論を出すかについても、決まったルールはない。全体として、これは著者の意見に有利なバイアスにつながる可能性がある。しかしながら、ナラティブレビューは、バランスの取れた方法で書かれていれば、読者が関連するリサーチクエスチョンや分野のエビデンスベースについて全体的な印象を得るのに役立つ方法となり得る。</p></li>
+<li><p><strong>システマティックレビュー</strong>: システマティックレビューは、明確に定義された透明性の高いルールでエビデンスをまとめようとするものである。システマティックレビューでは、研究課題を事前に決定し、研究を選択し、レビューするための明確で再現可能な方法論が存在する。その目的は、利用可能なすべてのエビデンスを網羅することである。また、あらかじめ定義された基準でエビデンスの妥当性を評価し、結果の統合を系統的に提示する。</p></li>
+<li><p><strong>メタ分析</strong>: メタ分析の多くは、システマティックレビューの発展型といえるだろう。メタ分析の範囲は事前に明確に定義され、一次研究も体系的かつ再現可能な方法で選択され、エビデンスの妥当性を評価する基準も明確になっている。そのため、「システマティックレビュー<strong>と</strong>メタ分析」と名付けられた研究がよく見られるのである。メタ分析の目的は、先行研究の結果を<strong>定量的</strong>に組み合わせることで、この点がメタ分析を特別なものにしている。メタ分析の目的は、選択された研究で報告された定量的アウトカムを1つの数値的な推定値に統合することである。そしてこの推定値は、個々の結果をすべて要約したものである。メタ分析は、例えば、薬の効果、病気の流行、2つの性質の相関などを、<strong>すべての研究にわたって</strong>定量化する<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;この記述はもちろん、メタ分析技術が適切に適用され、メタ分析の結果がそのような一般化を可能にする場合にのみ当てはまる&lt;/p&gt;"><sup>1</sup></a> 。したがって、定量的な結果を報告している研究にのみ適用することが可能である。システマティックレビューと比較して、メタ分析は、要約される証拠の種類に関してより限定的でなければならないことが多い。メタ分析を行うには、通常、同じデザイン、同じタイプの測定、同じ介入を行った研究が必要である (Chapter <a href="intro.html#pitfalls">1.3</a> 参照)。</p></li>
+</ul>
+<div class="boxinfo">
+<p>
+<strong>個別被験者データメタ分析</strong> (Individual Participant
+Data Meta-Analysis)
+</p>
+<p>
+定義によっては、第4のタイプのエビデンス合成法、いわゆる<strong>個別被験者データ</strong>
+(Individual Participant Data, IPD) <strong>メタ分析</strong>も存在する
+<span class="citation"><span class="citation">(<a href="references.html#ref-riley2010meta">Richard D. Riley, Lambert, and Abo-Zaid 2010</a>; <a href="references.html#ref-riley2021individual">Richard D. Riley, Tierney, and Stewart 2021</a>)</span></span>。従来、メタ分析は、発表された文献にある研究の<strong>集計された</strong>結果
+(例えば、平均と標準偏差、または割合) に基づいている。IPD
+メタ分析では、代わりにすべての研究の<strong>オリジナル</strong>データを収集し、1つの大きなデータセットにまとめる。
+</p>
+<p>
+IPD
+メタ分析にはいくつかの利点がある。例えば、欠損データをインプットしたり、全ての研究に対して全く同じ方法で統計手法を適用することが可能である。さらに、関心のある結果に影響を与える変数の探索を容易にすることが可能である。従来のメタ分析では、いわゆる<strong>研究レベル</strong>の変数
+(例えば、発表年や研究で使用された集団など)
+のみを使用して、このようなことを行うことができることとする。しかし、結果の重要なモデレータとしての役割を果たすのは、しばしば<strong>参加者レベル</strong>の情報
+(例えば、個々の人の年齢や性別) である。このような変数は、IPD
+メタ分析を使ってのみ探索することが可能である。
+</p>
+<p>
+IPD
+メタ解析は比較的新しい手法であり、現在行われているメタ解析の圧倒的多数は「従来の」メタ解析のままである。このことも、本ガイドで
+IPD メタ分析手法を取り上げない理由の一つである。
+</p>
+<p>
+これは、従来のメタ分析が優れているということとは全く関係がなく、その逆である。これは単に、すべての研究データがオープンに利用可能であるという事実が、残念ながら最近までほとんどの分野で非常に稀であったためである。発表された研究報告から要約された結果を抽出することは比較的容易であるが、関連するすべての研究のオリジナルデータを入手することは、はるかに困難である。例えば、生物医学研究では、参加者個人のデータは、対象となる研究の約64％からしか得られない
+<span class="citation"><span class="citation">(<a href="references.html#ref-riley2007evidence">Richard D. Riley, Simmonds, and Look 2007</a>)</span></span>。
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="history" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> “Exercises in Mega-Silliness” 歴史的な逸話<a class="anchor" aria-label="anchor" href="#history"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>メタ分析は一人の人間によって発明されたのではなく、多くの創始者と父親によって発明されたのである。別々の、しかし類似した研究の効果を統計的に要約する最初の試みは約100年前にさかのぼり、史上最も重要な統計学者である Karl Pearson と Ronald A. Fisher の2人に結びつけることが可能である。</p>
+<p>Pearson は20世紀初頭に、大英帝国全体での腸チフス接種の効果に関する知見を組み合わせて、プール推定値を計算した <span class="citation">(<a href="references.html#ref-shannon2016statistical">Shannon 2016</a>)</span>。Fisher は、1935年の実験計画法の代表的な著書で、農業研究における複数の研究のデータを分析するアプローチを取り上げ、場所や時間によって研究結果が異なるという問題を既に認めている <span class="citation">(<a href="references.html#ref-fisher19351he">R. A. Fisher 1935</a>; <a href="references.html#ref-o2007historical">O’Rourke 2007</a>)</span>.</p>
+<p>
+</p>
+<p>しかし、「メタ分析」という名称とその隆盛のきっかけは、20世紀半ばに起こったある学問的論争にさかのぼることが可能である。1952年、イギリスの著名な心理学者 Hans Jürgen Eysenck (Figure <a href="intro.html#fig:eysenck">1.2</a>) が、心理療法 (当時はフロイトの精神分析を指すことが多かった) は効果がないと主張する論文を発表したのである。もし患者が治療中に良くなったとしても、それは治療とは関係のない要因によるものであって、治療がなくとも状況が改善されたからである。さらに悪いことに、Eysenck は、心理療法は患者の回復を妨げることもよくあると主張した。</p>
+<p>心理療法は大きな打撃を受け、1970年代後半までその評判は回復しなかった。この間、Gene V. Glass は「メタ分析」と呼ぶ技法を開発し、研究間で<strong>標準化平均差</strong> (Standardized Mean Differences)<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;介入群と対照群など2群間の平均値の差を、両群の標準偏差をプールした単位で表したもの (Chapter &lt;a href="effects.html#s-md"&gt;3.3.1&lt;/a&gt; 参照) &lt;/p&gt;'><sup>2</sup></a>をプールできるようにした。この手法が初めて広範囲に適用されたのは、Mary L. Smith と Glass 自身 <span class="citation">(<a href="references.html#ref-smith1977meta">Smith and Glass 1977</a>)</span> が書いた <strong>American Psychologist</strong> 誌に掲載された論文であった。この大規模な研究では、4000人以上が参加した375の研究の結果がメタ分析で統合された。</p>
+<p>その結果、心理療法は 0.68 のプール効果を示し、これは非常に大きいと考えられる。Glass の研究は、Eysenck の評決が誤りであることを定量的に証明するものであり、そのインパクトは絶大であった。しかし、Eysenck 自身は納得しておらず、メタ分析を “Exercises in Mega-Silliness” と呼んでいる <span class="citation">(<a href="references.html#ref-eysenck1978exercise">Eysenck 1978</a>)</span> 。</p>
+
+<div class="figure" style="text-align: right">
+<span style="display:block;" id="fig:eysenck"></span>
+<img src="images/eysenck_col.jpg" alt="Hans Jürgen Eysenck (Sirswindon/CC BY-SA 3.0)" width="35%"><p class="caption">
+Figure 1.2: Hans Jürgen Eysenck (<a href="attr.html#attr"><em>Sirswindon/CC BY-SA 3.0</em></a>)
+</p>
+</div>
+<p>今日、私たちは、Smith and Glass の研究が、対象研究のバイアスを制御しなかったために、心理療法の効果を過大評価した可能性があることを知っている <span class="citation">(<a href="references.html#ref-cuijpers2019eysenck">P. Cuijpers, Karyotaki, et al. 2019</a>)</span>。しかし、いくつかの心理療法が有効であるという主要な発見は、その後の数十年間で、他の無数のメタ分析によって裏付けらた。Eysenck の厳しい反応も、メタ分析がやがて様々な研究分野でよく使われる手法となるということを変えることはできなかった。この時代のことは、“meta-analytic Big Bang” に詳しく書かれている <span class="citation">(<a href="references.html#ref-shadish2015meta">Shadish and Lecy 2015</a>)</span>。</p>
+<p>Glass がメタ分析の手法を開発したのとほぼ同時期に、Hunter and Schmidt は、測定誤差の補正に重点を置いた独自のメタ分析手法を作り始めた <span class="citation">(<a href="references.html#ref-schmidt1977development">Schmidt and Hunter 1977</a>; <a href="references.html#ref-hunter2004methods">Hunter and Schmidt 2004</a>)</span>。メタ分析が初めて医学の世界に登場したのは、Peter Elwood や Archie Cochrane らがメタ分析を用いた画期的な業績からである。このメタ分析で、アスピリンには、わずかではあるが心臓発作の再発を防ぐ効果が統計的にも臨床的にもあることを示した <span class="citation">(<a href="references.html#ref-peto1980aspirin">Peto and Parish 1980</a>; <a href="references.html#ref-elwood2006first">Elwood 2006</a>; <a href="references.html#ref-o2007historical">O’Rourke 2007</a>)</span>。</p>
+<p>80年代半ば、Rebecca DerSimonian and Nan Laird がランダム効果メタ分析を計算するアプローチを紹介し (Chapter <a href="pooling-es.html#rem">4.1.2</a> 参照)、今日まで使用されている <span class="citation">(<a href="references.html#ref-dersimonian1986meta">DerSimonian and Laird 1986</a>)</span>。その他にも数え切れないほどの技術革新があり、過去40年間にメタ分析手法の適用性、頑健性、汎用性を高めることに貢献してきた。</p>
+<p>
+</p>
+
+<div class="boxinfo">
+<p><strong>Cochrane と Campbellの共同研究</strong></p>
+<p>1993 年に設立され、Archie Cochrane にちなんで名付けられた <a href="https://www.cochrane.org/"><strong>コクラン共同計画</strong></a> (Cochrane Collaboration, または単に <strong>Cochrane</strong>) は、応用メタ分析の発展において重要な役割を担っている。コクラン共同計画は、研究者、専門家、患者、その他関係者の国際的なネットワークで、「商業的なスポンサーシップやその他の利益相反のない、信頼性が高くアクセスしやすい健康情報を生み出すために協力し合う」ものである。</p>
+<p>コクラン共同計画は、生物医学分野におけるエビデンスを統合するために、厳格な基準を用いている。ロンドンに本部を置くほか、世界数カ国に現地支部を置いている。</p>
+<p>コクラン共同計画では、定期的に更新される <a href="https://training.cochrane.org/handbook"><strong>Handbook for Systematic Reviews of Interventions</strong></a> <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019</a>)</span> と <a href="https://methods.cochrane.org/bias/resources/rob-2-revised-cochrane-risk-bias-tool-randomized-trials"><strong>Cochrane Risk of Bias Tool</strong></a> <span class="citation">(<a href="references.html#ref-sterni2019rob">Sterne et al. 2019</a>)</span> を発行している。どちらもシステマティックレビューやメタ分析に関するあらゆる技術的な詳細について、標準的な参考書として広く知られている (Chapter <a href="intro.html#spec-search-coding">1.4</a> 参照)。</p>
+<p>コクランに似た組織として、オスロに拠点を置く<a href="https://campbellcollaboration.org/"><strong>Campbell Collaboration</strong></a> があり、主に社会科学分野の研究に力を入れている。</p>
+</div>
+<p><br></p>
+</div>
+<div id="pitfalls" class="section level2" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> りんごとオレンジ: メタ分析の落とし穴のクイックツアー<a class="anchor" aria-label="anchor" href="#pitfalls"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>この数十年で、メタ分析は普遍的に受け入れられる研究ツールとなった。しかし、これにはそれなりのコストがかかる。質の高い一次研究を行うには多くの場合非常にコストがかかり、その結果を最終的に分析できるようになるまで何年もかかることがある。それに比べてメタ分析は、あまり多くのリソースを必要とせず、比較的短期間で作成することが可能である。それにもかかわらず、メタ分析はしばしば高い影響力を持ち、頻繁に引用されている <span class="citation">(<a href="references.html#ref-patsopoulos2005relative">Patsopoulos, Analatos, and Ioannidis 2005</a>)</span>。</p>
+<p>すなわち、科学雑誌はメタ分析を掲載する傾向が強く、たとえその品質や科学的メリットが限られていたとしても、掲載する傾向があるのである。残念ながら、このことは研究者に多くのメタ分析を作成する動機を与え、科学的動機は時として従属的になっている。</p>
+<p>Ioannidis <span class="citation">(<a href="references.html#ref-ioannidis2016mass">2016</a>)</span> は、毎年膨大な量の冗長で誤解を招くメタ分析が生産されていると批判している。いくつかの「ホット」なトピックでは、最近のメタ分析が20以上ある。また、薬物療法研究などでは、企業の利益に大きく偏ったメタ分析もある<span class="citation">(<a href="references.html#ref-ebrahim2016meta">Ebrahim et al. 2016</a>; <a href="references.html#ref-kirsch2002emperor">Kirsch et al. 2002</a>)</span>。前にも述べたように、再現性は優れた科学の特徴である。しかし現実には、重要な情報が報告されないために、多くのメタ分析の再現性が制限されていることがあまりにも多い <span class="citation">(<a href="references.html#ref-lakens2017examining">Lakens et al. 2017</a>)</span>。</p>
+<p>また、同じテーマ、あるいは重複するテーマについて、異なるメタ分析で異なる結論に至ることもよくある問題である。例えば、心理療法の研究では、すべてのタイプの心理療法が同等の結果をもたらすかどうかという問題に関連する議論が続いている。数え切れないほどのレビューが、どちらかの結論を支持する形で発表されている <span class="citation">(<a href="references.html#ref-wampold2013great">Wampold 2013</a>; <a href="references.html#ref-cuijpers2019role">Pim Cuijpers, Reijnders, and Huibers 2019</a>)</span> 。</p>
+<p>こうした問題は、科学的プロセスの体系的な問題と関連しているかもしれないし、メタ分析自体の欠陥にさかのぼることが可能である。そこで、メタ分析の落とし穴を簡単に紹介する <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 40</a>; <a href="references.html#ref-greco2013meta">Greco et al. 2013</a>; <a href="references.html#ref-sharpe1997apples">Sharpe 1997</a>)</span>。</p>
+<p>
+</p>
+<p><br></p>
+<div id="りんごとオレンジ問題" class="section level3" number="1.3.1">
+<h3>
+<span class="header-section-number">1.3.1</span> 「りんごとオレンジ」問題<a class="anchor" aria-label="anchor" href="#%E3%82%8A%E3%82%93%E3%81%94%E3%81%A8%E3%82%AA%E3%83%AC%E3%83%B3%E3%82%B8%E5%95%8F%E9%A1%8C"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>メタ分析とは、りんごとオレンジを混ぜることだ、と主張する人もいる。対象基準を最大限に厳格にしても、メタ分析における研究が完全に同一であることはない。含まれるサンプル、介入の実施方法、研究デザイン、研究で使用された測定の種類などには、常に大小の差が存在する。</p>
+<p>これは問題になることもある。メタ分析とは、すべての研究の結果を表す数値的な推定値を計算することである。このような推定値は、統計学的な観点からは常に計算することが可能であるが、特定の研究課題に答えるために重要な特性を共有する研究がない場合には、意味がなくなる。</p>
+<p>明らかにばかげたシナリオとして、仕事のパフォーマンスに対する仕事満足度の効果に関する研究と糖尿病患者の HbA<sub>1c</sub> 値に対する投薬の効果に関する利用可能なすべてのエビデンスを、1つのメタ分析にプールすることを決定した、と想像してみよう。その結果は、組織心理学者にとっても、糖尿病学者にとっても、無意味なものだろう。</p>
+<p>さて、この無能なメタ分析者が、過去の失敗から学び過剰な補償をして、1990年から1999年の間に発表された、中程度の抑うつ症状を持つ60代のカナダ人男性に Fluoxetine を1日 40 mg、正確に6週間投与した研究のみを含むメタ分析を実施したとする。メタ分析は、研究の肯定的な結果を誇らしげに精神科医に報告することが可能である。しかし、精神科医は、「私の患者が45歳のフランス人だったらどうすればいいのか」と聞くだけだろう。</p>
+<p>ここで重要なポイントがある。メタ分析の目的は、組み合わせられるものは何でも無造作に放り込むことではない。メタ分析は、個々の研究の特殊性を超えた、関連する研究課題に答えるために用いることが可能である <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 40</a>)</span>。したがって、メタ分析の範囲と特異性は、答えたい研究課題に基づくべきであり、この課題は実用的な関連性を持つものであるべきである (Chapter <a href="intro.html#spec-search-coding">1.4</a> 参照)。</p>
+<p>例えば、ある種のトレーニングプログラムが、様々な年齢層、文化的地域、環境において有効であるかどうかに関心がある場合、研究の対象者や出身国に制限を設けないことは非常に理にかなっている。しかし、その場合、評価する研修プログラムを限定し、一定の長さの研修や類似のトピックを扱った研修のみを対象とすることが望ましいと考えられる。</p>
+<p>このようなメタ分析の結果は、トレーニングのプール効果を推定するだけでなく、この効果がどの程度変動しているのかを定量化することが可能である。メタ分析は、このような<strong>異質性</strong>に対応し、意味を持たせることができるのである。Chapter <a href="heterogeneity.html#heterogeneity">5</a> では、この重要な概念について詳しく見ていく。</p>
+<p>要約すると、「りんごとオレンジ」問題が実際に問題であるかどうかは、メタ分析が答えたい問題に大きく依存するということである。研究間のばらつきは、メタ分析の目的と問題の特定に正しく組み入れられれば、多くの場合問題にはならず、洞察的でさえある。</p>
+<p><br></p>
+</div>
+<div id="garbage-in-garbage-out問題" class="section level3" number="1.3.2">
+<h3>
+<span class="header-section-number">1.3.2</span> 「Garbage In, Garbage Out」問題<a class="anchor" aria-label="anchor" href="#garbage-in-garbage-out%E5%95%8F%E9%A1%8C"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>メタ分析が生み出すエビデンスの質は、それが要約した研究の質に大きく依存する。もし、含まれる知見で報告された結果が偏っていたり、全く間違っていたりすれば、メタ分析の結果も同様に欠陥があることになる。これが「Garbage In, Garbage Out」問題の指すところである (訳注: 入力が無意味なら出力も無意味であることを指す。略して GIGO と書くこともある。)。これは、含まれる研究の質や<strong>バイアスのリスク</strong> (Chapter <a href="intro.html#spec-search-coding">1.4</a> と Chapter <a href="risk-of-bias-plots.html#risk-of-bias-plots">15</a>) 参照) を評価することである程度軽減することが可能である。</p>
+<p>しかし、結果の多くまたは大部分が最適な品質ではなく、バイアスがある可能性が高い場合、最も厳密なメタ分析でもバランスを取ることはできない。このような場合、導き出される唯一の結論は、レビューしたテーマについて信頼できる証拠は存在せず、今後さらに質の高い研究を実施しなければならないということである。しかし、このような残念な結果であっても、将来の研究の指針として参考になることがある。</p>
+<p><br></p>
+</div>
+<div id="ファイルの引き出し問題" class="section level3" number="1.3.3">
+<h3>
+<span class="header-section-number">1.3.3</span> 「ファイルの引き出し」問題<a class="anchor" aria-label="anchor" href="#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%BC%95%E3%81%8D%E5%87%BA%E3%81%97%E5%95%8F%E9%A1%8C"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>ファイルの引き出し問題とは、関連する研究結果がすべて発表されているわけではないため、メタ分析に欠落してしまうという問題である。メタ分析ですべてのエビデンスを統合できないことは望ましくないが、少なくとも、研究成果が発表された文献の中でランダムに欠落していると安全に仮定できるのであれば、許容範囲であろう。</p>
+<p>しかし、残念ながら、そうではない。ポジティブで「革新的」な発見は、失敗した複製やネガティブで結論の出ない研究よりも話題を呼ぶことが多い。これに伴い、ここ数十年、多くの分野、特に社会科学や生物医学の分野で、否定的な知見が発表されることが少なくなっていることが調査で明らかになっている <span class="citation">(<a href="references.html#ref-fanelli2012negative">Fanelli 2012</a>)</span>。</p>
+<p>否定的な結果や「期待はずれ」の結果を出した研究は、発表された文献の中で体系的に過小評価されており、いわゆる<strong>発表バイアス</strong>があると考える十分な根拠がある。このバイアスの正確な性質と程度は、メタ分析ではせいぜい「未知の知」(known unknown) である。</p>
+<p>しかし、出版バイアスを最小化する方法はいくつかある。一つは、研究の検索・抽出の方法に関連する (Chapter <a href="intro.html#spec-search-coding">1.4</a> 参照)。もう1つは、メタ分析において出版バイアスが存在するかどうか、またその影響がどの程度あるのかを推定しようとする統計的な方法である。これらの手法については、Chapter <a href="pub-bias.html#pub-bias">9</a> でいくつか紹介する。</p>
+<p><br></p>
+</div>
+<div id="研究者のアジェンダ問題" class="section level3" number="1.3.4">
+<h3>
+<span class="header-section-number">1.3.4</span> 「研究者のアジェンダ」問題<a class="anchor" aria-label="anchor" href="#%E7%A0%94%E7%A9%B6%E8%80%85%E3%81%AE%E3%82%A2%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%80%E5%95%8F%E9%A1%8C"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>メタ分析の範囲を定義し、研究を検索・選択し、最終的にアウトカム指標をプールする際、研究者は無数の選択を迫られる。メタ分析には多くの「研究者の自由度」<span class="citation">(<a href="references.html#ref-wicherts2016degrees">Wicherts et al. 2016</a>)</span> があり、時には恣意的であったり、公表されていない個人の好みの結果などの決定の余地が多く残されている。</p>
+<p>メタ分析の<strong>運用法</strong> (modus operandi) の自由度は、研究者が意識的または無意識的に自身のアジェンダに突き動かされている場合に特に問題となる。メタ分析は通常、応用研究者によって行われるが、レビュートピックに関する広範な主題固有の専門知識を持つことは諸刃の剣である。一方では、特定の分野における有意義なリサーチクエスチョンを導き出し、それに答えるのに役立つこともある。</p>
+<p>また他方では、そのような専門家は、自分が調査している研究分野に深く関与していることも事実である。つまり、多くのメタ分析者は特定のテーマについて強い意見を持っており、意図的または無意識に自分の信念に合う方向に結果に影響を与える可能性がある。</p>
+<p>同じデータセットが与えられると、最高の意図を持った経験豊富な分析者間でも、結論が大きく異なることがあるというエビデンスがある <span class="citation">(<a href="references.html#ref-silberzahn2018many">Silberzahn et al. 2018</a>)</span> 。この問題は介入研究においてさらに深刻で、メタ分析者の中には、研究中の介入手法の開発に貢献したことがあるため、堅固な<strong>研究者としての忠誠心</strong>を持っている人もいる。そのような研究者はもちろん、メタ分析の結果を証拠によって示されるよりも肯定的に解釈する傾向が強いかもしれない。</p>
+<p>研究者のアジェンダ問題を軽減する一つの方法として、メタ分析のデータ収集を開始する前に、事前登録を行い、詳細な解析計画を公開することが挙げられる (Chapter <a href="intro.html#spec-search-coding">1.4</a> と <a href="reporting-reproducibility.html#pre-registration">16.3.5</a>を参照)。</p>
+<p><br></p>
+</div>
+</div>
+<div id="spec-search-coding" class="section level2" number="1.4">
+<h2>
+<span class="header-section-number">1.4</span> 問題の特定、スタディ検索、コーディング<a class="anchor" aria-label="anchor" href="#spec-search-coding"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>前章では、メタ分析の一般的な問題や限界について時間をかけて議論した。「りんごとオレンジ」問題、「ファイルの引き出し」問題、「研究者のアジェンダ」問題など、これらの問題の多くは、すべてのメタ分析者が取り組むことができ、また取り組むべきものである。</p>
+<p>これは、最初の結果を計算し始めるずっと前から始まっている。メタ分析はデータがなければ実施できないため、当然ながらこのデータをどこからか持ってこなければならない。まず、計画中のメタ分析の<strong>研究課題</strong>と<strong>適格基準</strong>を特定し、研究を検索して関連するものを選び、計算に必要なデータを抽出し、後で報告したい重要な情報をコーディングする。</p>
+<p>各ステップにおいて、従うことができる、または従うべき規則、基準、推奨事項がいくつかあり、高品質なメタ分析を作成するのに役立つ。このような高品質のメタ分析には、すべての適切なエビデンスが包括的に選択されており、その対象に関してバイアスがなく公平であり、その結果から有効かつ正当で、実際的に適切な結論が導き出されている。</p>
+<p>しかし、「すべてのルールに従う」といっても、実際には具体的にどのような判断が最適なのか、必ずしも明らかでない場合もある。あなたが行った方法に対して、人々が反対することもあり得る。これは普通のことで、方法論の決定が<strong>透明</strong>かつ<strong>再現可能</strong>である限り、問題はない <span class="citation">(<a href="references.html#ref-pigott2020methodological">Pigott and Polanin 2020</a>)</span>。</p>
+<p>この章では、計算を始めるより前の段階で必要となる重要な構成要素を順番に説明する。この章は長いが、データ取得のプロセスが現実に要する時間を表すものではない。経験上、統計解析はメタ分析に費やす時間の最大15％を占めるに過ぎず、その前に行われるすべての作業と比較するとはるかに少ないものである。しかし、研究課題を特定し、系統的に研究を検索し、抽出されたデータを確実にコーディングすることは不可欠である。これが、優れたメタ分析の基礎となるのである。</p>
+<p><br></p>
+<div id="research-question" class="section level3" number="1.4.1">
+<h3>
+<span class="header-section-number">1.4.1</span> リサーチクエスチョンの定義<a class="anchor" aria-label="anchor" href="#research-question"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>研究をデザインするとき、最初にすることはリサーチクエスチョンの定義である。メタ分析も例外ではない。リサーチクエスチョンを<strong>問題指定</strong>の一形態として捉えると、適切に定義することができる。適切でインパクトのあるメタ分析を行うためには、問題を解決する必要がある。そのような問題を特定するためには、対象分野に特化した知識が必要である。</p>
+<p>メタ分析のための良いリサーチクエスチョンを見つけるには、ある程度背景知識のある研究分野を選び、まずいくつかの基本的な質問を自分自身に問いかけることが有効だろう。この分野では、現在どのようなことが問題になっているのか？特定のテーマについて、現在の知識には欠如がないか？未解決の議論が残っていないか？また、対象となる読者について考えてみるのもよいだろう。他の研究者に関連する問題は何か？他の人々、例えば医療関係者、国家機関、学校、人事部などが直面しそうな問題は何か。</p>
+<p>メタ分析は先行研究に依存する。研究課題の大まかな方向性が決まったら、現在の文献を見るのが効果的である。このテーマに関する先行研究は存在し、どのように問題に対処していたのか？どのような方法とアウトカム尺度を使用したのか？論文の背景や考察のセクションで、どのような制限に言及しているか？過去のレビューやメタ分析でこのテーマを扱ったことがあるか、またどのような問題が残されているか？</p>
+<p>Cummings ら <span class="citation">(<a href="references.html#ref-cummings2013conceiving">2013</a>)</span> は、メタ分析の対象となる問題を特定するために使用できるいくつかの基準、FINERフレームワークを提案している。それは、リサーチクエスチョンが、実行可能 (<strong>F</strong>easible) で、興味深く (<strong>I</strong>nteresting)、新規性があり (<strong>N</strong>ovel)、倫理的である ( <strong>E</strong>thical)、関連性がある (<strong>R</strong>elevant) べきである。</p>
+<p>これらの質問を自分に投げかけることで、メタ分析で何を達成したいのかが、少しずつ明らかになってくるはずである。また、メタ分析が自分の問題に適していないことが明らかになる場合もある。例えば、そのテーマを扱った関連する研究がない、あるいは、その問題を十分に扱った質の高いメタ分析が既に文献に残っている、などである。</p>
+<p>しかし、自分の問題が1つまたは複数のグループの人々に関連し、先行研究がこの問題に関連するデータを提供し、先行するレビューやメタ分析が十分にまたは適切に対処していないと感じた場合、それを<strong>リサーチクエスチョン</strong>に変えるために進むことが可能である。</p>
+<p>どのようなことができるのか、例を挙げてみよう。医学研究においてジェンダーバイアスが存在することを示唆する証拠がある <span class="citation">(<a href="references.html#ref-hamberg2008gender">Hamberg 2008</a>; <a href="references.html#ref-nielsen2017one">Nielsen et al. 2017</a>)</span>。以前は、多くの臨床試験で男性の参加者のみであるか、または大部分が男性であっタにもかかわらず、単純にアウトカムが女性にも一般化されると仮定されていた。このため、心臓疾患など一部の疾患では、女性の健康状態が悪くなることにつながったと考えられている <span class="citation">(<a href="references.html#ref-kim2009status">Kim and Menon 2009</a>; <a href="references.html#ref-mosca2013fifteen">Mosca et al. 2013</a>)</span> <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;なお、ジェンダーバイアスは女性だけでなく男性にも悪影響を及ぼすことがあり、例として骨粗しょう症 &lt;span class="citation"&gt;(&lt;a href="references.html#ref-adler2014osteoporosis"&gt;Adler 2014&lt;/a&gt;)&lt;/span&gt; などの病気がある&lt;/p&gt;'><sup>3</sup></a>。</p>
+<p>あなたが医学研究者であると仮定しよう。よく使われる薬である <strong>Chauvicepine</strong> には、これまでほとんど認識されていなかった女性への深刻な副作用があるのではないかという噂を耳にしたとする。これは、安全でない可能性のある薬が多くの女性に処方されていることになるので、もし噂が本当であれば非常に重要な問題であると判断した。</p>
+<p>文献を見ると、Chauvicepine を調査した研究のほとんどが無作為化プラセボ対照試験であることがわかった。初期の試験では、男性のみ、あるいは男性が大半を占める集団で実施された。しかし、最近の試験では、性別の構成がよりバランスの取れたものもいくつか見受けられる。これらの試験の多くは、試験中に発生した否定的な副作用の数を、男女別に報告していた。また医学雑誌の最近の論評で、ある医師が、自分のクリニックでは、この薬で治療したときに多くの女性がネガティブな副作用を経験したと報告しているのも見つかった。</p>
+<p>この問題をメタ分析で解決するのは面白いかもしれないと考えついた。そこで、今発見した問題をリサーチクエスチョンに変換した。「プラセボと比較して、Chauvicepine が女性における負の副作用を有意に増加させることを示す無作為化プラセボ対照試験からのエビデンスはあるだろうか？」。</p>
+<p></p>
+<p>リサーチクエスチョンの最初の定式化は、最初のステップに過ぎない。次に、それを具体的な<strong>適格性基準</strong>に変換する必要がある。これらの適格基準は、どの研究がメタ分析に含まれ、どの研究が含まれないかを決定する指針となりうる。したがって、この基準は非常に重要であり、絶対的に透明で再現可能でなければならない。</p>
+<p>適格基準を指定し始める良い方法は、PICO フレームワークを使用することである <span class="citation">(<a href="references.html#ref-mattos2015systematic">Mattos and Ruellas 2015</a>)</span>。このフレームワークは主に介入研究を対象としているが、他のタイプのリサーチクエスチョンにも役に立ちる。PICO の文字は、母集団 (<strong>P</strong>opulation)、介入 ( <strong>I</strong>ntervention)、対照群 (<strong>C</strong>ontrol group) または比較 (Comparison)、アウトカム (<strong>O</strong>utcome) の頭文字をとったものである (訳注: P は、Patients, Problems とも)。</p>
+<ul>
+<li><p><strong>母集団</strong> (P): どのような人々や研究対象者が含まれていれば、研究の対象となるのか。繰り返しになるが、この質問にはできるだけ正確に答え、それぞれの定義が持つ意味を考えることが重要であることを覚えておいてください。若年成人を対象とした研究のみを対象とするのであれば、「若年成人」とは何を意味するのだろうか。18歳から30歳までの人だけが対象なのだろうか？それは発表された論文から簡単に判断できることなのだろうか？それとも、大学や <strong>Cardi B</strong> のコンサートのような、若者がよく訪れる場所で募集されたことだけが重要なのだろうか？特定の病状を持つ患者に関する研究のみを対象とするのであれば、その病状はどのように診断されたのだろうか？訓練を受けた医療専門家によるものなのか、それとも自己報告式のアンケートで十分なのか？こうした質問は、FINER フレームワークの F と R の部分に頼ることによって答えられることが多い。発表された研究にこのような制限を加えることは可能なのか？また、それは適切な差別化なのだろうか。</p></li>
+<li><p><strong>介入</strong> (I): どのような介入 (または<strong>曝露</strong>) を研究する必要があるのか。介入の効果を研究したいのであれば、対象となる治療の種類を明確にすることが重要である。介入はどのくらいの期間でなければならないか？誰が介入を行うことが可能であるか？介入はどのような内容を含まなければならないか？介入に焦点を当てない場合、<strong>独立変数</strong>はどのように運用されなければならないか？変数は特定の測定機器や質問紙によって測定されなければならないか？例えば、仕事に対する満足度を研究する場合、この構成要素は研究においてどのように運用されなければならないか？</p></li>
+<li><p><strong>対照群</strong>または<strong>比較対象</strong> (C): 試験結果は何と比較されたのか？情報提供プラセボ (Attention placebo) か、または錠剤のプラセボを受けた対照群か？待機者？別の治療法？それとも全く何もしないのか？例えば、異なる研究間での病気の有病率推定を研究したい場合や、異なる生息地にどれだけの種の標本があるのかを研究したい場合など、比較群や対照群が全くないこともあり得る。</p></li>
+<li><p><strong>アウトカム</strong> (O): 研究では、どのような成果や従属変数を測定しなければならないのだろうか？そして、その変数はどのように測定しなければならないのだろうか？質問票の点数の平均や標準偏差だろうか？それとも、死亡した患者や病気になった患者の数か？結果はいつ測定されなければならないのだろうか？治療期間には関係なく、単純に治療直後でよいのか？それとも1〜2年後か？</p></li>
+</ul>
+<p>
+</p>
+
+<div class="boxinfo">
+<p><strong>システマティックレビューとメタ分析のためのガイドライン</strong></p>
+<p>メタ分析の質が低いことが多いことから、メタ分析の実施方法について、いくつかのガイドラインや基準が設けられている。</p>
+<p>生物医学研究または介入の効果に関するエビデンスをメタ分析する場合、<strong>Preferred Reporting Items for Systematic Reviews and Meta-Analyses</strong> (PRISMA) <span class="citation">(<a href="references.html#ref-moher2009preferred">Moher et al. 2009</a>)</span> に従うよう強く推奨する。PRISMA 声明には、メタ分析過程のほぼすべての側面についてどのように報告すべきかという推奨事項が含まれている。また、この声明は<a href="http://www.prisma-statement.org/">オンライン</a>で見ることが可能である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;最近、2009年の古いバージョンが更新され、&lt;strong&gt;PRISMA 2020&lt;/strong&gt; 声明&lt;span class="citation"&gt;(&lt;a href="references.html#ref-page2021prisma"&gt;Page et al. 2021&lt;/a&gt;)&lt;/span&gt;が発表された。アブストラクト報告チェックリスト、検索の更新に関する情報も盛り込んだフロー図の改訂、競合利益の宣言とデータ共有の重視などが目新しい点である。&lt;/p&gt;'><sup>4</sup></a>。</p>
+<p>心理・行動研究のメタ分析については、<strong>米国心理学会</strong>の<strong>メタ分析報告基準</strong> (American Psychological Association’s Meta-Analysis Reporting Standards, MARS) <span class="citation">(<a href="references.html#ref-appelbaum2018journal">Appelbaum et al. 2018</a>)</span> に従うことが可能である。</p>
+<p>これらの基準は、メタ分析がどのように<strong>報告</strong>されるべきかについて主にコメントしているが、メタ分析を行う際のベストプラクティスにも影響を及ぼしている。PRISMA とMARS はコアな要素を多数共有しており、本章で取り上げる多くの事柄は、両ガイドラインでも言及されている。</p>
+<p>さらに詳細な資料として、<strong>Cochrane Handbook for Systematic Reviews of Interventions</strong> (Chapter <a href="intro.html#history">1.2</a>) があり、システマティックレビューとメタ分析のほぼすべての側面に関する正確な推奨事項が記載されている。社会科学におけるメタ分析の方法論的基準の概要は、Pigott and Polanin <span class="citation">(<a href="references.html#ref-pigott2020methodological">2020</a>)</span> で見ることが可能である。</p>
+</div>
+<p>PICO フレームワークはメタ分析の適格基準を指定する優れた方法であるが、関連する可能性のある情報すべてを網羅しているわけではない。他にも考慮すべき点がいくつかある <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001</a>)</span>。</p>
+<p>関連する詳細の1つは、対象となる<strong>研究デザイン</strong>である。エビデンスに基づく医療では、無作為化化比較試験 (参加者が偶然に治療群または対照群に割り付けられた研究を意味する) からのエビデンスのみを含めることが一般的であるが、これは必ずしも必要ではない <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011</a>、Chapter 40)</span>。</p>
+<p></p>
+<p>また、対象となる研究の<strong>文化的</strong>および<strong>言語的範囲</strong>を指定することも有用だろう。ほとんどの研究は WEIRD 集団、つまり西洋 (Western)、教育 (Educated)、工業化 (Industrialized)、豊か (Ric)、 民主主義国 (Democratic societies) に基づいている <span class="citation">(<a href="references.html#ref-henrich2010most">Henrich, Heine, and Norenzayan 2010</a>)</span> 。特に社会科学の分野では、ある効果や現象が他の社会規範を持つ国にはうまく一般化されない可能性が非常に高い。しかし、多くの研究者は、他の言語の論文を翻訳する手間を省くために、英語の論文のみをメタ分析の対象としている。</p>
+<p>これは、異なる言語圏からのエビデンスが考慮されないことを意味する。英語はほとんどの分野で科学的発表の最も一般的な言語であるが、少なくともこの制限が存在することは適格基準において明らかにされるべきである。しかし、メタ分析の目的の一つが異文化間の差異を調べることであるならば、他のすべての基準を満たす限り、一般的に適格基準を他の言語にも拡大することが望ましい。</p>
+<p></p>
+<p>もう一つの重要な点は、メタ分析に許可される<strong>出版物の種類</strong>である。メタ分析には、査読付き科学雑誌に掲載された研究論文のみが含まれることがある。これは、その分野の専門家の厳しい目を通過した研究であるため、より高い基準を満たすという主張である。この正当化には欠点がないわけではない。Chapter <a href="intro.html#pitfalls">1.3</a> では、「ファイル引き出し」問題がメタ分析結果の妥当性を著しく制限する可能性があることをすでに取り上げた。</p>
+<p>したがって、出版バイアスのリスクを軽減する方法として、<strong>灰色文献</strong>も含めることが挙げられる。灰色文献とは、従来の出版形式では入手できなかったあらゆるタイプの研究資料と定義することが可能である。これには、研究報告書、プレプリント、ワーキングペーパー、会議への投稿などが含まれる。学位論文も灰色文献に数えられることが多いが、その多くは今日、電子書誌データベースで索引付けされている <span class="citation">(<a href="references.html#ref-schopfel2018electronic">Schöpfel and Rasuli 2018</a>)</span>。</p>
+<p>学位論文については、少なくともメタ分析には含めることが望ましいと思われる。他の種類の未発表資料と比較して、学位論文で提供される情報に大きなバイアスがあったり、明らかに不正であったりすることは、むしろ少ないだろう。さらに、科学雑誌に掲載されたかどうかにかかわらず、特定の方法論的要件を満たす研究のみを含めるよう、他の適格基準を定義することも可能である。</p>
+<p>適格基準を定義する最後のステップは、適用する<strong>包含基準</strong>と<strong>除外基準</strong>のリストとして書き留めることである。大学生における不眠症の介入に関するメタ分析から、このような方法があることを示す例を紹介する <span class="citation">(<a href="references.html#ref-saruhanjan2020psychological">Saruhanjan et al. 2020</a>)</span>。</p>
+<blockquote>
+<p><em>“We included: (a) RCTs [randomized controlled trials; authors’ note] in which (b) individuals enrolled at a tertiary education facility (university, college or comparable postsecondary higher education facility) at the time of randomization, (c) received a sleep-focused psychological intervention, (d) that was compared with a passive control condition, defined as a control condition in which no active manipulation was induced as part of the study (wait-list, treatment as usual).</em></p>
+</blockquote>
+<blockquote>
+<p><em>For the purposes of this analysis, “sleep-focused” means that (e) effects on symptoms of sleep disturbances (global measures of sleep disturbances, sleep-onset latency […], fatigue and daytime functionality, pre-sleep behaviour and experiences) were assessed as a (f) target outcome (by declaring a sleep outcome as the primary outcome or by stating the intervention was primarily aimed at this outcome) using (g) standardized symptom measures (objective sleep measures, standardized sleep or fatigue questionnaires, sleep diaries, items recording sleep quantity, quality or hygiene).</em></p>
+</blockquote>
+<blockquote>
+<p><em>Only studies (h) published in English or German were considered for inclusion.”</em></p>
+</blockquote>
+<p><br></p>
+</div>
+<div id="analysis-plan" class="section level3" number="1.4.2">
+<h3>
+<span class="header-section-number">1.4.2</span> 解析計画・事前登録<a class="anchor" aria-label="anchor" href="#analysis-plan"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>
+</p>
+<p>リサーチクエスチョンと適格基準を設定したら、<strong>解析計画</strong> <span class="citation">(<a href="references.html#ref-pigott2020methodological">Pigott and Polanin 2020</a>; <a href="references.html#ref-tipton2019history">Tipton, Pustejovsky, and Ahmadi 2019</a>)</span> も書くのが賢明だろう。統計学では、<strong>a priori</strong> (先験的) な分析と <strong>post hoc</strong> (事後) な分析を明確に区別する。a priori 分析とは、<strong>データを見る前に</strong>指定される分析である。post hoc 分析あるいは探索的分析は、<strong>データを見た後</strong>、あるいはデータから示唆される結果に基づいて行われる。</p>
+<p>a priori 分析の結果は、post hoc 分析よりもはるかに有効で信頼できると見なすことができる。post hoc 分析では、研究者の目標が達成されるまで、分析内容やデータそのものに手を加えることが容易になり得る。そのため、「研究者アジェンダ」の問題が発生しやすい。</p>
+<p>解析計画では、メタ解析で行いたい重要な計算をすべて a priori に指定する。これには2つの目的がある。まず、実行した分析が本当に計画されたものであり、望ましい結果が得られるまでデータを操作しただけの結果ではないことを、他の人が確認することが可能である。つまり、メタ分析の各ステップで何をしたかを理解し、それを再現しようとすることができるのである。</p>
+<p><em>R</em> を使う場合は、分析の各ステップを他の人が再実行できるようなドキュメントを書くことができ、これによって解析の再現性を高めることが可能である (「各種ツール」の Chapter <a href="reporting-reproducibility.html#reporting-reproducibility">16</a> 参照)。しかし、これは分析が完了した後の話である。解析計画では、データを収集する前に、何をする予定なのかを指定する。</p>
+<p>
+</p>
+<p>解析計画には、必ず明記すべきことが何点かある。どのような情報を抽出するのか、含まれる研究ごとにどのような効果量指標を算出するのかを明確にしておく必要がある (Chapter <a href="effects.html#effects">3</a>)。また、各研究の結果をプールする際に、研究間のばらつきの大きさを考慮して、<strong>固定効果モデル</strong>と<strong>ランダム効果モデル</strong>のどちらを使用するかをあらかじめ決めておくとよいだろう (Chapter <a href="pooling-es.html#pooling-es">4</a>参照)。また、メタ分析で統計的に有意な効果を得るために必要な研究数を決定するために、先験的な<strong>検出力分析</strong>も役に立つ (「ツール」の Chapter <a href="power.html#power">14</a> 参照)。</p>
+<p>さらに、サブグループ解析 (Chapter <a href="subgroup.html#subgroup">7</a>) やメタ回帰 (Chapter <a href="metareg.html#metareg">8</a>) を用いて、いくつかの変数が対象研究の結果の違いを説明しているかどうかを評価したいかを決定することが重要である。例えば、仮説として出版年が研究のアウトカムと関連している可能性があり、この関連をメタ分析で後で調べたい場合、解析計画にその旨を記載する。研究をサブグループに分類し、そのサブグループを別々に調査する予定であれば、特定のサブグループに属すると判断する正確な基準も報告する必要がある (Chapter <a href="intro.html#study-selection">1.4.4</a> 参照)。</p>
+<p>本書の第II部 (「 <em>R</em> でメタ分析」) では、メタ分析の一部として適用すべき様々な統計的技法について取り上げる。ここで学び、メタ分析で適用する予定の技法は、すべて解析計画書に記載する必要がある。</p>
+<p>
+</p>
+<p>解析計画を書き終えたら、どこかに埋めてしまうのではなく、公開するようにしよう。研究者が自分の研究文書をオープンにするための優れた選択肢がいくつかある。例えば、<strong>オープンサイエンス・フレームワーク</strong> (OSF) のウェブサイトに新しいプロジェクトを作成し、そこに解析計画書をアップロードすることができる。また、研究内容によっては、<strong>medrxiv.org</strong>、<strong>biorxiv.org</strong>、<strong>psyarxiv.com</strong>などのプレプリントサーバーに解析計画をアップロードすることも可能である。</p>
+<p>研究課題、適格基準、解析計画、検索戦略 (次章参照) が決まったら、メタ分析も<strong>登録</strong>する必要がある。メタ分析が広く健康に関連するアウトカムである場合、前向きシステマティックレビューとメタ分析の最大級の登録機関である <a href="https://www.crd.york.ac.uk/prospero/">PROSPERO</a> を利用することが望ましい。OSF の<a href="https://osf.io/prereg/">事前登録サービス</a>も良い選択肢である。</p>
+<p>さらに一歩進んで、メタ分析用の<strong>プロトコル</strong>全体を書くことも可能である <span class="citation">(<a href="references.html#ref-quintana2015pre">Quintana 2015</a>)</span>。メタ分析プロトコルには、解析計画に加えて、研究の科学的背景の説明、より詳細な方法論、研究の潜在的な影響についての議論を含める。</p>
+<p>また、PRISMA-P ステートメント <span class="citation">(<a href="references.html#ref-moher2015preferred">Moher et al. 2015</a>)</span> など、プロトコルの書き方に関するガイドラインも存在する。メタ分析のプロトコルは、多くの査読誌で受け入れられている。Büscher, Torok and Sander <span class="citation">(<a href="references.html#ref-buscher2019effectiveness">2019</a>)</span> や Valstad and colleagues <span class="citation">(<a href="references.html#ref-valstad2016relationship">2016</a>)</span> などは良い例である。</p>
+<p>a priori な解析計画と事前登録は、よくできた信頼できるメタ分析には欠かせない特徴である。そして、このことで不安になる必要はない。方法論の決定一つ一つについて、事前に完璧な選択をすることは、不可能ではないにせよ、困難である。最初の計画をある時点で変更するのは、ごく普通のことである。計画したアプローチの変更について正直かつ明確に説明すれば、ほとんどの研究者はこれを失敗の印ではなく、プロ意識と信頼性の証と受け止めてくれることは間違いない。</p>
+<p><br></p>
+</div>
+<div id="study-search" class="section level3" number="1.4.3">
+<h3>
+<span class="header-section-number">1.4.3</span> 研究の検索<a class="anchor" aria-label="anchor" href="#study-search"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>適格基準や解析計画を決定した次のステップは、研究の検索である。本章では、ほとんどのメタ分析がシステマティックレビューの発展型であることを説明してきた。偏りのない包括的な事実の見方を得るために、研究課題に関する利用可能なエビデンス<strong>すべて</strong>を見つけることを目的としている。つまり、研究の検索も可能な限り包括的でなければならない。研究の検索には、1つだけでなく、複数の情報源を使用する必要がある。ここでは、重要かつ一般的に使用されている情報源の概要を説明する。</p>
+<ul>
+<li><p><strong>レビュー記事</strong>: 同じトピックや類似のトピックに関する過去のレビューを精査し、関連する文献を探すことは非常に役に立つ。ナラティブレビューやシステマティックレビューでは、通常、レビューに含まれるすべての研究の引用が提供される。こうした研究の中には、自分の研究目的にも関連しているものも多くある可能性がある。</p></li>
+<li><p><strong>研究中の参照文献</strong>: メタ分析に関連する研究を見つけた場合、この研究が参照している論文もスクリーニングするのが賢明である。その研究が序論や考察のセクションで同じトピックに関する過去の文献を引用している可能性は非常に高く、これらの研究のいくつかもメタ分析に関連する可能性がある。</p></li>
+<li><p><strong>フォワードサーチ</strong>: フォワードサーチは、先行する一次研究やレビューの文献をスクリーニングすることの逆と見ることができる。メタ分析に関連する研究をベースとして、その研究が発表されてから引用された他の論文を検索することを意味する。これはインターネット上で非常に簡単に行うことが可能である。通常、その研究が掲載された雑誌のウェブサイトにある、その研究のオンラインエントリーを見つければいいのである。今日、ほとんどの雑誌のウェブサイトには、ある研究を引用した論文を表示する機能がある。また、<strong>Google Scholar</strong>で検索することもできる (Table <a href="intro.html#tab:bibdatabases">1.1</a> を参照)。Google Scholar では、引用されている研究を項目ごとに表示することが可能である。</p></li>
+<li><p><strong>関連する学術雑誌</strong>: 多くの場合、あなたが注目している研究課題の種類に特化した科学雑誌がいくつもある。そのため、それらの雑誌に掲載されている研究を探すとよいだろう。現在では、ほぼすべての学術雑誌が検索機能を備えたウェブ サイトを持っており、それを使って対象となりそうな研究を選別することができ る。また、電子書誌データベースを利用し、1つまたは複数の雑誌からの結果のみが表示されるようにフィルタを使用することも可能である。</p></li>
+</ul>
+<p>上で説明した方法は、かなり細かい戦略として見ることができる。この方法は、関連する論文がリストアップされる可能性が非常に高い場所を検索する方法である。欠点としては、本当にそこにあるすべての証拠を発見することができないことである。したがって、検索には<strong>電子書誌データベース</strong>も使用することが推奨される。重要なデータベースの概要は、Table <a href="intro.html#tab:bibdatabases">1.1</a> に記載している。</p>
+<p>1つのデータベースだけでなく、常に複数のデータベースで検索する必要がある。多くの書誌データベースには、膨大な数の項目が含まれている。それでも、データベースの検索結果の重複が予想以上に少ないということはよくあることである。検索するデータベースは、テーマ別の焦点に基づいて選択することができる。例えば、メタ分析が健康に関連する結果に焦点を当てている場合、少なくとも PubMed と CENTRAL を検索する必要がある。</p>
+<p>書誌データベースを検索する際には、<strong>検索文字列</strong>を作成することが重要になる。検索文字列には、異なる単語や用語を含め、AND や OR などの演算子を使って連結する。検索文字列の作成には、ある程度の時間と実験が必要である。まずは、PICO や適格基準 (Chapter <a href="intro.html#research-question">1.4.1</a>) をベースに、AND でつなげるのがよいだろう (簡単な例では、<strong>“college student” AND “psychotherapy” AND “randomized controlled trial” AND “depression”</strong> など)。</p>
+<p>ほとんどの書誌データベースでは、<strong>切り捨て</strong>と<strong>ワイルドカード</strong>も使用可能である。切り捨ては、語尾を記号で置き換えて、検索の一部として変化させることである。これは通常、アスタリスクを使用して行われる。たとえば、“<em>sociolog*</em>” を検索用語として使用すると、データベースは “sociology”、“sociological”、“sociologist” を同時に検索する。</p>
+<p>ワイルドカードは、単語の中の文字が変化してもよいことを意味している。これは、単語の綴りに違いがある場合に便利である (例えば、アメリカ英語とイギリス英語の違いなど)。例えば、“<em>randomized</em>” という検索語を考えてみよう。この場合、アメリカ英語のスペルを使った研究のみが検索される。ワイルドカード (しばしばクエスチョンマークで象徴される) を使用する場合、代わりに “<em>randomi?ed</em>” と書くと、イギリス英語のスペルが使用された結果 (“randomised”) も得られる。</p>
+<p>検索文字列を作成する際には、ヒット数にも注目する必要がある。検索文字列は、あまり特定しすぎて関連する記事が見落とされるようなことがあってはならない。例えば、検索文字列のヒット数が3000件程度であれば、後のステップで管理しやすく、重要な参考文献がすべて結果にリストアップされる可能性が高くなる。検索文字列が一般的に有効かどうかを確認するには、最初の数百件を検索して、少なくともいくつかの文献が研究課題と関係があるかどうかをチェックすると良いだろう。</p>
+<p>選択したデータベースで使用する検索文字列の最終版を作成したら、どこかに保存する。検索文字列は、事前登録に含めておくのがベストプラクティスである。メタ分析のプロトコルを公開する場合や、メタ分析の最終結果を公開する場合は、検索文字列の報告 (例えば、付録) が必要である。</p>
+<p>結論として、書誌データベースの検索はそれ自体が技術であり、この段落では表面をわずかになぞった程度であることを強調しておきたい。このトピックに関しては、Cuijpers <span class="citation">(<a href="references.html#ref-cuijpers2016meta">2016</a>)</span> と Bramer and colleagues <span class="citation">(<a href="references.html#ref-bramer2018systematic">2018</a>)</span> が より詳細な議論している。</p>
+<p><br></p>
+<div class="inline-table"><table class="table table-hover" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+<span id="tab:bibdatabases">Table 1.1: </span>関連する書誌データベースの一部。
+</caption>
+<thead><tr>
+<th style="text-align:left;font-size: 17px;">
+Database
+</th>
+<th style="text-align:left;font-size: 17px;">
+Description
+</th>
+</tr></thead>
+<tbody>
+<tr grouplength="6">
+<td colspan="2" style="border-bottom: 1px solid;background-color: #f2f1ed !important;">
+<strong>Core Database</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.ncbi.nlm.nih.gov/pubmed"><strong>PubMed</strong></a>
+</td>
+<td style="text-align:left;">
+米国国立医学図書館の公開データベース。主に生物医学の研究成果を収録している。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.apa.org/pubs/databases/psycinfo"><strong>PsycInfo</strong></a>
+</td>
+<td style="text-align:left;">
+米国心理学会（American Psychological Association）のデータベース。主に社会科学、行動科学の研究をカバーする。30日間の無料トライアルが可能。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.cochranelibrary.com/central"><strong>Cochrane Central Register of Controlled Trials (CENTRAL) </strong></a>
+</td>
+<td style="text-align:left;">
+コクラン共同計画のデータベースを公開。主に健康関連のトピックを扱う。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.elsevier.com/solutions/embase-biomedical-research"><strong>Embase</strong></a>
+</td>
+<td style="text-align:left;">
+大手科学出版社エルゼビアが運営するバイオメディカル研究のデータベース。ライセンスが必要。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.about.proquest.com/products-services/ibss-set-c.html"><strong>ProQuest International Bibliography of the Social Sciences</strong></a>
+</td>
+<td style="text-align:left;">
+社会科学研究のデータベース。ライセンスが必要。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.eric.ed.gov"><strong>Education Resources Information Center (ERIC)</strong></a>
+</td>
+<td style="text-align:left;">
+教育研究のデータベースを公開。
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="2" style="border-bottom: 1px solid;background-color: #f2f1ed !important;">
+<strong>Citation Database</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.webofknowledge.com"><strong>Web of Science</strong></a>
+</td>
+<td style="text-align:left;">
+Clarivate Analyticsが運営する学際的な引用データベース。ライセンスが必要。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.scopus.com"><strong>Scopus</strong></a>
+</td>
+<td style="text-align:left;">
+Elsevier 社が運営する学際的な引用データベース。ライセンスが必要。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.scholar.google.com"><strong>Google Scholar</strong></a>
+</td>
+<td style="text-align:left;">
+Google が管理するオープンアクセスな引用データベース。検索・文献検索機能は限定的。
+</td>
+</tr>
+<tr grouplength="1">
+<td colspan="2" style="border-bottom: 1px solid;background-color: #f2f1ed !important;">
+<strong>Dissertations</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.about.proquest.com/products-services/dissertations/"><strong>ProQuest Dissertations</strong></a>
+</td>
+<td style="text-align:left;">
+学位論文のデータベース。ライセンスが必要。
+</td>
+</tr>
+<tr grouplength="2">
+<td colspan="2" style="border-bottom: 1px solid;background-color: #f2f1ed !important;">
+<strong>Study Registries</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.www.who.int/ictrp"><strong>WHO International Clinical Trials Registry Platform (ICTRP)</strong></a>
+</td>
+<td style="text-align:left;">
+世界中の臨床試験登録のデータベースで、オープンにアクセスできる。まだ発表されていない試験の特定に利用できる。
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; ">
+<a href="https://www.osf.io/registries"><strong>OSF Registries</strong></a>
+</td>
+<td style="text-align:left;">
+研究登録の学際的なデータベースで、オープンにアクセスできる。まだ発表されていない研究の特定に利用できる。
+</td>
+</tr>
+</tbody>
+</table></div>
+<p><br></p>
+</div>
+<div id="study-selection" class="section level3" number="1.4.4">
+<h3>
+<span class="header-section-number">1.4.4</span> 研究の選択<a class="anchor" aria-label="anchor" href="#study-selection"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>研究調査を終えれば、さまざまな情報源から何千もの参考文献を集めることができるはずである。次のステップは、自分の適格基準を満たすものを選択することである。そのためには、以下のように3つのステップを踏むことを勧める。</p>
+<p>ステップ 1 では、重複している文献を削除する必要がある。特に、複数の電子書誌データベースで検索した場合、1つの文献が2回以上表示される可能性がある。これを行う簡単な方法は、まず、すべての参考文献を<strong>参考文献管理ソフトウェア</strong>にインポートして、一箇所に集めることである。優れた参考文献管理ツールはいくつかある。<a href="https://www.zotero.org/"><strong>Zotero</strong></a> や <a href="https://www.mendeley.com/"><strong>Mendeley</strong></a> のようなものは、無料でダウンロードすることが可能である。また、<a href="https://endnote.com/"><strong>EndNote</strong></a> のようなプログラムは、より多くの機能を提供したが、通常、ライセンスが必要である。</p>
+<p>文献管理ソフトは、重複する論文を自動的に削除できる機能を備えている。最初に研究検索で見つけた文献の数と、重複を除去した後に残った文献の数を書き留めておくことが重要である。除外の詳細は、後にメタ分析を公開する際に報告する必要がある。</p>
+<p>重複を除去した後は、<strong>タイトルとアブストラクト</strong>に基づいて、目的に合わない文献を除外する必要がある。研究検索をすると、研究課題とは全く関係のない結果が何百件も出てくる可能性が非常に高い<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Lipsey and Wilson &lt;span class="citation"&gt;(&lt;a href="references.html#ref-lipsey2001practical"&gt;2001&lt;/a&gt;)&lt;/span&gt; は、アルコール摂取と攻撃性の関係に関するメタ分析の論文を検索する際に、縄張り争い行動を調べるために魚にアルコールを与えるという驚くほど多くの研究を除外しなければならないという面白いエピソードを語っている&lt;/p&gt;'><sup>5</sup></a> 。このような文献は、タイトルと要旨だけを見て、安全に削除することが可能である。このステップでも、文献管理ソフトが役に立つ。各参考文献を一つずつ調べていき、その論文が自分とは関係ないと確信したら、単に削除すればいい<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;電子データベースから参考文献をエクスポートする場合、通常は抄録が参考文献ファイルに追加され、参考文献管理ツールで表示することが可能である。その参考文献に抄録がない場合は、通常、研究タイトルで Google 検索すればすぐに見つかる&lt;/p&gt;"><sup>6</sup></a>。</p>
+<p>タイトルとアブストラクトから、ある研究に興味深い情報が含まれているかもしれないと思った場合、たとえその研究が重要でないように思えても、削除しないほうがよい。せっかく時間と労力をかけて総合的な研究を検索したのに、次のステップで誤って関連する文献を削除してしまったら残念なことである。タイトルと抄録に基づく文献のスクリーニングでは、その研究を除外した具体的な理由を説明する必要はない。最終的には、次のステップのために、いくつの研究が残ったかを記録するだけでよいのである。</p>
+<p>タイトルとアブストラクトのスクリーニングに基づくと、最初の参考文献の90%以上が削除される可能性がある。次のステップでは、各文献の<strong>全文</strong>を取得する必要がある。論文で報告されたすべての内容に基づいて、その研究が適格基準を満たすかどうかを最終的に判断する。この作業は、メタ分析に研究を含めるかどうかを決定する最終ステップなので、特に念入りに行う必要がある。さらに、単に「目的に合わないから外した」というだけでは不十分である。ここで<strong>理由</strong>を述べなければならない。削除する各研究について、定義した基準に従って、なぜその研究が適格でなかったのかを文書化する必要がある。適格性の基準以外に、ある研究を含めることができない理由がもう一つある。</p>
+<p>論文全体に目を通すと、その研究が適格かどうかを判断するのに十分な情報が提供されていないことがわかるかもしれない。研究デザインに関する十分な情報が提供されていないだけということもあり得る。また別のよくあるシナリオは、メタ分析に必要な効果量メトリックを計算できるような形で研究結果が報告されていないことである。このような場合は、少なくとも2回、研究の責任著者に連絡を取り、必要な情報を求めるようにする。著者が応答しない場合、そして発表論文に欠けている情報が不可欠な場合のみ、その研究を除外することが可能である。</p>
+<p>
+</p>
+<p>含めるべき研究の最終的な選択に到達したら、含めるプロセスのすべての詳細を<strong>フロー図</strong>に書き留める。フロー図のテンプレートとしてよく使われるのは、<a href="http://prisma-statement.org/PRISMAStatement/FlowDiagram">PRISMAガイドライン</a>で提供されている<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Neal Haddaway and Luke McGuinness &lt;span class="citation"&gt;(&lt;a href="references.html#ref-prisma2020package"&gt;2020&lt;/a&gt;)&lt;/span&gt; は最近 &lt;strong&gt;{PRISMA2020}&lt;/strong&gt; というパッケージを開発し、PRISMA 2020 準拠フロー図を &lt;em&gt;R&lt;/em&gt; で直接生成できるようになっている。パッケージの機能は、インタラクティブな&lt;a href="https://estech.shinyapps.io/prisma_flowdiagram/"&gt;ウェブアプリ&lt;/a&gt;を介してアクセスすることも可能である。&lt;/p&gt;'><sup>7</sup></a>。このフローチャートは、上記で取り上げた必要な情報をすべて文書化したものである。</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>電子データベース</strong>を検索して、いくつの文献を特定できたか。</p></li>
+<li><p><strong>他の情報源</strong>から見つけた追加の参考資料の数。</p></li>
+<li><p><strong>重複排除</strong>後に残った参考文献の数。</p></li>
+<li><p><strong>タイトルとアブストラクト</strong>に基づいて削除した文献の数。</p></li>
+<li><p><strong>フル論文</strong>に基づいて削除した<strong>論文</strong>の数、<strong>特定の理由</strong>で除外した論文の数を含む。</p></li>
+<li><p><strong>定性的統合</strong> (つまりシステマティックレビュー) および<strong>定量的統合</strong> (つまりメタ分析) に含めた<strong>研究</strong>の数。</p></li>
+</ol>
+<p>なお、(5)で除外しなかった論文の数と(6)で含めた研究の数は通常同じであるが、必ずしも同じである必要はない。例えば、1つの論文が2つ以上の独立した研究の結果を報告し、そのすべてがメタ分析に適していることもあり得る。その場合、<strong>研究</strong>の数は、含まれる<strong>論文</strong>の数より多くなる。</p>
+
+<div class="boximportant">
+<p><strong>ダブルスクリーニング</strong></p>
+<p>関連するほぼすべてのガイドラインやコンセンサスステートメントは、研究選択プロセスにおいて<strong>ダブルスクリーニング</strong>を用いるべきであると強調している <span class="citation">(<a href="references.html#ref-dissemination2009systematic">Tacconelli 2009</a>; <a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019</a>; <a href="references.html#ref-methods2016methodological">Campbell Collaboration 2016</a>)</span>。</p>
+<p>つまり、誤りを避けるために、少なくとも2人が独立して各研究選択ステップを行う必要がある。タイトルとアブストラクトに基づく文献の削除は、2人以上の研究者が独立して行い、評価者が削除しなかったすべての記録の組み合わせを次のステップに転送する必要がある。</p>
+<p>2人以上の評価者を使うことは、論文の全文をスクリーニングする最後のステップではさらに重要である。このステップでは、各人が独立して研究が適格であるかどうかを評価し、適格でない場合はその理由を述べなければならない。</p>
+<p>その後、評価者同士でその結果を比較する必要がある。一部の研究の適格性に関して評価者が意見を異にすることはよくあることで、そのような意見の相違は通常、議論を通じて解決することが可能である。評価者が合意を見いだせない場合、そのような場合に最終決定を下すことができる上級研究者をあらかじめ決めておくと便利である。</p>
+<p>2人以上の評価者を使用することは、研究の選択プロセスにおいてのみ望ましいわけではない。この方法は、データの抽出やコーディングの際にも有効である (Chapter <a href="intro.html#data-extraction">1.4.5</a> 参照)。</p>
+</div>
+<p><br></p>
+</div>
+<div id="data-extraction" class="section level3" number="1.4.5">
+<h3>
+<span class="header-section-number">1.4.5</span> データ抽出とコーディング<a class="anchor" aria-label="anchor" href="#data-extraction"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>メタ分析に含める研究の選択が確定すると、データを抽出することができる。選択した論文から抽出すべき情報は、大きく分けて3種類ある <span class="citation">(<a href="references.html#ref-cuijpers2016meta">Pim Cuijpers 2016</a>)</span>。</p>
+<ol style="list-style-type: decimal">
+<li>研究の特徴。</li>
+<li>効果量を算出するために必要なデータ。</li>
+<li>研究の質またはバイアスのリスクの特性。</li>
+</ol>
+<p>質の高いメタ分析では、対象となった研究の特徴を報告する表が用意されるのが通例である。この表で報告される正確な内容は、研究分野や研究課題によって異なる可能性がある。しかし、研究の筆頭著者とその発表時期は必ず抽出して報告する必要がある。また、各研究のサンプルサイズも報告する必要がある。</p>
+<p>これとは別に、メタ分析の PICO で指定された特性、例えば、対象国、平均年齢または中央値、女性と男性の参加者の割合、介入または曝露の種類、対照群または比較 (該当する場合)、および各研究の評価結果についての情報を含めることが可能である。1つまたは複数の研究で特性の1つが評価されていない場合は、その詳細が表で指定されていないことを示す必要がある。</p>
+<p>また、プールする予定の効果量や結果指標を計算するために必要なデータを抽出・収集することも必要である。章では、効果量データを表計算ソフトで構成し、 <em>R</em> での計算に利用しやすくする方法について詳しく説明する。また、解析計画 (Chapter <a href="intro.html#analysis-plan">1.4.2</a> 参照) にサブグループ解析やメタ回帰を計画している場合は、これらの分析に必要なデータも論文から抽出する必要がある。</p>
+<p>
+</p>
+<p>メタ分析では、一次研究の質も評価して報告することが一般的である。そのために各研究から抽出する必要のある情報は、使用する評価システムの種類に依存する。一次研究の質を評価するツールは、この数十年で数え切れないほど開発されている <span class="citation">(<a href="references.html#ref-sanderson2007tools">Sanderson, Tatt, and Higgins 2007</a>)</span>。</p>
+<p>ランダム化比較試験のみが対象である場合、研究の質をコード化する方法として、コクランが開発した <a href="https://methods.cochrane.org/bias/resources/rob-2-revised-cochrane-risk-bias-tool-randomized-trials"><strong>Risk of Bias Tool</strong></a> を用いるのが最適な方法の1つである <span class="citation">(<a href="references.html#ref-higgins2011cochrane">Julian Higgins et al. 2011</a>; <a href="references.html#ref-sterni2019rob">Sterne et al. 2019</a>)</span> 。タイトルにあるように、このツールは研究の質<strong>そのもの</strong>を評価するのではなく、研究のバイアスのリスクを評価するものである。</p>
+<p>研究の質とバイアスのリスクは関連しているが、同一の概念ではない。「バイアス」 (あるいは「偏り」) とは、研究結果やその解釈における系統的な誤りを指す。バイアスのリスクとは、研究の実施方法やその結果が、そのような系統的な誤りを引き起こす可能性を高めるような側面である。たとえ、ある研究が「最先端」とされる方法のみを適用している場合でも、バイアスが存在する可能性はある。ある研究は、特定の研究分野で重要だと考えられている品質基準をすべて満たすことが可能であるが、時にはこれらのベストプラクティスでさえ、研究を歪みから守るには十分でない場合がある。このように、「バイアスのリスク」の概念は、研究の質の評価とは少し異なる焦点を持っている。それは主に介入研究のアウトプットが<strong>信じられるか</strong>という問題に関心があり、この目標に資する基準に焦点を当てている <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019</a>)</span>.</p>
+<p></p>
+<p>いくつかのドメインでは、バイアスリスクツールで研究のバイアスリスクを「高い」「低い」に分類できたり、「何らかの懸念がある」と判断できる。また、バイアスリスクをどのように視覚的にまとめるかについても慣例がある (Chapter <a href="risk-of-bias-plots.html#risk-of-bias-plots">15</a> で <em>R</em> でどのようにできるかを説明している)。非無作為化研究のバイアスリスクを評価するための同様のリソースとして、<strong>Risk of Bias in Non-randomized Studies of Interventions</strong> または ROBINS-I, tool がある <a href="https://www.riskofbias.info/welcome/home"><span class="citation">(<span>Sterne et al. 2016</span>)</span></a>。</p>
+<p>Cochrane Risk of Bias ツールは、(非) 無作為化臨床試験におけるバイアスのリスクを評価するための標準的なアプローチとなっている <span class="citation">(<a href="references.html#ref-jorgensen2016evaluation">Jørgensen et al. 2016</a>)</span>。他の分野では、現在は残念ながらまだむしろ開拓時代である。例えば、心理学研究においては、研究の質の評価は一貫性がなく、不透明であるか、全く実施されていないことが多い <span class="citation">(<a href="references.html#ref-hohn2019primary">Hohn, Slaney, and Tafreshi 2019</a>)</span>。</p>
+<p>臨床試験以外の研究のメタ分析を計画している場合、できることが2つある。まず、Risk of Bias または ROBINS-I ツールがまだ適用可能かどうかを確認しよう。例えば、健康に関連しない別の介入方法に焦点を当てている場合である。もう一つは、確かに最適とは言えないかもしれないが、類似のテーマに関する過去の高品質なメタ分析を検索し、これらの研究がどのように主要研究の品質を決定したかを確認することである。</p>
+<p>これで、メタ分析の歴史、問題点、そしてデータを収集しエンコードする際にそれらをどのように回避するかについての考察を終えることとする。次の章は、このガイドの「ハンズオン」部分の始まりである。この章では、 <em>R</em> の最初のステップを自分で実施してみる。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+</div>
+<div id="演習問題" class="section level2" number="1.5">
+<h2>
+<span class="header-section-number">1.5</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C"><i class="fas fa-link"></i></a>
+</h2>
+
+<div class="boxquestion">
+<p><strong>知識を試そう！</strong></p>
+<ol style="list-style-type: decimal">
+<li>メタ分析はどのように定義することができるか？メタ分析と他の文献レビューの違いは何か？</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>メタ分析の生みの親、生みの親を一人挙げることができるか？その人物はどのような功績を残したか？</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>メタ分析のよくある問題点を3つ挙げ、1～2文で説明しなさい。</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>メタ分析のための良いリサーチクエスチョンを定義する資質を挙げなさい。</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>大学生の睡眠介入に関するメタ分析の適格基準をもう一度見てみよう (Chapter <a href="intro.html#research-question">1.4.1</a>章末)。この研究の適格基準、除外基準から PICO を抽出できるか。</li>
+</ol>
+<ol start="6" style="list-style-type: decimal">
+<li>研究を検索するために使用できるいくつかの重要なソースを挙げなさい。</li>
+</ol>
+<ol start="7" style="list-style-type: decimal">
+<li>「研究の質」と「バイアスのリスク」の違いを1～2文で説明しなさい。</li>
+</ol>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda1">Appendix A</a> にある。</strong>
+</div>
+<p><br></p>
+</div>
+<div id="概要" class="section level2" number="1.6">
+<h2>
+<span class="header-section-number">1.6</span> 概要<a class="anchor" aria-label="anchor" href="#%E6%A6%82%E8%A6%81"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>毎年、より多くの科学的研究が発表され、利用可能な証拠を追跡することが難しくなっている。しかし、研究成果が多いからといって、自動的に科学が進歩するわけではない。</p></li>
+<li><p>メタ分析の目的は、過去の研究結果を定量的に組み合わせることである。ある研究課題に関する利用可能なすべての証拠を統合し、意思決定に利用することができる。</p></li>
+<li><p>メタ分析の手法は、20世紀初頭にまで遡る。しかし、現代的なメタ分析手法は20世紀後半に開発され、それ以降、メタ分析は一般的な研究ツールとなった。</p></li>
+<li><p>各メタ分析には、「りんごとオレンジ」問題、「Garbage In, Garbage Out」問題、「ファイルの引き出し」問題、「研究者のアジェンダ」問題などが関連する。</p></li>
+<li><p>これらの問題の多くは、明確な研究課題と適格基準を定義し、解析計画を書き、メタ解析を事前に登録し、研究検索とデータ抽出を系統的かつ再現可能な方法で行うことによって軽減することが可能である。</p></li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="about-the-authors.html">著者について</a></div>
+<div class="next"><a href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#intro"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="nav-link" href="#what-are-mas"><span class="header-section-number">1.1</span> メタ分析とは？</a></li>
+<li><a class="nav-link" href="#history"><span class="header-section-number">1.2</span> “Exercises in Mega-Silliness” 歴史的な逸話</a></li>
+<li>
+<a class="nav-link" href="#pitfalls"><span class="header-section-number">1.3</span> りんごとオレンジ: メタ分析の落とし穴のクイックツアー</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%82%8A%E3%82%93%E3%81%94%E3%81%A8%E3%82%AA%E3%83%AC%E3%83%B3%E3%82%B8%E5%95%8F%E9%A1%8C"><span class="header-section-number">1.3.1</span> 「りんごとオレンジ」問題</a></li>
+<li><a class="nav-link" href="#garbage-in-garbage-out%E5%95%8F%E9%A1%8C"><span class="header-section-number">1.3.2</span> 「Garbage In, Garbage Out」問題</a></li>
+<li><a class="nav-link" href="#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%BC%95%E3%81%8D%E5%87%BA%E3%81%97%E5%95%8F%E9%A1%8C"><span class="header-section-number">1.3.3</span> 「ファイルの引き出し」問題</a></li>
+<li><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E8%80%85%E3%81%AE%E3%82%A2%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%80%E5%95%8F%E9%A1%8C"><span class="header-section-number">1.3.4</span> 「研究者のアジェンダ」問題</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#spec-search-coding"><span class="header-section-number">1.4</span> 問題の特定、スタディ検索、コーディング</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#research-question"><span class="header-section-number">1.4.1</span> リサーチクエスチョンの定義</a></li>
+<li><a class="nav-link" href="#analysis-plan"><span class="header-section-number">1.4.2</span> 解析計画・事前登録</a></li>
+<li><a class="nav-link" href="#study-search"><span class="header-section-number">1.4.3</span> 研究の検索</a></li>
+<li><a class="nav-link" href="#study-selection"><span class="header-section-number">1.4.4</span> 研究の選択</a></li>
+<li><a class="nav-link" href="#data-extraction"><span class="header-section-number">1.4.5</span> データ抽出とコーディング</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C"><span class="header-section-number">1.5</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="header-section-number">1.6</span> 概要</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

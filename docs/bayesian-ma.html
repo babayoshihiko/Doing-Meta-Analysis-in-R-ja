@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>13 ベイズメタ分析 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="こ れまでの章では、「マルチレベル」モデル (Chapter 10)、メタ分析的構造方程式モデリング (Chapter 11)、ネットワークメタ分析 (Chapter 12) など、メタ分析のやや高度な拡張を掘り下げてきた。さて、一歩下がって、もう一度「従来の」メタ分析を見直そう。ただし、今回はこれまでとは異なる角度でベイズメタ分析を扱う。 ...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="13 ベイズメタ分析 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="こ れまでの章では、「マルチレベル」モデル (Chapter 10)、メタ分析的構造方程式モデリング (Chapter 11)、ネットワークメタ分析 (Chapter 12) など、メタ分析のやや高度な拡張を掘り下げてきた。さて、一歩下がって、もう一度「従来の」メタ分析を見直そう。ただし、今回はこれまでとは異なる角度でベイズメタ分析を扱う。 ...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="13 ベイズメタ分析 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="こ れまでの章では、「マルチレベル」モデル (Chapter 10)、メタ分析的構造方程式モデリング (Chapter 11)、ネットワークメタ分析 (Chapter 12) など、メタ分析のやや高度な拡張を掘り下げてきた。さて、一歩下がって、もう一度「従来の」メタ分析を見直そう。ただし、今回はこれまでとは異なる角度でベイズメタ分析を扱う。 ...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="active" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="bayesian-ma" class="section level1" number="13">
+<h1>
+<span class="header-section-number">13</span> ベイズメタ分析<a class="anchor" aria-label="anchor" href="#bayesian-ma"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/waves.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">こ</span>
+れまでの章では、「マルチレベル」モデル (Chapter <a href="multilevel-ma.html#multilevel-ma">10</a>)、メタ分析的構造方程式モデリング (Chapter <a href="sem.html#sem">11</a>)、ネットワークメタ分析 (Chapter <a href="netwma.html#netwma">12</a>) など、メタ分析のやや高度な拡張を掘り下げてきた。さて、一歩下がって、もう一度「従来の」メタ分析を見直そう。ただし、今回はこれまでとは異なる角度で<strong>ベイズメタ分析</strong>を扱う。</p>
+<p>
+</p>
+<p>すでに一つ前のネットワークメタ分析に関する章でベイズモデルを取り上げた。そこでは、ベイズの定理や事前分布の考え方など、ベイズ統計の背後にある主要な考え方について議論してきた (Chapter <a href="netwma.html#bayesian-inference">12.3.1</a> 参照)。本章では、この知識をもとに、メタ分析を行うための「ベイズ的な方法」をより深く理解したい。例えば、ベイジアンネットワークのメタ分析モデルを設定するとき、<strong>{gemtc}</strong> パッケージは自動的に優先順位を指定したが、ここでは、これを自分たちで行っていきたい。</p>
+<p>背景は少し複雑であるが、ベイズメタ分析も本質的に「従来の」メタ分析と同じことをしていることがわかる。しかし、ベイズモデルを使用することは、頻度論的アプローチと比較して、いくつかの実用的な利点もある。そのため、 <em>R</em> を使用して利点のあるモデルを実装する方法を学ぶことは価値がある。</p>
+<p><br></p>
+<div id="bayes-hierarchical-model" class="section level2" number="13.1">
+<h2>
+<span class="header-section-number">13.1</span> ベイズ型階層モデル<a class="anchor" aria-label="anchor" href="#bayes-hierarchical-model"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>ベイズメタ分析を行うために、いわゆる<strong>ベイズ階層モデル</strong> <span class="citation">(<a href="references.html#ref-rover2017bayesian">Röver 2017</a>; <a href="references.html#ref-higgins2009re">Julian Higgins, Thompson, and Spiegelhalter 2009</a>)</span> を採用する。このタイプのモデルについては、すでにネットワークメタ分析の章 (Chapter <a href="netwma.html#bayesian-net-ma-model">12.3.2</a>) で簡単に取り上げた。</p>
+<p>Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> では、すべてのメタ分析モデルには固有の「マルチレベル」、つまり<strong>階層的</strong>な構造があることを学んだ。最初のレベルには、個々の参加者がいる。このレベルのデータは、通常、各研究 <span class="math inline">\(k\)</span> の計算された効果量 <span class="math inline">\(\hat\theta_k\)</span> という形で届く。参加者が第２レベルにネストされると、それぞれの研究の真の効果量 <span class="math inline">\(\theta_k\)</span> は、独自の分布に従うと仮定する。この真の効果の分布は、平均 <span class="math inline">\(\mu\)</span> (推定したい「真の」効果のプール値) と分散 <span class="math inline">\(\tau^2\)</span> (研究間の異質性を表す) を持っている。</p>
+<p>これを定式化してみよう。最初のレベルでは、研究 <span class="math inline">\(k\)</span> で報告された観察された効果量 <span class="math inline">\(\hat\theta_k\)</span> が、この研究での「真の」効果 <span class="math inline">\(\theta_k\)</span> の推定値であると仮定した。観察された効果 <span class="math inline">\(\hat\theta_k\)</span> は、サンプル誤差 <span class="math inline">\(\epsilon_k\)</span> のために <span class="math inline">\(\theta_k\)</span> から乖離している。これは、<span class="math inline">\(\hat\theta_k\)</span> が <span class="math inline">\(k\)</span> の基礎となる母集団から抽出 (サンプル) されたと仮定している。この母集団は、平均 <span class="math inline">\(\theta_k\)</span>、研究の「真の」効果、および分散 <span class="math inline">\(\sigma^2\)</span> を持つ分布と見なすことが可能である。</p>
+<p>第2ステップでは、真の効果量 <span class="math inline">\(\theta_k\)</span> 自身は、真の効果量の包括的な分布のサンプルに過ぎないと仮定する。この分布の平均 <span class="math inline">\(\mu\)</span> は、推定したい効果量のプール値である。包括的な分布は分散 <span class="math inline">\(\tau^2\)</span> も持っているので、研究別の真の効果 <span class="math inline">\(\theta_k\)</span> は、<span class="math inline">\(\mu\)</span> から乖離している。この分散は、研究間の異質性を表す。まとめると、この2つの方程式が得られる。</p>
+<p><span class="math display" id="eq:by1">\[\begin{align}
+\hat\theta_k &amp;\sim \mathcal{N}(\theta_k,\sigma_k^2) \notag \\
+\theta_k &amp;\sim \mathcal{N}(\mu,\tau^2) \tag{13.1}
+\end{align}\]</span></p>
+<p>ここでは、<span class="math inline">\(\mathcal{N}\)</span> を使って、左側のパラメータが<strong>正規</strong>分布からサンプルされたことを示す。これは2番目の式に対して不必要に厳しい仮定であるという意見もあるが <span class="citation">(<a href="references.html#ref-higgins2009re">Julian Higgins, Thompson, and Spiegelhalter 2009</a>)</span>、ここで示したような定式化は、ほとんどの場合に使用されているものである。前にも述べたように、固定効果モデルはこのモデルの特殊なケースで、<span class="math inline">\(\tau^2 = 0\)</span> 、つまり研究間の異質性がなく、すべての研究が1つの真の効果量を共有していると仮定している (すなわち、すべての研究 <span class="math inline">\(k\)</span> に対して、<span class="math inline">\(\theta_k = \mu\)</span>)。</p>
+<p>また、この式を簡略化するために、合わせた形式を用いることができる。</p>
+<p><span class="math display" id="eq:by2">\[\begin{equation}
+\hat\theta_k  \sim \mathcal{N}(\mu,\sigma_k^2 + \tau^2)
+\tag{13.2}
+\end{equation}\]</span></p>
+<p>これらの公式は、ランダム効果 (Chapter <a href="pooling-es.html#rem">4.1.2</a>) や３レベルメタ分析 (Chapter <a href="multilevel-ma.html#multilevel-nature">10.1</a>) モデルを議論したときに定義したものとよく似ていることに、すでに気づいただろう。実際、この定式化には特に「ベイズ的」なものはない。しかし、次の式 <span class="citation">(<a href="references.html#ref-williams2018bayesian">Williams, Rast, and Bürkner 2018</a>)</span> を追加すると、この点は変わる。</p>
+<p><span class="math display" id="eq:by3">\[\begin{align}
+(\mu, \tau^2) &amp;\sim p(.) \notag \\
+\tau^2 &amp;&gt; 0 \tag{13.3}
+\end{align}\]</span></p>
+<p></p>
+<p>最初の行が特に重要で、パラメータ <span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau^2\)</span> の<strong>事前分布</strong> (prior distributions) を定義している。これにより、真のプール効果量 <span class="math inline">\(\mu\)</span> と研究間異質性 <span class="math inline">\(\tau^2\)</span> がどのように見えるか、またそれについてどの程度確信が持てるかを <strong>a priori</strong> に指定することが可能である。2番目の式は、研究間異質性分散が0より大きくなければならないという制約を加えている。しかし、この式は、<span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau^2\)</span> で使用される事前分布の正確な<strong>種類</strong> を指定していない。それは、<strong>何らかの</strong>事前分布が仮定されていることを教えてくれるだけである。ベイズメタ分析モデルのための合理的で特別な事前分布については、後で詳しく説明する。</p>
+<p>
+</p>
+<p>ネットワークメタ分析の章では、ベイズアプローチがモデルパラメータを推定する方法について説明した。要約すると、<strong>マルコフ連鎖モンテカルロ</strong>に基づくサンプリング手続き、例えば <strong>Gibbs サンプリング</strong>を使用することである。本章で使用する <strong>{brms}</strong> パッケージでは、いわゆる <strong>No-U-Turn</strong> サンプリング <span class="citation">(NUTS, <a href="references.html#ref-hoffman2014no">Hoffman and Gelman 2014</a>)</span> を使用する<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;NUTS はいわゆる &lt;strong&gt;Hamiltonian Monte Carlo&lt;/strong&gt; (HMC) の拡張で、後者は別のタイプの Markov Chain Monte Carlo メソッドである。他のアプローチ (例えば Gibbs サンプリング) と比較して、HMC は階層的モデル を推定するためのより効率的なソリューションを提供することができる&lt;span class="citation"&gt;(例えばメタ分析に使用されるもの, &lt;a href="references.html#ref-betancourt2015hamiltonian"&gt;Betancourt and Girolami 2015&lt;/a&gt;)&lt;/span&gt;。HMC と NUTS の簡単な説明は、&lt;strong&gt;Stan&lt;/strong&gt; &lt;a href="https://mc-stan.org/docs/2_26/reference-manual/hamiltonian-monte-carlo.html" target="_blank"&gt;リファレンスマニュアル&lt;/a&gt;にある (Stanは &lt;strong&gt;{brms}&lt;/strong&gt; のベースとなっている低レベルプログラミング言語である。Chapter &lt;a href="bayesian-ma.html#bayes-ma-R"&gt;13.3&lt;/a&gt; を参照)。&lt;/p&gt;'><sup>67</sup></a>。</p>
+<p>
+</p>
+<p>これまでの章では、主に <strong>{meta}</strong> と <strong>{metafor}</strong> パッケージを使用してきた。この二つのパッケージは、非ベイズ的、つまり<strong>頻度論的</strong>なフレームワークに基づいてメタ分析を行うことが可能である。したがって、「従来の」アプローチですでにこのような強力なツールに頼ることができるのに、なぜベイズ法を使い始めなければならないのかと疑問に思うだろう。その理由は、以下のようなベイズメタ分析には明確な利点があるからである <span class="citation">(<a href="references.html#ref-williams2018bayesian">Williams, Rast, and Bürkner 2018</a>; <a href="references.html#ref-mcneish2016using">McNeish 2016</a>; <a href="references.html#ref-chung2013nondegenerate">Chung et al. 2013</a>)</span>。</p>
+<ul>
+<li><p>ベイズ法は、<span class="math inline">\(\tau^2\)</span> の推定値における<strong>不確実性</strong>を直接モデル化することが可能である。また、特に対象研究の数が少ない場合 (実際には非常に多い)、効果のプール推定に優れている場合がある。</p></li>
+<li><p>ベイズ法は、<span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau^2\)</span> の両方について、完全な<strong>事後分布</strong> (posterior distribution) を生成する。これにより、<span class="math inline">\(\mu\)</span> または <span class="math inline">\(\tau^2\)</span> がある指定された値より小さいまたは大きい正確な<strong>確率</strong>を計算することが可能である。これは、信頼区間だけを計算する頻度論的方法とは対照的である。しかし、(95％) 信頼区間は、データサンプリングが何度も繰り返された場合、母集団のパラメータ (例えば、<span class="math inline">\(\mu\)</span> や <span class="math inline">\(\tau^2\)</span>) の真の値が、サンプルの95％において信頼区間の範囲に収まることを述べているに過ぎないのである。真のパラメータが2つの指定された値の間にある<strong>確率</strong>は教えてくれない。</p></li>
+<li><p>ベイズ法は、メタ分析を計算する際に、<strong>事前知識</strong>と仮定を統合することができる。</p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="priors" class="section level2" number="13.2">
+<h2>
+<span class="header-section-number">13.2</span> 事前分布の設定<a class="anchor" aria-label="anchor" href="#priors"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>これまで、ベイズメタ分析で効果をプールするために使用できる階層モデルを定式化した。しかし、このようなモデルを実行するためには、<span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau^2\)</span> の事前分布を指定しなければならない。特に、研究数が少ない場合、事前分布は結果にかなりの影響を与えるので、賢く選択する必要がある。</p>
+<p>
+</p>
+<p>一般的に、良いアプローチは、<strong>弱情報</strong>事前 (weakly informative prior) を使用することである <span class="citation">(<a href="references.html#ref-williams2018bayesian">Williams, Rast, and Bürkner 2018</a>)</span>。弱情報事前分布は、<strong>無情報</strong>事前 (non-informative priors) 分布と対比することが可能である。無情報的事前分布は、事前分布の最も単純な形式である。これは通常、<strong>一様</strong>分布に基づいており、すべての値が等しく信頼できることを表現する時に使用される。</p>
+<p>一方、弱情報事前分布は、もう少し洗練されたものである。これは、ある値が他の値よりも信頼できるという<strong>弱い</strong>確信を持っていることを表す分布に依存する。しかし、データから推定されるパラメータの値については、まだ具体的な記述はしていない。</p>
+<p></p>
+<p>直感的には、これは非常に理にかなっている。たとえば、多くのメタ分析では、真の効果がSMD = -2.0 と 2.0 の間のどこかにあると仮定することは妥当であるが、SMD = 50 になることはまずないだろう。この理論的根拠に基づいて、ここでの <span class="math inline">\(\mu\)</span> 事前分布は、平均 0、分散 1の正規分布から出発すると良いだろう。これは、真のプールされた効果量 <span class="math inline">\(\mu\)</span> が -2.0 と 2.0 の間にあることを、約95%の事前確率で認めることを意味する。</p>
+<p><span class="math display" id="eq:by4">\[\begin{equation}
+\mu \sim \mathcal{N}(0,1)
+\tag{13.4}
+\end{equation}\]</span></p>
+<p>次に指定しなければならない事前分布は、<span class="math inline">\(\tau^2\)</span> の事前分布である。<span class="math inline">\(\tau^2\)</span> は常に非負であるが、0 (またはゼロに近い値) であってもよいことがわかっているので、これは少し難しい。この場合に推奨される分布で、<span class="math inline">\(\tau^2\)</span> のような分散によく使われるものは、<strong>Half-Cauchy</strong> 事前分布である。Half-Cauchy 分布は、Cauchy 分布の特殊なケースで、分布の「半分」 (もちろん、正の側) に対してのみ定義されている<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;標準 Cauchy 分布自体は、&lt;span class="math inline"&gt;\(t\)&lt;/span&gt; の特殊ケースで、&lt;span class="math inline"&gt;\(\text{d.f.}=1\)&lt;/span&gt; が付いている&lt;/p&gt;'><sup>68</sup></a>。</p>
+<p>Half-Cauchy 分布は2つのパラメータで制御される。最初のものは、分布のピークを指定する位置パラメータ <span class="math inline">\(x_0\)</span> である。もう1つは、スケーリングパラメータ <span class="math inline">\(s\)</span> である。これは、分布がどの程度<strong>裾が重い</strong> (heavy-tailed) か (すなわち、どの程度高い値まで「広がる」か) を制御する。Half-Cauchy 分布は <span class="math inline">\(\mathcal{HC}(x_0,s)\)</span> と表記される。</p>
+<p>以下のグラフは、<span class="math inline">\(x_0\)</span> の値を 0 に固定し、<span class="math inline">\(s\)</span> の値を変化させた場合の Half-Cauchy 分布を可視化したものである。</p>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-429-1.png" width="55%" style="display: block; margin: auto;"></div>
+<p>Half-Cauchy 分布は通常、かなり重い裾を持つので、<span class="math inline">\(\tau\)</span> の事前分布として特に有用である。この重い尾は、<span class="math inline">\(\tau\)</span> の非常に高い値を<strong>何らかの</strong>確率で与えることを保証すると同時に、低い値の方がより可能性が高いと想定している。</p>
+<p>多くのメタ分析では、<span class="math inline">\(\tau\)</span> (<span class="math inline">\(\tau^2\)</span> の平方根) は 0.3 近辺にあるか、少なくとも同じような範囲にある。したがって、Half-Cauchy 事前分布を指定するために、<span class="math inline">\(s =\)</span> 0.3 を使用することが可能である。これにより、<span class="math inline">\(\tau =\)</span> 0.3 より小さい値は50%の確率で存在することが保証される <span class="citation">(<a href="references.html#ref-williams2018bayesian">Williams, Rast, and Bürkner 2018</a>)</span>。このことは、<strong>{extraDistr}</strong> パッケージの <code>phcauchy</code> 関数で実装されている Half-Cauchy 分布関数を用いて確認することが可能である <span class="citation">(<a href="references.html#ref-extradistr">Wołodźko 2020</a>)</span>。</p>
+<p></p>
+<div class="sourceCode" id="cb450"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/twolodzko/extraDistr">extraDistr</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/extraDistr/man/HalfCauchy.html">phcauchy</a></span><span class="op">(</span><span class="fl">0.3</span>, sigma <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.5</code></pre>
+<p>しかし、これはすでに <span class="math inline">\(\tau\)</span> の真の値に関するかなり具体的な仮定である。より保守的なアプローチとして、この実践例では、<span class="math inline">\(s\)</span> を0.5に設定する。これは、分布をよりフラットにできる。一般的に、常に異なる事前分布を用いた感度分析を行い、それが結果に大きな影響を与えるかどうかを確認することを勧める。 <span class="math inline">\(s =\)</span> 0.5 を Half-Cauchy 分布のパラメータとして使用し、<span class="math inline">\(\tau\)</span> の事前分布を次のように書くことが可能である。</p>
+<p><span class="math display" id="eq:by5">\[\begin{equation}
+\tau \sim \mathcal{HC}(0,0.5)
+\tag{13.5}
+\end{equation}\]</span></p>
+<p>これで、階層モデルの式と事前指定をまとめることが可能である。これは、ベイズ・メタ分析に使用できる完全なモデルにつながる。</p>
+<p><span class="math display" id="eq:by5">\[\begin{align}
+\hat\theta_k &amp;\sim \mathcal{N}(\theta_k,\sigma_k^2) \notag \\
+\theta_k &amp;\sim \mathcal{N}(\mu,\tau^2) \notag \\
+\mu &amp;\sim \mathcal{N}(0,1) \notag \\
+\tau &amp;\sim \mathcal{HC}(0,0.5) \tag{13.5}
+\end{align}\]</span></p>
+<p><br></p>
+</div>
+<div id="bayes-ma-R" class="section level2" number="13.3">
+<h2>
+<span class="header-section-number">13.3</span> <em>R</em> でのベイズメタ分析<a class="anchor" aria-label="anchor" href="#bayes-ma-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>
+</p>
+<p>メタ分析のためのベイズモデルを定義したので、いよいよ <em>R</em> で実装してみよう。ここでは、<strong>{brms}</strong> パッケージ <span class="citation">(<a href="references.html#ref-burknerJSS">Bürkner 2017b</a>, <a href="references.html#ref-burkner2017advanced">2017a</a>)</span> を使ってモデルの適合を行う。<strong>{brms}</strong> パッケージは、ベイズ回帰モデルを適合させるための非常に多機能で強力なツールである。マルチレベル (混合効果) モデル、一般化線形モデル、多変量モデル、一般化加法モデルなど、幅広い用途に使用することが可能である。モデルの多くは人レベルのデータを必要とするが、<strong>{brms}</strong> は (重み付けされた) 研究レベルデータを扱うメタ分析にも使用可能である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;&lt;strong&gt;{bbrms}&lt;/strong&gt; パッケージは、ベイズモデリングのための低レベルプログラミング言語である &lt;strong&gt;Stan&lt;/strong&gt; に基づいている。Stan プロジェクトでは、独自のオンラインフォーラム(&lt;a href="https://discourse.mc-stan.org/)%E3%81%8C%E6%B4%BB%E7%99%BA%E3%81%AB%E9%81%8B%E5%96%B6%E3%81%95%E3%82%8C%E3%81%A6%E3%81%8A%E3%82%8A" class="uri"&gt;https://discourse.mc-stan.org/)が活発に運営されており&lt;/a&gt;、&lt;strong&gt;{brms}&lt;/strong&gt; に関する問題を議論することもできる。また、このフォーラムには「メタ分析」タグがあり、関連する可能性のあるスレッドをフィルタリングすることが可能である&lt;/p&gt;'><sup>69</sup></a>。</p>
+<p>モデルの適合を始める前に、まず <strong>{brms}</strong> パッケージをインストールし、ロードする必要がある。</p>
+<div class="sourceCode" id="cb452"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/paul-buerkner/brms">brms</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<div id="モデルの適合-1" class="section level3" number="13.3.1">
+<h3>
+<span class="header-section-number">13.3.1</span> モデルの適合<a class="anchor" aria-label="anchor" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%81%A9%E5%90%88-1"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>このデータセットには、大学生における「第3の波」心理療法の効果を調査したメタ分析からの情報が含まれている (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a>)。モデルを適合させる前に、まず、全体の効果量 <span class="math inline">\(\mu\)</span> と研究間の異質性 <span class="math inline">\(\tau\)</span> の事前分布を指定しよう。前に、<span class="math inline">\(\mu \sim \mathcal{N}(0,1)\)</span> と <span class="math inline">\(\tau \sim \mathcal{HC}(0,0.5)\)</span> と定義した。</p>
+<p>分布を指定するには、<code>prior</code> 関数を使用する。この関数は2つの引数を取る。最初の引数では、分布パラメータを含む、事前分布として想定される分布を指定する。2番目の引数では、事前分布の <code>class</code> を定義する必要がある。<span class="math inline">\(\mu\)</span> の場合、母集団レベルの固定効果であるため、適切なクラスは <code>Intercept</code> である。<span class="math inline">\(\tau\)</span> の場合は、分散 (より正確には、<strong>標準偏差</strong>) なので、クラスは <code>sd</code> である。両方の prior を <code>prior</code> 関数で定義し、それらを連結したものを <code>priors</code> という名前で保存する。</p>
+<div class="sourceCode" id="cb453"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">priors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">prior</span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>,</span>
+<span>            <span class="fu">prior</span><span class="op">(</span><span class="fu">cauchy</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>さて、次にモデルの適合を行う。これを行うには、<strong>{brms}</strong> の <code>brm</code> 関数を使用する。この関数には多くの引数があるが、私たちに関係するのはごく一部である。</p>
+<p>引数 <strong><code>formula</code></strong> には、モデルの数式が指定される。<strong>{brms}</strong> パッケージは回帰式の表記法を用いており、アウトカム (ここでは観測された効果量) <code>y</code> が一つ以上の予測変数 <code>x</code> によって予測されることを表している。チルダ ( <code>~</code> ) は、<code>y ~ x</code> という予測関係があることを指定するために使用される。</p>
+<p>メタ分析はやや特殊で、効果量を予測する変数を持っていない (メタ回帰を実行する場合を除く)。つまり、<strong>切片のみ</strong>のモデルであることを示すために、<code>x</code> を <code>1</code> に置き換える必要がある。さらに、単純に各研究の効果量をそのまま <code>y</code> に使うことはできないので、<code>y|se(se_y)</code> を使う。また、精度の高い研究 (すなわち、サンプルサイズ) にはより大きな重みを与える必要がある。ここで、<code>se(se_y)</code> の部分は、データセット中の各効果量 <code>y</code> の標準誤差を表している。</p>
+<p>ランダム効果モデルを使用したい場合、最後のステップは、式の右側にランダム効果項 <code>(1|study)</code> を追加することである。これは、<code>y</code> の効果量が研究内で入れ子になっていると仮定し、その真の効果量は、真の効果量の包括的な母集団からランダムに抽出されたものであることを指定するものである。固定効果モデルを使用したい場合は、この項を省略すればよい。したがって、ランダム効果モデルの一般的な完全式は、次のようになる。<code>y|se(se_y) ~ 1 + (1|random)</code>。モデルの計算式の詳細については、コンソールで <code>?brmsformula</code> と入力すると、ドキュメントが表示される。</p>
+<p>他の引数はかなり単純である。<code>prior</code> には、モデルに定義したい prior を指定する。この例では、以前に作成した <code>priors</code> オブジェクトを代入することが可能である。<code>iter</code> 引数は、MCMC アルゴリズムの反復回数を指定する。モデルが複雑であればあるほど、この数値は大きくなるはずである。しかし、反復回数が多ければ多いほど、関数が終了するまでに時間がかかるということでもある。最後に、<code>data</code> を指定する。ここでは、データセットの名前を指定する。</p>
+<p>適合したベイズメタ分析モデルを <code>m.brm</code> という名前で保存する。コードは以下のようになる。</p>
+<div class="sourceCode" id="cb454"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.brm</span> <span class="op">&lt;-</span> <span class="fu">brm</span><span class="op">(</span><span class="va">TE</span><span class="op">|</span><span class="fu">se</span><span class="op">(</span><span class="va">seTE</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">Author</span><span class="op">)</span>,</span>
+<span>             data <span class="op">=</span> <span class="va">ThirdWave</span>,</span>
+<span>             prior <span class="op">=</span> <span class="va">priors</span>,</span>
+<span>             iter <span class="op">=</span> <span class="fl">4000</span><span class="op">)</span></span></code></pre></div>
+<p>ベイズ法は、以前取り上げた標準的なメタ分析手法に比べ、計算量が非常に多いことに注意。そのため、サンプリングが完了するまで数分かかる場合がある。</p>
+<p><br></p>
+</div>
+<div id="収束性とモデルの妥当性の評価" class="section level3" number="13.3.2">
+<h3>
+<span class="header-section-number">13.3.2</span> 収束性とモデルの妥当性の評価<a class="anchor" aria-label="anchor" href="#%E5%8F%8E%E6%9D%9F%E6%80%A7%E3%81%A8%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E5%A6%A5%E5%BD%93%E6%80%A7%E3%81%AE%E8%A9%95%E4%BE%A1"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>結果の解析を始める前に、モデルが<strong>収束</strong>すること (つまり、MCMC アルゴリズムが最適解を見つること) を確認する必要がある。もし収束しなければ、パラメータは信頼できないので、解釈すべきではない。収束しないことはベイズモデルで頻繁に起こり、反復回数 (<code>iter</code>) を大きくしモデルを再実行することで解決することが多い。モデルの収束と全体的な妥当性を評価するために、常に2つのことを行うべきである。まず、パラメータ推定値の <span class="math inline">\(\hat{R}\)</span> (「R ハット」と読む) 値をチェックし、次に、<strong>事後予測チェック</strong> (posterior predictive checks) を行う。</p>
+<p><span class="math inline">\(\hat{R}\)</span> の値は、ベイジアンネットワークメタ分析 (Chapter <a href="netwma.html#bayesian-model-convergence">12.3.3.5</a> ) を議論する際にすでに取り上げた <strong>Potential Scale Reduction Factor</strong> (PSRF) を表している。推定 <span class="math inline">\(\hat{R}\)</span> 値は 1.01 より小さいはずである。これを確認するために、<code>m.brm</code> オブジェクトの <code>summary</code> を生成しよう。</p>
+<div class="sourceCode" id="cb455"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.brm</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: TE | se(seTE) ~ 1 + (1 | Author) 
+##    Data: ThirdWave (Number of observations: 18) 
+## Samples: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
+##          total post-warmup samples = 8000
+## 
+## Group-Level Effects: 
+## ~Author (Number of levels: 18) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS 
+## sd(Intercept)     0.29      0.10     0.11     0.51 1.00     2086   
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS 
+## Intercept     0.57      0.09     0.39     0.76 1.00     3660    
+## 
+##
+## [...]
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, 
+## Bulk_ESS and Tail_ESS are effective sample size measures, 
+## and Rhat is the potential scale reduction factor on split 
+## chains (at convergence, Rhat = 1).</code></pre>
+<p>見ての通り、両パラメータの <code>Rhat</code> 値は 1 であり、収束した。つまり、結果を解釈できることを意味する。</p>
+<p>一方、事後予測チェックでは、事後予測分布からランダムに抽出してデータをシミュレートし、観測データと比較する。モデルが収束してデータをよく捉えていれば、再現分布の密度は観測データの密度とほぼ同じになると予想される。これは、関数 <code>pp_check</code> の出力で簡単に確認することが可能である。</p>
+<div class="sourceCode" id="cb457"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pp_check</span><span class="op">(</span><span class="va">m.brm</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/ppcheck_sep.png" width="50%" style="display: block; margin: auto;"></div>
+<p></p>
+<p><br></p>
+</div>
+<div id="結果の解釈" class="section level3" number="13.3.3">
+<h3>
+<span class="header-section-number">13.3.3</span> 結果の解釈<a class="anchor" aria-label="anchor" href="#%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A7%A3%E9%87%88"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>まず、要約出力の <code>Group-Level Effects</code> を見ることによって、結果の解釈を始めていこう。このセクションは、数式で定義したランダム効果のために予約されている。ランダム効果のメタ分析モデルを適用したので、個々の研究を意味する変数 <code>~Author</code> は、ランダム切片でモデル化された。前に説明したように、これはレベル２において、各研究がそれ自身の「真の」効果量を持ち、それは真の効果量の包括的な分布からサンプルされた、というの仮定を表している。また、グループレベルの効果は 18 あり、これは結果のデータ中の <span class="math inline">\(K =\)</span> 18 件の研究に対応している。</p>
+<p>研究間異質性の推定値 <code>sd(Intercept)</code> である <span class="math inline">\(\tau =\)</span> 0.29 である、したがって、prior を設定する際の最初の「最良の推測」に近いものである。<code>ranef</code> 関数を使用すると、プール効果から各研究の「真の」効果量の推定偏差を抽出することも可能である。</p>
+<div class="sourceCode" id="cb458"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">m.brm</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## $Author
+## , , Intercept
+##                           Estimate Est.Error         Q2.5       Q97.5
+## Call et al.             0.06836636 0.1991649 -0.327463365  0.47663987
+## Cavanagh et al.        -0.14151644 0.1767123 -0.510165576  0.18799272
+## DanitzOrsillo           0.48091338 0.2829719 -0.003425284  1.08636421
+## de Vibe et al.         -0.31923470 0.1454819 -0.612269461 -0.03795683
+## Frazier et al.         -0.11388029 0.1497128 -0.417029387  0.17085917
+## [...]</code></pre>
+<p>次に解釈できるのは、<code>Population-Level Effects</code> である。このセクションは、モデル化した「固定」母集団パラメータを表す。ここでは <span class="math inline">\(\mu\)</span> のことで、メタ分析の全体的な効果量である。</p>
+<p></p>
+<p>出力では、推定値は (バイアス補正された) SMD が 0.57 であり、95％信用 (確信) 区間は95％CrI: 0.39-0.76であることがわかる。これは、このメタ分析で研究された介入は、中程度の大きさの全体的な効果を有することを示している。</p>
+<p>これはベイズモデルなので、<span class="math inline">\(p\)</span> -値は見当たらない。しかし、この例は、古典的な有意性検定に頼ることなく、合理的な推論を行うことができることを強調するものである。頻度論的なメタ分析になりベイズモデルの利点として、推定したいパラメータを<strong>確率的に</strong>モデル化することができる。ベイズモデルで、興味のあるパラメータを推定するだけでなく、<span class="math inline">\(\tau^2\)</span> と <span class="math inline">\(\mu\)</span> の事後分布全体を推定するには、<code>posterior_samples</code> 関数を使用するだけでよい。</p>
+<div class="sourceCode" id="cb460"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">post.samples</span> <span class="op">&lt;-</span> <span class="fu">posterior_samples</span><span class="op">(</span><span class="va">m.brm</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"^b"</span>, <span class="st">"^sd"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">post.samples</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] "b_Intercept"          "sd_Author__Intercept"</code></pre>
+<p>この結果、データフレームには2つの列が含まれる。<code>b_Intercept</code> はプール効果量 <span class="math inline">\(\tau\)</span> の事後サンプルデータ、<code>sd_Author_Intercept</code> は研究間異質性データである。列の名前をより分かりやすくするために、<code>smd</code> と <code>tau</code> に改名しよう。</p>
+<div class="sourceCode" id="cb462"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">post.samples</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"smd"</span>, <span class="st">"tau"</span><span class="op">)</span></span></code></pre></div>
+<p></p>
+<p><code>post.samples</code> のデータを用いて、事後分布の<strong>密度プロット</strong>を作成してみよう。プロットには、<strong>{ggplot2}</strong> パッケージを使用する。</p>
+<div class="sourceCode" id="cb463"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">smd</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">post.samples</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"lightblue"</span>,                <span class="co"># 色を指定</span></span>
+<span>               color <span class="op">=</span> <span class="st">"lightblue"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">0</span>,                               <span class="co"># 平均に点を追加</span></span>
+<span>             x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">post.samples</span><span class="op">$</span><span class="va">smd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu">italic</span><span class="op">(</span><span class="va">SMD</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>       y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">tau</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">post.samples</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"lightgreen"</span>,               <span class="co"># 色を指定</span></span>
+<span>               color <span class="op">=</span> <span class="st">"lightgreen"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">0</span>, </span>
+<span>             x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">post.samples</span><span class="op">$</span><span class="va">tau</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>        <span class="co"># 平均に点を追加</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">tau</span><span class="op">)</span>,</span>
+<span>       y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="images/posterior1_sep.png" width="49%"><img src="images/posterior2_sep.png" width="49%"></p>
+<p>事後分布はほぼ、一峰性の正規分布に従い、<span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau\)</span> の推定値付近でピークを示すことがわかる。</p>
+<p>ベイズ法は、関心のあるパラメータの実際のサンプル分布を作成するということは、<span class="math inline">\(\mu\)</span> または <span class="math inline">\(\tau\)</span> がある特定の値より大きいか小さいかという<strong>正確な確率</strong>を計算することができるということである。以前の文献で、介入の効果が SMD = 0.30 以下であれば、もう意味がないことがわかったとする。そこで、このメタ分析における真の全体効果が SMD = 0.30 より小さい確率を、このモデルに基づいて計算してみよう。</p>
+<p></p>
+<p>これは、<strong>経験的累積分布関数</strong> (Empirical Cumulative Distribution Function, ECDF) を見ることによって行うことが可能である。ECDF は、ある特定の値 <span class="math inline">\(X\)</span> を選択することができ、提供されたデータに基づいて、ある値 <span class="math inline">\(x\)</span> が <span class="math inline">\(X\)</span> より小さい確率を返す。この例での <span class="math inline">\(\mu\)</span> の事後分布の ECDF は、以下のようになる。</p>
+<div class="inline-figure"><img src="images/ecdf_sep.png" width="50%" style="display: block; margin: auto;"></div>
+<p><code>ECDF</code> 関数を使って、 <em>R</em> で ECDF を定義し、プールした効果が 0.30 より小さい確率を調べることができる。コードは以下のようになる。</p>
+<div class="sourceCode" id="cb464"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">smd.ecdf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ecdf.html">ecdf</a></span><span class="op">(</span><span class="va">post.samples</span><span class="op">$</span><span class="va">smd</span><span class="op">)</span></span>
+<span><span class="fu">smd.ecdf</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.002125</code></pre>
+<p>0.21% ということは、プール効果が 0.30 より小さい確率は非常に低いことがわかる。このカットオフが有効であると仮定すると、このメタ分析で見出された介入の全体的な効果は、意味のあるものである可能性が非常に高いということになる。</p>
+<p><br></p>
+</div>
+<div id="フォレストプロットの生成" class="section level3" number="13.3.4">
+<h3>
+<span class="header-section-number">13.3.4</span> フォレストプロットの生成<a class="anchor" aria-label="anchor" href="#%E3%83%95%E3%82%A9%E3%83%AC%E3%82%B9%E3%83%88%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E7%94%9F%E6%88%90"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>
+</p>
+<p>これまで見てきたように、ベイズモデルによって、そのサンプル事後分布を抽出することが可能である。これは、モデルが与えられたときの特定の値の確率を直接評価するのに非常に役立つ。また、この機能を利用して、非常に有益で見栄えのする拡張<strong>フォレストプロット</strong> (Chapter <a href="forest.html#forest">6</a>) を作成することも可能である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;ここで紹介するコードの一部は、Matti Vuorre &lt;span class="citation"&gt;(&lt;a href="references.html#ref-vuorre2016bayesian"&gt;2016&lt;/a&gt;)&lt;/span&gt; が書いた &lt;a href="https://mvuorre.github.io/posts/2016-09-29-bayesian-meta-analysis/"&gt;blog post&lt;/a&gt; からインスピレーションを受けたものである&lt;/p&gt;'><sup>70</sup></a>。</p>
+<p>残念ながら、現在のところ、<strong>{brms}</strong> モデルから直接フォレストプロットを作成するパッケージは整備されていない。しかし、<strong>{tidybayes}</strong> パッケージ <span class="citation">(<a href="references.html#ref-tidybayes">Kay 2020</a>)</span> の関数を使用することにより、自分で作成することが可能である。そこで、まずパッケージを読み込んでから先に進もう。</p>
+<div class="sourceCode" id="cb466"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mjskay.github.io/tidybayes/">tidybayes</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggridges/">ggridges</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/glue">glue</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org">stringr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://forcats.tidyverse.org/">forcats</a></span><span class="op">)</span></span></code></pre></div>
+<p>プロットを作成する前に、データを準備する必要がある。特に、<strong>各研究の事後分布を個別に</strong>抽出する必要がある (フォレストプロットは各研究の特定の効果量も描写しているため)。これを実現するために、<strong>{tidybayes}</strong> パッケージの <code>spread_draws</code> 関数を使用することが可能である。この関数は3つの引数を入力として必要とする。適合 <strong>{brms}</strong> モデル、結果をインデックス化するランダム効果因子、そして抽出したいパラメータ (ここでは固定項: 効果量を抽出したいので <code>b_Intercept</code>) である。</p>
+<p>パイプ演算子を使うことで、出力を直接操作することが可能である。<strong>{dplyr}</strong> の <code>mutate</code> 関数を用いて、各研究の推定偏差にプール効果量 <code>b_Intercept</code> を加算して、各研究の実際の効果量を計算する。その結果を <code>study.draws</code> として保存する。</p>
+<div class="sourceCode" id="cb467"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">study.draws</span> <span class="op">&lt;-</span> <span class="fu">spread_draws</span><span class="op">(</span><span class="va">m.brm</span>, <span class="va">r_Author</span><span class="op">[</span><span class="va">Author</span>,<span class="op">]</span>, <span class="va">b_Intercept</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>b_Intercept <span class="op">=</span> <span class="va">r_Author</span> <span class="op">+</span> <span class="va">b_Intercept</span><span class="op">)</span></span></code></pre></div>
+<p>次に、同様の方法でプール効果の分布を生成したい (フォレストプロットでは、効果の要約は通常最後の行に表示されるため)。そこで、先ほどのコードを少しアレンジして、プール効果だけを得るために第2引数を削除する。<code>mutate</code> の呼び出しは、<code>"Author"</code> という追加の列を追加するだけである。その結果を <code>pooled.effect.draws</code> という名前で保存する。</p>
+<div class="sourceCode" id="cb468"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pooled.effect.draws</span> <span class="op">&lt;-</span> <span class="fu">spread_draws</span><span class="op">(</span><span class="va">m.brm</span>, <span class="va">b_Intercept</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Author <span class="op">=</span> <span class="st">"Pooled Effect"</span><span class="op">)</span></span></code></pre></div>
+<p>次に、<code>study.draws</code> と <code>pooled.effect.draws</code> を一つのデータフレームにバインドしている。そして、パイプを再び立ち上げ、まず <code>ungroup</code> を呼び出し、次に <code>mutate</code> を用いて、(1) 研究ラベルをきれいにし (ドットをスペースに置き換えるなど)、(2) 研究因子レベルを効果量 (高から低) で並べ替える。その結果、プロットに必要なデータができあがり、<code>forest.data</code> として保存する。</p>
+<div class="sourceCode" id="cb469"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">forest.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html">bind_rows</a></span><span class="op">(</span><span class="va">study.draws</span>, </span>
+<span>                         <span class="va">pooled.effect.draws</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Author <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace_all</a></span><span class="op">(</span><span class="va">Author</span>, <span class="st">"[.]"</span>, <span class="st">" "</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Author <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span><span class="op">(</span><span class="va">Author</span>, <span class="va">b_Intercept</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>最後に、フォレストプロットは各研究の効果量 (SMD と信用 (確信) 区間) も表示する必要がある。そのために、新しく作成した <code>forest.data</code> データセットを使用し、<code>Author</code> でグループ化し、<code>mean_qi</code> 関数を使用してこれらの値を計算する。出力は <code>forest.data.summary</code> という名前で保存する。</p>
+<div class="sourceCode" id="cb470"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">forest.data.summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">forest.data</span>, <span class="va">Author</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu">mean_qi</span><span class="op">(</span><span class="va">b_Intercept</span><span class="op">)</span></span></code></pre></div>
+<p>これで、<strong>{ggplot2}</strong> パッケージでフォレストプロットを生成する準備が整った。プロットを生成するコードは次のようなものである。</p>
+<div class="sourceCode" id="cb471"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">b_Intercept</span>, </span>
+<span>           <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">Author</span>, <span class="st">"Pooled Effect"</span>, </span>
+<span>                   after <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>       data <span class="op">=</span> <span class="va">forest.data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  </span>
+<span>  <span class="co"># プール効果と信頼区間に縦線を追加</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu">fixef</span><span class="op">(</span><span class="va">m.brm</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>, </span>
+<span>             color <span class="op">=</span> <span class="st">"grey"</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu">fixef</span><span class="op">(</span><span class="va">m.brm</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, </span>
+<span>             color <span class="op">=</span> <span class="st">"grey"</span>, linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, color <span class="op">=</span> <span class="st">"black"</span>, </span>
+<span>             size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  </span>
+<span>  <span class="co"># 密度を追加</span></span>
+<span>  <span class="fu">geom_density_ridges</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"blue"</span>, </span>
+<span>                      rel_min_height <span class="op">=</span> <span class="fl">0.01</span>, </span>
+<span>                      col <span class="op">=</span> <span class="cn">NA</span>, scale <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                      alpha <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_pointintervalh</span><span class="op">(</span>data <span class="op">=</span> <span class="va">forest.data.summary</span>, </span>
+<span>                      size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  </span>
+<span>  <span class="co"># テキストとラベルを追加</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_if</a></span><span class="op">(</span><span class="va">forest.data.summary</span>, </span>
+<span>                             <span class="va">is.numeric</span>, <span class="va">round</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"{b_Intercept} [{.lower}, {.upper}]"</span><span class="op">)</span>, </span>
+<span>        x <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>, hjust <span class="op">=</span> <span class="st">"inward"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Standardized Mean Difference"</span>, <span class="co"># 要約</span></span>
+<span>       y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/tidybayes_sep.png" width="80%" style="display: block; margin: auto;"></div>
+
+<div class="boximportant">
+<p><strong>観測に基づく効果量とモデルに基づく効果量</strong></p>
+<p>ここで一つ、非常に重要なことを述べておこう。フォレストプロットに表示されている効果量は、元の研究の<strong>観測</strong>された効果量では<strong>なく</strong>、ベイズモデルに基づいた研究の効果量 (<span class="math inline">\(\theta_k\)</span>) の推定値である。フォレストプロットで示された点は、<code>ranef</code> を用いてランダム効果を抽出した際に見た研究ごとの推定値と同等である (ただし、これらの値はプールされた効果を中心にしたもの)。</p>
+<p>さらに、効果量が非常に大きい研究 (例えば、“DanitzOrsillo” や “Shapiro et al.” などの外れ値) の値を見ると、モデルベースの効果量は、最初の観測値よりも<strong>全体効果 <span class="math inline">\(\hat\mu\)</span> に 近いことがわかる</strong><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;例えば、“DanitzOrsillo” の観測効果は 1.79 で、モデル内の推定効果は 1.05&lt;/p&gt;"><sup>71</sup></a>。</p>
+<p>この<strong>平均への縮小</strong>は、メタ分析的ランダム効果モデルのような共通の包括的分布を持つ階層的モデルに典型的なものである。推定プロセスにおいて、ベイズモデルは、メタ分析におけるすべての効果量 <span class="math inline">\(k\)</span> によって共同推定される真の効果量の<strong>全体的</strong>分布に関する情報で、<strong>ある</strong>研究 <span class="math inline">\(k\)</span> の効果に関する情報を「補完」する。</p>
+<p>このような<strong>「強さの借用」</strong>は、極端な効果を持つ研究の値が平均値に向かって引っ張られることを意味する <span class="citation">(<a href="references.html#ref-lunn2012bugs">Lunn et al. 2012, chap. 10.1</a>)</span>。この挙動は、比較的少ない情報を提供する研究 (つまり、大きな標準誤差を持つ研究) においてより顕著になる。</p>
+</div>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+</div>
+<div id="演習問題-12" class="section level2" number="13.4">
+<h2>
+<span class="header-section-number">13.4</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-12"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxinfo">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+「従来の」ランダム効果モデルとベイズ型階層モデルの相違点と類似点は何か？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+ベイズメタ分析の頻度論的な利点と比較した場合の利点を3つ挙げよ。
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+弱情報的事前分布と非情報的事前分布の違いを説明しなさい。
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+Half-Cauchy 分布とは何か、なぜベイズメタ分析に有用なのか。
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+ECDF とは何か、ベイズメタ分析にどう使えるか？
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda13">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="要約-9" class="section level2" number="13.5">
+<h2>
+<span class="header-section-number">13.5</span> 要約<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84-9"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>メタ分析は頻度論的な統計で行われることが多いが、ベイズメタ分析も可能である。</p></li>
+<li><p>ベイズメタ分析は、ベイズ階層モデルに基づいている。このモデルの核となる考え方は、「従来の」ランダム効果モデルと同じである。ただし、<span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau^2\)</span> 、(情報量が多い、情報量が少ない、または情報量が少ない) <strong>事前分布</strong>を仮定している点が異なる。</p></li>
+<li><p>ベイズメタ分析モデルでは、通常、<strong>弱情報</strong>事前を仮定するのがよいだろう。弱情報的事前は、ある値が他の値よりも信頼性が高いという<strong>弱い</strong>信念を表すために使用される。</p></li>
+<li><p>研究間異質性分散 <span class="math inline">\(\tau^2\)</span> の事前分布を指定するために、Half-Cauchy 分布を使用することができる。Half-Cauchy 分布は、正の値に対してのみ定義され、より重いテールを持つので、このタスクに特に適している。これは、<span class="math inline">\(\tau^2\)</span> の非常に高い値の可能性は低いけれども、まだ非常に可能性があることを表現するために使うことが可能である。</p></li>
+<li><p>ベイズメタ分析モデルを当てはめる際には、(1) モデルが収束するのに十分な<strong>反復回数</strong>を含んでいるかどうかを常に確認すること (例えば、<span class="math inline">\(\hat{R}\)</span> の値を確認するなど)、(2) 異なる事前仕様を用いた<strong>感度分析</strong>を行って結果に対する影響を評価することが重要である。</p></li>
+</ul>
+</div>
+</div>
+
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></div>
+<div class="next"><a href="power.html"><span class="header-section-number">14</span> 検出力分析</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#bayesian-ma"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li><a class="nav-link" href="#bayes-hierarchical-model"><span class="header-section-number">13.1</span> ベイズ型階層モデル</a></li>
+<li><a class="nav-link" href="#priors"><span class="header-section-number">13.2</span> 事前分布の設定</a></li>
+<li>
+<a class="nav-link" href="#bayes-ma-R"><span class="header-section-number">13.3</span> R でのベイズメタ分析</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%81%A9%E5%90%88-1"><span class="header-section-number">13.3.1</span> モデルの適合</a></li>
+<li><a class="nav-link" href="#%E5%8F%8E%E6%9D%9F%E6%80%A7%E3%81%A8%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E5%A6%A5%E5%BD%93%E6%80%A7%E3%81%AE%E8%A9%95%E4%BE%A1"><span class="header-section-number">13.3.2</span> 収束性とモデルの妥当性の評価</a></li>
+<li><a class="nav-link" href="#%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A7%A3%E9%87%88"><span class="header-section-number">13.3.3</span> 結果の解釈</a></li>
+<li><a class="nav-link" href="#%E3%83%95%E3%82%A9%E3%83%AC%E3%82%B9%E3%83%88%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E7%94%9F%E6%88%90"><span class="header-section-number">13.3.4</span> フォレストプロットの生成</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-12"><span class="header-section-number">13.4</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84-9"><span class="header-section-number">13.5</span> 要約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

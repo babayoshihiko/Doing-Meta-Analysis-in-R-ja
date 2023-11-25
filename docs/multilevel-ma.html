@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>10 「マルチレベル」メタ分析 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="高 度な分析へようこそ。このガイドの前のパートでは、ほとんどすべてのメタ分析に非常に関連すると思われるトピックに深く潜ってみよう。この背景を踏まえて、より高度なテクニックに進む。 以下の方法は、基礎となる数学あるいは R...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="10 「マルチレベル」メタ分析 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="高 度な分析へようこそ。このガイドの前のパートでは、ほとんどすべてのメタ分析に非常に関連すると思われるトピックに深く潜ってみよう。この背景を踏まえて、より高度なテクニックに進む。 以下の方法は、基礎となる数学あるいは R...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="10 「マルチレベル」メタ分析 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="高 度な分析へようこそ。このガイドの前のパートでは、ほとんどすべてのメタ分析に非常に関連すると思われるトピックに深く潜ってみよう。この背景を踏まえて、より高度なテクニックに進む。 以下の方法は、基礎となる数学あるいは R...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="active" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="multilevel-ma" class="section level1" number="10">
+<h1>
+<span class="header-section-number">10</span> 「マルチレベル」メタ分析<a class="anchor" aria-label="anchor" href="#multilevel-ma"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/multilevel_felder.jpg"></div>
+<p><br></p>
+<p></p>
+<p><span class="firstcharacter">高</span>
+度な分析へようこそ。このガイドの前のパートでは、ほとんどすべてのメタ分析に非常に関連すると思われるトピックに深く潜ってみよう。この背景を踏まえて、より高度なテクニックに進む。</p>
+<p>以下の方法は、基礎となる数学あるいは <em>R</em> での実装がより複雑であるため、「高度」であるとみなした。しかし、このガイドの前の章を読んでいれば、この後に続く内容を理解し、実装するのに十分な能力を備えているはずである。以下のトピックの多くは、それ自身の本に値するものであり、ここで取り上げるものは、簡単な紹介としてのみ考慮されるべきである。ここで取り上げた内容は、あくまでも簡単な紹介と考えていただきたい。</p>
+<p>最初の章では、「マルチレベル」メタ分析というトピックを扱う。なぜ「マルチレベル 」という言葉をカギカッコで囲むのか、不思議に思われるだろう。ある研究を「マルチレベル」メタ分析と表現することは、暗に「標準的な」メタ分析に比べて特別なものであることを示している。</p>
+<p>しかし、これは正しくはない。あらゆるメタ分析モデルは、結果をプールするために、データのマルチレベル構造を前提にしている <span class="citation">(<a href="references.html#ref-pastor2018multilevel">Pastor and Lazowski 2018</a>)</span>。前の章で、私たちはすでに何度かマルチレベル (メタ分析) モデルを、知らないうちに使っている。</p>
+<p>マルチレベルメタ分析というと、すぐに思いつくのは <strong>3 レベルメタ分析モデル</strong>ではないだろうか。このモデルは、確かに私たちが既に知っている固定効果モデルやランダム効果モデルとは多少異なる。そこで、この章では、まず、なぜメタ分析が自然にデータのマルチレベル構造意味をするのか、そして、従来のメタ分析をどのようにして 3 レベルモデルに拡張できるのかを説明する。また、いつものように、このようなモデルを <em>R</em> でどのように適合させることができるかを、実際の例を使って見ていこう。</p>
+<p><br></p>
+<div id="multilevel-nature" class="section level2" number="10.1">
+<h2>
+<span class="header-section-number">10.1</span> メタ分析のマルチレベル性<a class="anchor" aria-label="anchor" href="#multilevel-nature"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>メタ分析がなぜデフォルトでマルチレベルになるのかを知るために、Chapter <a href="pooling-es.html#rem">4.1.2</a> で説明したランダム効果モデルの式に戻ってみよう。</p>
+<p><span class="math display" id="eq:mlm1">\[\begin{equation}
+\hat\theta_k = \mu + \epsilon_k + \zeta_k
+\tag{10.1}
+\end{equation}\]</span></p>
+<p></p>
+<p>ランダム効果モデルで <span class="math inline">\(\epsilon_k\)</span> (「イプシロン・k」と読む) と <span class="math inline">\(\zeta_k\)</span> (「ゼータ・k」と読む) という項が導入されているのは、2 つの変動源があると仮定しているからだと説明してきた。1つ目は、個々の研究のサンプルエラー( <span class="math inline">\(\epsilon_k\)</span> )によるもので、これにより効果量推定値が真の効果量 <span class="math inline">\(\theta_k\)</span> から差が出ることになる。</p>
+<p>2 つ目の <span class="math inline">\(\zeta_k\)</span> は、研究間の異質性を表している。この異質性は、ある研究 <span class="math inline">\(k\)</span> の真の効果量が、やはり<strong>真の効果量の包括的な分布</strong>の一部に過ぎないという事実によって引き起こされる。この分布は、個々の真の効果量 <span class="math inline">\(\theta_k\)</span> が引き出されたところから導かれる。したがって、ランダム効果モデルにおける私たちの目的は、<span class="math inline">\(\mu\)</span> (「ミュー」と読む) で示される真の効果量の分布の平均を推定することである。</p>
+<p><span class="math inline">\(\epsilon_k\)</span> と <span class="math inline">\(\zeta_k\)</span> の 2 つの誤差項は、メタ分析データにおける「参加者」レベル (レベル 1) と「研究」レベル (レベル2) の 2 つのレベルに対応している。以下の Figure <a href="multilevel-ma.html#fig:multilevel1">10.1</a> は、この構造を象徴している。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:multilevel1"></span>
+<img src="images/multilevel-model_col_sep.png" alt="従来のランダム効果モデルのマルチレベル構造" width="100%"><p class="caption">
+Figure 10.1: 従来のランダム効果モデルのマルチレベル構造
+</p>
+</div>
+<p>最下層 (レベル 1) には、参加者 (研究分野によっては、患者、検体など) がいる。これらの参加者は、より大きな単位であるメタ分析に含まれる研究の一部である。この上にある研究の層は、私たちの第２レベルを構成している。</p>
+<p>メタ分析を行う場合、レベル1のデータは通常すでに「プール」された形で届く (例えば、論文の著者は生データの代わりに研究サンプルの平均と標準偏差を提供してくれる)。しかし、レベル 2 (研究レベル) のプールは、メタ分析の一部として実行されなければならない。伝統的に、このようなタイプのデータは<strong>ネスト</strong>と呼ばれ、参加者が研究内に「ネスト」されていると言うことが可能である。</p>
+<p></p>
+<p>ここで、ランダム効果モデルの式 <a href="multilevel-ma.html#eq:mlm1">(10.1)</a> に戻ってみよう。この式は暗黙のうちにメタ分析データのマルチレベル構造を記述している。これをより明確にするために、式を 2 つに分割し、それぞれが 2 つのレベルのうちの 1 つに対応するようにする必要がある。そうすると、次のような結果が得られる。</p>
+<p><strong>レベル1 (参加者) モデル: </strong></p>
+<p><span class="math display" id="eq:mlm2">\[\begin{equation}
+\hat\theta_k = \theta_k + \epsilon_k
+\tag{10.2}
+\end{equation}\]</span></p>
+<p><strong>レベル2 (研究) モデル: </strong></p>
+<p><span class="math display" id="eq:mlm3">\[\begin{equation}
+\theta_k = \mu + \zeta_k
+\tag{10.3}
+\end{equation}\]</span></p>
+<p>すでにお気づきかもしれないが、最初の式の <span class="math inline">\(\theta_k\)</span> を 2 番目の式の定義に置き換えればよい。そうすると、先ほどのランダム効果モデルの式とまったく同じ式が得られる。固定効果モデルもこのように書くことが可能である。<span class="math inline">\(\zeta_k\)</span> をゼロに設定するだけである。明らかに、私たちのメタ分析モデルは、すでにマルチレベルの特性を 「内蔵」している。これは、私たちのデータでは、参加者が研究内でネストされていると仮定しているので、この特性を示している。</p>
+<p>このように、メタ分析には多階層構造が備わっていることがわかる。データを生成した特定のメカニズムをよりよく捉えるために、この構造をさらに拡張することが可能である。そこで、<strong>3 レベルモデル</strong> <span class="citation">(<a href="references.html#ref-cheung2014modeling">Cheung 2014</a>; <a href="references.html#ref-assink2016fitting">Assink, Wibbelink, et al. 2016</a>)</span> の出番となる。</p>
+<p></p>
+<p>統計的独立性は、メタ分析で効果量をプールするときの中心的な前提条件の一つである。効果量の間に依存関係がある (効果量に相関がある) 場合、異質性を人為的に減少させ、その結果、偽陽性の結果につながる可能性がある。この問題は<strong>分析単位エラー</strong>として知られており、以前すでに取り上げた (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a> 参照)。効果量の依存性は、様々な原因から生じる可能性がある <span class="citation">(<a href="references.html#ref-cheung2014modeling">Cheung 2014</a>)</span>。</p>
+<ul>
+<li><p><strong>個々の研究の著者によって導入された依存性</strong>: 例えば、研究を実施する科学者が複数のサイトからデータを収集したり、複数の介入を一つの対照群と比較したり、同じアウトカムを測定するために異なる質問票を使用したりすることがある。これらのシナリオのすべてにおいて、報告されたデータには何らかの依存性があると考えることが可能である。</p></li>
+<li><p><strong>メタ分析者自身によって導入される依存性</strong>: 例として、ある心理メカニズムに注目したメタ分析を考えてみよう。このメタ分析には、世界の異なる文化圏 (例えば、東アジアと西欧社会) で行われた研究が含まれている。心理メカニズムの種類によっては、同じ文化圏で行われた研究の方が、異なる文化圏で行われた研究よりも結果が似ていることもあり得る。</p></li>
+</ul>
+<p>メタ分析モデルの構造に第 3 の層を組み込むことで、このような依存性を考慮することができる。例えば、異なる質問票に基づく効果量が研究内でネストされているモデルが考えられる。あるいは、研究が文化圏にネストされているモデルを作成することもできる。これにより、次の図に示すような 3 階層のメタ分析モデルが構築される。</p>
+<div class="inline-figure"><img src="images/multilevel-model2_col_sep.png" width="100%" style="display: block; margin: auto;"></div>
+<p></p>
+<p>3 レベルのモデルには 3 つのプール段階があることがわかる。まず、研究者自身が、一次研究の個々の参加者の結果を「プール」し、集約した効果量を報告する。次に、レベル 2 において、これらの効果量は、<span class="math inline">\(\kappa\)</span> (「カッパ」と読む) で示されるいくつかの<strong>クラスタ</strong>内にネストされている。これらのクラスタは、個々の研究 (すなわち、多くの効果量が1つの研究にネストされている)、または研究のサブグループ (すなわち、多くの研究が1つのサブグループにネストされており、各研究は 1 つの効果量にのみ寄与する) のいずれかである可能性がある。</p>
+<p>最後に、集計されたクラスタ効果をプールすると、全体の真の効果量 <span class="math inline">\(\mu\)</span> になる。概念的には、この平均効果は、固定効果モデルまたはランダム効果モデルでプールされた真の効果 <span class="math inline">\(\mu\)</span> (「ミュー」と読む) に非常に近いものである。しかし、その違いは、私たちのデータにおける依存効果量を明示的に考慮したモデルに基づいている点にある。</p>
+<p>3 レベルモデルの式は、これまでと同じレベル表記で書き表すことができる。最大の違いは、2 つの数式ではなく、3 つの数式を定義する必要があることだ。</p>
+<p><strong>レベル1モデル: </strong></p>
+<p><span class="math display" id="eq:mlm4">\[\begin{equation}
+\hat\theta_{ij} = \theta_{ij} + \epsilon_{ij}
+\tag{10.4}
+\end{equation}\]</span></p>
+<p><strong>レベル2モデル: </strong></p>
+<p><span class="math display" id="eq:mlm5">\[\begin{equation}
+\theta_{ij} = \kappa_{j} + \zeta_{(2)ij}
+\tag{10.5}
+\end{equation}\]</span></p>
+<p><strong>レベル3モデル: </strong></p>
+<p><span class="math display" id="eq:mlm6">\[\begin{equation}
+\kappa_{j} = \mu + \zeta_{(3)j}
+\tag{10.6}
+\end{equation}\]</span></p>
+<p>ここで、<span class="math inline">\(\hat\theta_{ij}\)</span> は、真の効果量 <span class="math inline">\(\theta_{ij}\)</span> の推定値である。 <span class="math inline">\(ij\)</span> という用語は、「クラスタ <span class="math inline">\(j\)</span> にネストされているある効果量 <span class="math inline">\(i\)</span> 」と読み替えることができる。パラメータ <span class="math inline">\(\kappa_{j}\)</span> はクラスタ <span class="math inline">\(j\)</span> の平均効果量であり、<span class="math inline">\(\mu\)</span> は全体的な平均母集団効果である。前と同じように、これらの数式をつなぎ合わせて、数式を 1 行に減らすことができる。</p>
+<p><span class="math display" id="eq:mlm7">\[\begin{equation}
+\hat\theta_{ij} = \mu + \zeta_{(2)ij} + \zeta_{(3)j} + \epsilon_{ij}
+\tag{10.7}
+\end{equation}\]</span></p>
+<p>ランダム効果モデルとは異なり、この式には<strong>2つの</strong>不均質性項が含まれていることがわかる。一つは <span class="math inline">\(\zeta_{(2)ij}\)</span>で、これはレベル２の<strong>クラスタ内</strong> (within-cluster) 異質性である (つまり、 クラスタ <span class="math inline">\(j\)</span> 内の<strong>真の</strong>効果量は、平均 <span class="math inline">\(\kappa_j\)</span> の分布に従う)。もう一つは <span class="math inline">\(\zeta_{(3)j}\)</span> で、これはレベル 3 の<strong>クラスタ間</strong> (between-cluster) 異質性である。結果、3 レベルメタ分析適合モデルでは、異質性分散 <span class="math inline">\(\tau^2\)</span> は一つではなく、レベル 2 用とレベル 3 用の 2 つ推計しなければならない。</p>
+<p>
+</p>
+<p><strong>{metafor}</strong> パッケージは、特にメタ分析的な 3 レベルモデルの適合に適している。これは、(制限付き) 最尤法を用いて行う。以前は、メタ分析の実行に主に <strong>{meta}</strong> パッケージの関数を使用していた。なぜなら <strong>{meta}</strong> の方が若干専門的でなく、初心者に適しているためである。しかし、Chapter <a href="metareg.html#multiple-metareg-R">8.3.3</a> で見たように、 <strong>{metafor}</strong> パッケージも、データを正しく準備すればかなり使いやすくなっている。具体的にどのように <strong>{metafor}</strong> を使って <em>R</em> の 3 レベルモデルに適合させるかは、次のセクションのトピックになる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;最新バージョンの &lt;strong&gt;{meta}&lt;/strong&gt; は、3 レベルのメタ分析モデルを実装している。Chapter &lt;a href="pooling-es.html#pooling-es-r"&gt;4.2&lt;/a&gt; で扱ったメタ分析のすべてのプール関数には、&lt;code&gt;cluster&lt;/code&gt; という引数が追加されている。この引数で、データセット中の効果量が属する (レベル３) クラスタを含む変数名を定義することができる。引数 &lt;code&gt;cluster&lt;/code&gt; が指定された場合、自動的に階層のある 3 レベルモデルが適合される。例えば、Chapter &lt;a href="pooling-es.html#pre-calculated-es"&gt;4.2.1&lt;/a&gt; のメタ分析を 3 レベルにする場合、&lt;code&gt;metagen(TE, seTE, cluster = InterventionType, data = ThirdWave)&lt;/code&gt; を実行する。しかしながら、&lt;strong&gt;{metafor}&lt;/strong&gt; を使った 3 レベルモデルにも価値はある。第一に、&lt;strong&gt;{meta}&lt;/strong&gt; は、裏で &lt;strong&gt;{metafo}&lt;/strong&gt; を使っている。第二に、この章で扱った &lt;code&gt;rma.mv&lt;/code&gt; 関数は多くのことができる。Chapter &lt;a href="multilevel-ma.html#rve"&gt;10.4&lt;/a&gt; で紹介した「単純な」3 レベル階層モデル以上のことにも使うことができる。&lt;/p&gt;'><sup>46</sup></a>。</p>
+<p><br></p>
+</div>
+<div id="multilevel-R" class="section level2" number="10.2">
+<h2>
+<span class="header-section-number">10.2</span> <em>R</em> で３レベルのメタ分析モデルを適合<a class="anchor" aria-label="anchor" href="#multilevel-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>前述したように、３レベルのメタ分析モデルを適合させるためには、 <strong>{metafor}</strong> パッケージが必要である。そのため、まずライブラリからロードする必要がある。</p>
+<div class="sourceCode" id="cb306"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.metafor-project.org">metafor</a></span><span class="op">)</span></span></code></pre></div>
+<p>この例では、<code>Chernobyl</code> データセットを使用する。このデータセットは、<a href="https://www.britannica.com/event/Chernobyl-disaster">1986年のチェルノブイリ原発事故</a> <span class="citation">(<a href="references.html#ref-moller2015strong">Møller and Mousseau 2015</a>)</span> によって引き起こされた電離放射線 (「核汚染」) とヒトの突然変異率の相関を調べた実際のメタ分析に緩く基づいている。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“Chernobyl” データセット</strong>
+</p>
+<p>
+<code>Chernobyl</code> データセットは <strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(TherapyFormats)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが使用できるようになる。
+</p>
+<p>
+<strong>{dmetar}</strong> がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/Chernobyl.rda">Internet</a>
+から <em>.rda</em>
+ファイルとしてデータセットをダウンロードし、作業ディレクトリに保存してから、R
+Studio ウィンドウでクリックしてインポートすることが可能である。
+</p>
+</div>
+<div class="sourceCode" id="cb307"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load data set from 'dmetar'</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"Chernobyl"</span><span class="op">)</span></span></code></pre></div>
+<p>データの一般的な構造を見るために、<code>head</code> 関数を使用しよう。これは、先ほどグローバル環境にロードしたデータフレームの最初の 6 行を表示する。</p>
+<div class="sourceCode" id="cb308"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">Chernobyl</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##                       author  cor   n    z se.z var.z radiation es.id
+## 1 Aghajanyan &amp; Suskov (2009) 0.20  91 0.20 0.10  0.01       low  id_1
+## 2 Aghajanyan &amp; Suskov (2009) 0.26  91 0.27 0.10  0.01       low  id_2
+## 3 Aghajanyan &amp; Suskov (2009) 0.20  92 0.20 0.10  0.01       low  id_3
+## 4 Aghajanyan &amp; Suskov (2009) 0.26  92 0.27 0.10  0.01       low  id_4
+## 5     Alexanin et al. (2010) 0.93 559 1.67 0.04  0.00       low  id_5
+## 6     Alexanin et al. (2010) 0.44 559 0.47 0.04  0.00       low  id_6</code></pre>
+<p></p>
+<p>このデータセットには 8 つの列がある。最初の列は <code>author</code> で、研究の名前が表示されている。<code>cor</code> 列は放射線被曝と突然変異率の (未変換の) 相関を示し、<code>n</code> はサンプルサイズを示す。<code>z</code>、<code>se.z</code>、<code>var.z</code> 列は Fisher- <span class="math inline">\(z\)</span> で変換した相関 (Chapter <a href="effects.html#pearson-cors">3.2.3.1</a>) とその標準誤差および分散である。<code>radiation</code> 列はモデレーターとして機能し、効果量を全体的に放射線被曝量の低い (low) サブグループと高いサブグループに分割する。<code>es.id</code> 列には、各効果量 (すなわち、データフレームの各行) の識別用 ID を格納している。</p>
+<p>このデータセットで特徴的なことは、 <code>author</code> に繰り返し入力されていることである。これは、このメタ分析におけるほとんどの研究が、1つ以上の観察された効果量に貢献しているからである。いくつかの研究では、突然変異を測定するためにいくつかの方法を用いたり、複数のタイプの指標となる人物 (例えば、被曝した両親とその子孫) を用いたりしており、これらすべてが研究ごとに複数の効果をもたらす。</p>
+<p>この構造を見ると、このデータセットの効果量が独立していないことは明らかである。これらはネスト構造になっており、様々な効果量が 1 つの研究にネストされている。したがって、私たちのデータにおけるこれらの依存性を適切にモデル化するために、3 レベルのメタ分析に適合させることは良いアイデアだろう。</p>
+<p><br></p>
+<div id="モデルの適合" class="section level3" number="10.2.1">
+<h3>
+<span class="header-section-number">10.2.1</span> モデルの適合<a class="anchor" aria-label="anchor" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%81%A9%E5%90%88"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>3 レベルのメタ分析モデルは、<strong>{metafor}</strong> の <code>rma.mv</code> 関数を使用して適合させることが可能である。以下は、この関数の最も重要な引数のリストと、それらの引数の指定方法である。</p>
+<ul>
+<li><p><strong><code>yi</code></strong>. 計算された効果量を含むデータセットの列の名前。この例では、これは <code>z</code> である。Fisher- <span class="math inline">\(z\)</span> で変換された相関は、“未変換”の相関よりも数学的特性が優れていることがある。</p></li>
+<li><p><strong><code>V</code></strong>. 計算された効果量の <strong>分散</strong> を含む、データセットの列の名前。この場合、<code>var.z</code> となる。また、<span class="math inline">\(SE_k^2 = v_k\)</span> であるから、効果量の <strong>2 乗</strong>標準誤差を使用することも可能である。</p></li>
+<li><p><strong><code>slab</code></strong>. <strong>{meta}</strong> の <code>studlab</code> と同様に、研究ラベルを含むデータセットの列の名前。</p></li>
+<li><p><strong><code>data</code></strong>. データセットの名前。</p></li>
+<li><p><strong><code>test</code></strong>. 回帰係数に適用する検定。<code>"z"</code> (デフォルト) と <code>"t"</code> (推奨; Knapp-Hartung 法に類似した検定を使用) から選択することが可能である。</p></li>
+<li><p><strong><code>method</code></strong>. モデルのパラメータを推定するために用いる手法。REML (推奨; 制限付き最尤法) と ML (最尤法) の両方が利用可能。他のタイプの研究間不均一性推定量 (例えば Paule-Mandel) はここでは適用できないことに注意しておこう。</p></li>
+</ul>
+<p>しかし、最も重要な議論は、<strong><code>random</code></strong>である。間違いなく、最も厄介なものでもある。この引数では、(ネストされた) ランダム効果を定義する数式を指定する。3 レベルモデルの場合、式は常に <code>~ 1</code> で始まり、縦棒 <code>|</code> が続く。縦棒の後ろでは、グループ化変数 (研究、測定、地域など) に<strong>ランダム効果</strong>を割り当てる。このグルーピング変数は、各グループに異なる効果 (すなわち切片) を仮定するようにモデルに指示すので、しばしば <strong>ランダム化切片</strong> と呼ばれる。</p>
+<p>3 レベルモデルでは、2 つのグループ化変数がある。1 つはレベル 2 で、もう 1 つはレベル 3 である。私たちは、これらのグルーピング変数がネストになっていると仮定する。すなわち、レベル 2 でのいくつかの効果が一緒になって、レベル 3 でのより大きなクラスタを構成している。</p>
+<p>このようなネストしたランダム効果を仮定するために、<code>rma.mv</code> に特別な方法を指示すことが可能である。これは、スラッシュ (<code>/</code>) を使用して、上位と下位のグループ化変数を分離するものである。<code>/</code> の左側には、レベル 3 (クラスタ) 変数を入れる。右側には、大きなクラスタにネストされた低次の変数を入れる。したがって、式の一般的な構造は <code>~ 1 | cluster/effects_within_cluster</code> のようになる。</p>
+<p>この例では、個々の効果量 (レベル2； <code>es.id</code> で定義) は、研究 (レベル 3; <code>author</code> で定義) 内にネストされていると仮定している。この結果、以下の式が得られる: <code>~ 1 | author/es.id</code>。完全な <code>rma.mv</code> 関数呼び出しは次のようになる。</p>
+<div class="sourceCode" id="cb310"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">full.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">rma.mv</a></span><span class="op">(</span>yi <span class="op">=</span> <span class="va">z</span>, </span>
+<span>                     V <span class="op">=</span> <span class="va">var.z</span>, </span>
+<span>                     slab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                     data <span class="op">=</span> <span class="va">Chernobyl</span>,</span>
+<span>                     random <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">author</span><span class="op">/</span><span class="va">es.id</span>, </span>
+<span>                     test <span class="op">=</span> <span class="st">"t"</span>, </span>
+<span>                     method <span class="op">=</span> <span class="st">"REML"</span><span class="op">)</span></span></code></pre></div>
+<p>出力には <code>full.model</code> という名前を付けることとした。結果の概要を表示すには、<code>summary</code> 関数を使用する。</p>
+<div class="sourceCode" id="cb311"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">full.model</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Multivariate Meta-Analysis Model (k = 33; method: REML)
+## [...]   
+## Variance Components:
+## 
+##             estim    sqrt  nlvls  fixed        factor 
+## sigma^2.1  0.1788  0.4229     14     no        author 
+## sigma^2.2  0.1194  0.3455     33     no  author/es.id 
+## 
+## Test for Heterogeneity:
+## Q(df = 32) = 4195.8268, p-val &lt; .0001
+## 
+## Model Results:
+## 
+## estimate      se    tval    pval   ci.lb   ci.ub 
+##   0.5231  0.1341  3.9008  0.0005  0.2500  0.7963  *** 
+## [...]</code></pre>
+<p>まず、「分散成分」 (Variance Components) を見てみよう。ここでは、モデルの各レベルについて計算されたランダム効果分散を見ることが可能である。最初の <code>sigma^2.1</code> は、レベル 3 の<strong>クラスタ間</strong>分散 (<strong>between</strong> cluster variance) を示している 。この例では、(クラスタがこのモデルにおける研究を表しているため) これは従来のメタ分析における研究間異質性分散 <span class="math inline">\(\tau^2\)</span> に相当する。</p>
+<p>2 番目の分散成分 <code>sigma^2.2</code> は、<strong>クラスタ内</strong>の分散 (<strong>within</strong> cluster variance) (レベル 2) を示している。<code>nlvls</code> の列では、各レベルのグループの数を示している。レベル 3 は 14 グループあり、<span class="math inline">\(K=\)</span> 14 件の研究に相当する。2 行目に示すように、これらの 14 の研究は、33 の効果量を含む。</p>
+<p></p>
+<p><code>Model Results</code> の下に、プール効果の推定値がある。<span class="math inline">\(z=\)</span> 0.52 (95%CI: 0.25–0.80) である。解釈を容易にするために、効果を正規の相関に変換することが推奨される。これは、 <strong>{esc}</strong> パッケージの <code>convert_z2r</code> 関数を使用して行うことが可能である。</p>
+<div class="sourceCode" id="cb313"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/convert_z2r.html">convert_z2r</a></span><span class="op">(</span><span class="fl">0.52</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.4777</code></pre>
+<p>この結果、約 <span class="math inline">\(r \approx\)</span> 0.48 の相関が得られることがわかる。これは大きいといえるだろう。チェルノブイリの放射線被曝と突然変異率の間には、かなりの相関があるようだ。</p>
+<p>出力された「異質性の検定」は、私たちのデータにおける真の効果量の差を指摘している (<span class="math inline">\(p&lt;\)</span> 0.001)。しかし、この結果は、あまり有益ではない。私たちは、私たちのモデルの各レベルによって捕捉された異質性の分散の正確な量に、より興味がある。異質性のどれだけが<strong>研究内</strong>の差 (レベル 2) に起因し、どれだけが<strong>研究間</strong>の差 (レベル 3) に起因しているかを知ることは良いことだろう。</p>
+<p><br></p>
+</div>
+<div id="レベル間の分散分布" class="section level3" number="10.2.2">
+<h3>
+<span class="header-section-number">10.2.2</span> レベル間の分散分布<a class="anchor" aria-label="anchor" href="#%E3%83%AC%E3%83%99%E3%83%AB%E9%96%93%E3%81%AE%E5%88%86%E6%95%A3%E5%88%86%E5%B8%83"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p><span class="math inline">\(I^2\)</span> のマルチレベル版を計算することでこの疑問に答えることができる <span class="citation">(<a href="references.html#ref-cheung2014modeling">Cheung 2014</a>)</span>。従来のメタ分析では、<span class="math inline">\(I^2\)</span> はサンプリングエラーに起因しない変動量を表した (Chapter <a href="heterogeneity.html#i-squared">5.1.2</a> ;すなわち、研究間異質性)。3 レベルモデルでは、この異質性の分散は 2 つの部分に分けられる。1 つは<strong>クラスタ内の</strong>真の効果量の差に起因し、もう 1 つは<strong>クラスタ間の</strong>変量に起因するものである。したがって、レベル 2 またはレベル 3 のいずれかに関連する全変動のパーセンテージを定量化する 3 つの値 (<span class="math inline">\(I^2\)</span>) が存在する。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“var.comp” 関数</strong>
+</p>
+<p>
+<code>var.comp</code> 関数は、<strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+がインストールされ、コンピュータに読み込まれると、この関数を使用できるようになる。もし、<strong>{dmetar}</strong>
+をインストールして<strong>いない</strong>場合は、以下の手順でインストールできる。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+関数のソースコードにアクセスする <a href="https://raw.githubusercontent.com/MathiasHarrer/dmetar/master/R/power.analysis.subgroup.R">オンライン</a>.
+</li>
+<li>
+ソースコード全体をコンソール (R Studio の左下ペイン)
+にコピー＆ペーストし、Enterキーを押して、 <em>R</em>
+に関数を「学習」させる。
+</li>
+<li>
+<strong>{ggplot2}</strong>
+パッケージがインストールされ、ロードされていることを確認する。
+</li>
+</ol>
+</div>
+<p><code>var.comp</code> 関数は、適合した <code>rma.mv</code> モデルのみを入力として必要とする。出力を <code>i2</code> に保存し、<code>summary</code> 関数で結果を表示する。</p>
+<div class="sourceCode" id="cb315"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">i2</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://dmetar.protectlab.org/reference/mlm.variance.distribution.html">var.comp</a></span><span class="op">(</span><span class="va">full.model</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">i2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##         % of total variance    I2
+## Level 1            1.254966   ---
+## Level 2           39.525499 39.53
+## Level 3           59.219534 59.22
+## Total I2: 98.75%</code></pre>
+<p>出力では、3 つのレベルのそれぞれに起因する全分散のパーセンテージが表示される。レベル 1 のサンプル誤差の分散は非常に小さく、およそ 1% を占めるだけである。クラスタ内の異質性の分散である <span class="math inline">\(I^2_{\text{Level 2}}\)</span> の値ははるかに高く、合計で約 40% になる。しかし、最も大きな割合を占めるのはレベル 3 である。クラスタ間 (ここでは研究間) の異質性は、私たちのデータにおける全変動のうち、<span class="math inline">\(I^2_{\text{Level 3}}=\)</span> 59% を占めている。</p>
+<p>全体として、3 番目のレベルではかなりの研究間異質性があることを示している。しかし、全体の分散の 3 分の 1 以上という大きな割合が、<strong>研究内</strong>の差 (differences within studies) によって説明できることもわかる。</p>
+<p>また、<code>var.comp</code> の出力を <code>plot</code> 関数に代入すると、この全分散の分布を視覚化することができる。</p>
+<div class="sourceCode" id="cb317"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">i2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-277-1.png" width="55%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="モデルの比較" class="section level3" number="10.2.3">
+<h3>
+<span class="header-section-number">10.2.3</span> モデルの比較<a class="anchor" aria-label="anchor" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E6%AF%94%E8%BC%83"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>3 レベルモデルの適合は、2 レベルモデルよりもデータの変動をよりよく表す場合にのみ意味がある。2 レベルモデルが 3 レベルモデルに匹敵する適合度を示すことがわかったら、<strong>オッカムのカミソリ</strong>を適用すべきである。というのも、3 レベルモデルより 2 レベルモデルの方が複雑でなく、かつデータをうまく説明できることがある。</p>
+<p>幸運なことに、<strong>{metafor}</strong> パッケージは、3 レベルモデルとレベルを一つ取り除いたモデルを比較することが可能である。これを行うには、再び <code>rma.mv</code> 関数を使用した。しかし、今回は、1 つのレベルの分散成分をゼロに設定した。これは、 <code>sigma2</code> パラメータを指定することにより可能である。<code>c(level 3, level 2)</code>という一般的な形式のベクトルを用意する必要がある。このベクトルには、分散成分をゼロにする場合は <code>0</code> を記入し、データからパラメータを推定する場合は <code>NA</code> を使用する。</p>
+<p>この例では、個々の効果量を研究に入れ込むことでモデルが改善されたかどうかを確認することは理にかなっている。したがって、私たちは、研究間の異質性を表すレベル3分散がゼロに設定されたモデルを適合させる。これは、すべての効果量が独立であると仮定する (独立でないことは分かっている) 単純なランダム効果モデルの適合と同じである。レベル 3 はゼロで一定なので、<code>sigma2</code> の入力は <code>c(0, NA)</code> となる。この結果、以下のように <code>rma.mv</code> が呼び出され、その出力が <code>l3.removed</code> という名前で保存される。</p>
+<div class="sourceCode" id="cb318"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">l3.removed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">rma.mv</a></span><span class="op">(</span>yi <span class="op">=</span> <span class="va">z</span>, </span>
+<span>                     V <span class="op">=</span> <span class="va">var.z</span>, </span>
+<span>                     slab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                     data <span class="op">=</span> <span class="va">Chernobyl</span>,</span>
+<span>                     random <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">author</span><span class="op">/</span><span class="va">es.id</span>, </span>
+<span>                     test <span class="op">=</span> <span class="st">"t"</span>, </span>
+<span>                     method <span class="op">=</span> <span class="st">"REML"</span>,</span>
+<span>                     sigma2 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">l3.removed</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [...]
+## Variance Components:
+## 
+##             estim    sqrt  nlvls  fixed        factor 
+## sigma^2.1  0.0000  0.0000     14    yes        author 
+## sigma^2.2  0.3550  0.5959     33     no  author/es.id 
+## 
+## Test for Heterogeneity:
+## Q(df = 32) = 4195.8268, p-val &lt; .0001
+## 
+## Model Results:
+## 
+## estimate      se    tval    pval   ci.lb   ci.ub 
+##   0.5985  0.1051  5.6938  &lt;.0001  0.3844  0.8126  *** 
+## [...]</code></pre>
+<p></p>
+<p>出力では、 <code>sigma^2.1</code> がゼロに設定されていることがわかる。全体の効果も変化している。しかし、この結果は 3 レベルモデルのものよりも良いのだろうか？これを評価するために、<code>anova</code> 関数を使って両モデルを比較することが可能である。</p>
+<div class="sourceCode" id="cb320"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html">anova</a></span><span class="op">(</span><span class="va">full.model</span>, <span class="va">l3.removed</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##         df   AIC   BIC  AICc logLik   LRT   pval      QE 
+## Full     3 48.24 52.64 49.10 -21.12              4195.82 
+## Reduced  2 62.34 65.27 62.76 -29.17 16.10 &lt;.0001 4195.82</code></pre>
+<p>2 レベルの「縮小」モデルに比べ、「完全」 (3 レベル) モデルはより適合度が高いことがわかる。赤池情報量規準 (Akaike Information Criterion, AIC) とベイズ情報量規準 (Bayesian Information Criterion, BIC) は、このモデルの方が低く、良好な性能を示している。両モデルを比較した尤度比検定 (Likelihood Ratio Test, <code>LRT</code>) は有意であり ( <span class="math inline">\(\chi^2_1=\)</span> 16.1, <span class="math inline">\(p&lt;\)</span> 0.001)、同じ方向を向いている。</p>
+<p>3 レベルモデルは、1 つの追加パラメータを導入したが (すなわち、自由度が 2 ではなく 3)、この追加された複雑さは正当化されるようだと言える。ネストのデータ構造のモデリングは、おそらく良いアイデアで、プール効果の推定値を改善してきた。</p>
+<p>しかし、3 レベル構造を維持することには、たとえそれが有意に優れた適合性を提供しない場合であっても、しばしば正当な理由があることに留意してみよう。特に、3 レベルモデルが確かな理論的根拠に基づいていると考えられる場合には、3 レベルモデルを維持することは理にかなっている。</p>
+<p>例えば、複数の効果量を持つ研究がデータに含まれている場合、これらの効果が独立していることはありえないということが<strong>わかる</strong>。したがって、ネストされたモデルを維持することは、データがどのように「生成」されたかをより適切に表現しているため、理にかなっている。もし、この例の anova の結果が 2 レベル解を支持していたなら、私たちは研究内の効果は<strong>大きく</strong>均質であると結論付けたことだろう。しかし、いずれにせよ、3 レベルモデルの結果を報告しただろう。これは、3 レベルモデルがデータ生成過程をよりよく表現していることを知っていることがある。</p>
+<p>クラスタ変数の重要性が不明確な場合、状況は多少異なる。たとえば、３レベル・モデルにおいて、レベル 3 のクラスタが異なる文化圏を表すとした。研究対象の現象が文化間の変化を示さないことがわかったら、3 番目のレベルを削除して、代わりに 2 レベル・モデルを使用してもまったく問題ない。</p>
+<p><br></p>
+</div>
+</div>
+<div id="three-level-subgroup" class="section level2" number="10.3">
+<h2>
+<span class="header-section-number">10.3</span> ３レベルモデルにおけるサブグループ解析<a class="anchor" aria-label="anchor" href="#three-level-subgroup"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>
+</p>
+<p>３レベルモデルが設定されると、全体効果の推定モデレータを評価することも可能になる。このガイドの前では、サブグループ解析が、ダミー・コード化された予測変数 ( Chapter <a href="metareg.html#the-metareg-model">8.1</a> ) のメタ回帰モデルとして表現できることを発見してきた。同様にして、私たちは 「マルチレベル」モデルに回帰項を追加することができ、これは <strong>３レベル混合効果モデル</strong> につながる。</p>
+<p><span class="math display" id="eq:mlm8">\[\begin{equation}
+\hat\theta_{ij} = \theta + \beta x_i + \zeta_{(2)ij} + \zeta_{(3)j} + \epsilon_{ij}
+\tag{10.8}
+\end{equation}\]</span></p>
+<p>ここで、<span class="math inline">\(\theta\)</span> は切片、<span class="math inline">\(\beta\)</span> は予測変数 <span class="math inline">\(x\)</span> の回帰重みである。<span class="math inline">\(x_i\)</span> をダミー (Chapter <a href="metareg.html#the-metareg-model">8.1</a>) に置き換えると、サブグループ解析に使用できるモデルが得られる。<span class="math inline">\(x\)</span> が連続的であるとき、上記の式は 3 レベルのメタ回帰モデルを表す。</p>
+<p>カテゴリまたは連続の予測変数は、<code>rma.mv</code> で <code>mods</code> 引数を用いて指定することが可能である。この引数には、チルダ (<code>~</code>) で始まる数式と、その後に予測変数の名前を指定する。複数の予測変数 (例: <code>~ var1 + var2</code>) を指定することで、多重メタ回帰を行うことも可能である。</p>
+<p>チェルノブイリの例では、サンプルに含まれる放射線の量 (低、中、高) によって相関が異なるかどうかを確認したい。この情報は、データセットの <code>radiation</code> 列で提供されている。このコードを使って３レベルモデレータモデルを適合させることができる。</p>
+<div class="sourceCode" id="cb322"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">rma.mv</a></span><span class="op">(</span>yi <span class="op">=</span> <span class="va">z</span>, V <span class="op">=</span> <span class="va">var.z</span>, </span>
+<span>                    slab <span class="op">=</span> <span class="va">author</span>, data <span class="op">=</span> <span class="va">Chernobyl</span>,</span>
+<span>                    random <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">author</span><span class="op">/</span><span class="va">es.id</span>, </span>
+<span>                    test <span class="op">=</span> <span class="st">"t"</span>, method <span class="op">=</span> <span class="st">"REML"</span>,</span>
+<span>                    mods <span class="op">=</span> <span class="op">~</span> <span class="va">radiation</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mod.model</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [...]
+## Test of Moderators (coefficients 2:3):
+## F(df1 = 2, df2 = 28) = 0.4512, p-val = 0.6414
+## 
+## Model Results:
+##                 estimate    se   tval  pval  ci.lb ci.ub 
+## intrcpt             0.58  0.36   1.63  0.11  -0.14  1.32    
+## radiationlow       -0.19  0.40  -0.48  0.63  -1.03  0.63    
+## radiationmedium     0.20  0.54   0.37  0.70  -0.90  1.31    
+## [...]</code></pre>
+<p>最初の重要な出力は <code>Test of Moderators</code> である。<span class="math inline">\(F_{2,28}=\)</span> 0.45、<span class="math inline">\(p=\)</span> 0.64 であることがわかる。これは、サブグループ間に有意な差がないことを意味する。</p>
+<p><code>Model Results</code> はメタ回帰の枠組みで表示される。これは、サブグループ内のプール効果量を得るために、推定値を直接抽出することができないことを意味する。</p>
+<p><span class="math inline">\(z\)</span> 最初の値である切片 (<code>intrcpt</code>) は、全体の放射線被曝量が高い場合 (<span class="math inline">\(z=\)</span> 0.58) の値を示している。低線量群および中線量群における効果は、切片の値にそれらの推定値を加えることによって求めることができる。したがって、低線量被曝群における効果は <span class="math inline">\(z\)</span> = 0.58 - 0.19 = 0.39 であり、中線量被曝群における効果は <span class="math inline">\(z\)</span> = 0.58 + 0.20 = 0.78 である。</p>
+
+<div class="boxreport">
+<p><strong>3 レベル (調整効果) モデルの結果を報告</strong></p>
+<p>3 レベルモデルの結果の報告に際しては、プール効果だけでなく推定分散についても言及するべきである。関数 <code>rma.mv</code> は、レベル 3 とレベル 2 のランダム効果分散を、それぞれ <span class="math inline">\(\sigma^2_1\)</span> と <span class="math inline">\(\sigma^2_2\)</span> で示す。</p>
+<p>しかしながら、この推定分散は、<span class="math inline">\(\tau^2_{\text{Level 3}}\)</span> と <span class="math inline">\(\tau^2_{\text{Level 2}}\)</span> を使うことが望ましい。この方が、<strong>真の (研究) 効果</strong> (つまり異質性の分散) の分散を扱っていることが明確になる。マルチレベルの <span class="math inline">\(I^2\)</span> 値も、解釈しやすいという点では適しているが、最初に何を表しているかを説明するという条件が必要である。</p>
+<p>を使ってモデルを比較する場合、少なくとも尤度比検定を報告するべききである。調整効果 (moderator) 分析の結果は、Chapter <a href="subgroup.html#subgroup-R">7.3</a> で示したような表で報告することができる。以下に、<code>anova</code> の結果の報告例を示す。</p>
+<blockquote>
+<p><em>“The pooled correlation based on the three-level meta-analytic model was <span class="math inline">\(r=\)</span> 0.48 (95%CI: 0.25-0.66; <span class="math inline">\(p\)</span> &lt; 0.001). The estimated variance components were <span class="math inline">\(\tau^2_{\text{Level 3}}=\)</span> 0.179 and <span class="math inline">\(\tau^2_{\text{Level 2}}=\)</span> 0.119. This means that <span class="math inline">\(I^2_{\text{Level 3}}=\)</span> 58.22% of the total variation can be attributed to between-cluster, and <span class="math inline">\(I^2_{\text{Level 2}}=\)</span> 31.86% to within-cluster heterogeneity. We found that the three-level model provided a significantly better fit compared to a two-level model with level 3 heterogeneity constrained to zero (<span class="math inline">\(\chi^2_1=\)</span> 16.10; <span class="math inline">\(p\)</span>&lt; 0.001).”</em></p>
+</blockquote>
+</div>
+<p><br></p>
+</div>
+<div id="rve" class="section level2" number="10.4">
+<h2>
+<span class="header-section-number">10.4</span> ロバスト分散推定<a class="anchor" aria-label="anchor" href="#rve"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>前章では、3 レベルメタ分析モデルを紹介し、データにおける効果量間の依存性をモデル化するために、どのように使用できるかを説明してきた。前章で取り入れた階層型モデルは、効果量が完全に独立しているとする「従来の」メタ分析よりも、明らかに私たちのデータセットをより良く表現している。しかし、これはまだ<strong>現実の単純化</strong>である。実際には、効果量間の依存関係は、現在のネストモデルで捉えられるものよりも<strong>複雑</strong>であることが多いのである。</p>
+<p>チェルノブイリのデータセットに戻ると、すでにこのことがわかる。このデータでは、ほとんどの研究が複数の効果量を提供しているが、その<strong>理由</strong>は<strong>研究によって異なっている</strong>。いくつかの研究では、異なる対象集団における放射線の影響を比較しており、そのため複数の効果量を報告している。また、同じサンプルに対して異なる方法を用いた研究もあり、これも複数の効果量が報告されていることを意味する。</p>
+<p>一つの研究の複数の効果量が同じサンプルに基づいている場合、それらのサンプリングエラー (Chapter <a href="multilevel-ma.html#multilevel-nature">10.1</a> と Chapter <a href="multilevel-ma.html#three-level-subgroup">10.3</a> の 式 10.7 and 10.8 における <span class="math inline">\(\epsilon_ {ij}\)</span>) には<strong>相関がある</strong>と期待される。しかし、このことは、今回の３レベルモデルではまだ捉えられていない。上記のモデルは、クラスタ/研究内では、サンプル誤差の相関 (つまり共分散) がゼロであることを仮定している。つまり、1 つのクラスタまたは研究内では、効果量の推定値は<strong>独立である</strong>と仮定している。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:multilevel3"></span>
+<img src="images/multilevel-model3_col_sep.png" alt="もともと、３レベル (階層) モデルは研究官あるいはクラスタ間の効果量は独立であると仮定している。" width="100%"><p class="caption">
+Figure 10.2: もともと、３レベル (階層) モデルは研究官あるいはクラスタ間の効果量は独立であると仮定している。
+</p>
+</div>
+<p>このセクションでは、拡張された 3 レベル構造、いわゆる<strong>相関・階層効果</strong> (Correlated and Hierarchical Effects, CHE) モデル <span class="citation">(<a href="references.html#ref-pustejovsky2021meta">J. E. Pustejovsky and Tipton 2021</a>)</span>に時間を割こう。以前の (階層的) 3 レベルモデルと同様に、CHE モデルは、ある共通点 (例えば、同じ研究、作業グループ、文化的地域などに由来する) に基づいて、いくつかの効果量を大きなクラスタに結合することが可能である。</p>
+<p>このことに加えて、このモデルでは、クラスタ内のいくつかの効果量が同じサンプルに基づいており (例えば、複数の測定が行われたため)、したがってそれらのサンプル誤差は相関していることを明示的に考慮している。現実には、特に、データの依存性構造が複雑であったり、部分的にしか知られていない場合、CHE モデルから始めるとよい <span class="citation">(<a href="references.html#ref-pustejovsky2021meta">J. E. Pustejovsky and Tipton 2021</a>)</span><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Pustejovsky and Tipton &lt;span class="citation"&gt;(&lt;a href="references.html#ref-pustejovsky2021meta"&gt;2021&lt;/a&gt;)&lt;/span&gt; も CHE モデルが適切か、いつ適切かを決定するための決定木を提供している(&lt;a href="https://link.springer.com/content/pdf/10.1007/s11121-021-01246-3.pdf"&gt;Figure 1&lt;/a&gt; 参照)。CHE モデルがデータに対して最適な仮定を提供するか、あるいは他の作業モデルがより合理的かどうかをチェックする方法として、発見を目的として使用することが可能である。&lt;/p&gt;'><sup>47</sup></a>。</p>
+<p>CHE モデルとともに、メタ分析の文脈における<strong>ロバスト分散推定</strong> (Robust Variance Estimation, RVE) についても説明する <span class="citation">(<a href="references.html#ref-hedges2010robust">L. Hedges, Tipton, and Johnson 2010</a>; <a href="references.html#ref-tipton2015small">Tipton and Pustejovsky 2015</a>; <a href="references.html#ref-tipton2015small2">Tipton 2015</a>)</span>。これは、過去にメタ分析で従属効果量を扱うために頻繁に使用されてきた一連の方法である。RVE の中核は、いわゆる<strong>サンドイッチ推定量</strong>を中心に展開されている。この推定量は、CHEモデル (および他のメタ分析モデル) と組み合わせて、ロバストな信頼区間と <span class="math inline">\(p\)</span>-値を得るために使用することができる。選択したモデルが、データの複雑な依存構造を完全にうまく捉えていない場合も可能である。</p>
+<p>そこで、最初の CHE モデルの適合の前に、<strong>メタ分析 RVE の概要</strong>と <strong>サンドイッチ推定量</strong> について、後者がなぜそのような魅力的な名前を持っているのかを探ってみよう。</p>
+<p><br></p>
+<div id="sandwich" class="section level3" number="10.4.1">
+<h3>
+<span class="header-section-number">10.4.1</span> サンドイッチ型分散推定量<a class="anchor" aria-label="anchor" href="#sandwich"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>発表されたメタ分析では、「ロバスト分散推定」という言葉が特殊な使われ方をしていることがあり、これが依存効果量を持つメタ分析データに<strong>のみ適用できる</strong>特殊な方法であると思われることがある。その逆である。ロバスト分散推定量は、もともと<strong>従来の回帰モデル</strong>のための手法として開発されたもので、回帰重みの分散 <span class="math inline">\(\hat\beta\)</span> を計算するために使われる <span class="citation">(<a href="references.html#ref-aronow2019foundations">Aronow and Miller 2019, chap. 4.2.2</a> など参照)</span>。</p>
+<p>この推定量は、線形モデルの通常の仮定が満たされない場合でも、漸近的な標準誤差の<strong>一貫性のある推定値</strong>が得られるため、「ロバスト」推定量と呼ばれる <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;その一つが、&lt;strong&gt;同質散布性&lt;/strong&gt; (homoskedasticity) と呼ばれる残差分散の均質性である。同質散布性は、係数分散の「古典的」推定値が有効であるために必要な他の仮定のうちの1つである。&lt;/p&gt;"><sup>48</sup></a> 。回帰モデルにおける係数分散のロバスト推定は非常に重要である。分散推定値 <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;あるいはむしろその&lt;strong&gt;平方根&lt;/strong&gt;で、これは係数の&lt;strong&gt;標準誤差&lt;/strong&gt;を表す。 &lt;span class="math inline"&gt;\(\sqrt{V_{\hat\beta}}={SE}_{\hat\beta}\)&lt;/span&gt;&lt;/p&gt;'><sup>49</sup></a> は、<span class="math inline">\(p\)</span>-値と同様に、推定回帰重量の周りの<strong>信頼区間</strong>を計算するために使われ、したがってモデルから引き出す推測に直接影響を持つ。</p>
+<p>ここで取り上げるロバスト分散推定量は、「通常の」回帰モデルで使用されるオリジナルの手法の<strong>特別バージョン</strong> に過ぎないのである。Hedges, Tipton and Jackson <span class="citation">(<a href="references.html#ref-hedges2010robust">2010</a>)</span> は、依存効果量のある<strong>メタ回帰モデル</strong>に使用できる適応型の RVE を発表し、このアプローチはここ数年で拡張されている。</p>
+<p>これを理解するためには、まずメタ回帰の式をもう一度見てみる必要がある。概念的には、この式は Chapter <a href="metareg.html#the-metareg-model">8.1</a> で紹介した式 8.2 と非常によく似ている。それを単に<strong>行列表記</strong>で表示すだけですある<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;本章では、メタ分析的 RVE を論じる際に、Hedges, Tipton and Jackson &lt;span class="citation"&gt;(&lt;a href="references.html#ref-hedges2010robust"&gt;2010&lt;/a&gt;)&lt;/span&gt; とそのフォローアップ論文の表記法をほぼ踏襲した&lt;/p&gt;'><sup>50</sup></a>。</p>
+<p><span class="math display" id="eq:mlm9">\[\begin{equation}
+\boldsymbol{T}_{j}=\boldsymbol{X}_{j}\boldsymbol{\beta} + \boldsymbol{u}_j +\boldsymbol{e}_j
+\tag{10.9}
+\end{equation}\]</span></p>
+<p>この式は、単純に、<span class="math inline">\(\boldsymbol{T}\)</span> のある 効果量が、<span class="math inline">\(\boldsymbol{X}\)</span> のある共変量と関連した回帰の重み <span class="math inline">\(\beta\)</span> によって予測されることを教えてくれる。また、サンプル誤差 (<span class="math inline">\(\boldsymbol{e}_j\)</span> で記号化) 以外に、各研究のランダム効果 (<span class="math inline">\(\boldsymbol{u}_j\)</span> で表記) があり、それによって (混合効果) メタ回帰モデルを生成していることも教えてくれる。</p>
+<p>特別なのは、この式の添え字 <span class="math inline">\(j\)</span> である。これは、式中の文字が<strong>太字</strong> であることとともに、データセット中の各研究またはクラスタ <span class="math inline">\(j\)</span> が複数の効果量を提供する、または提供できることを示している。<span class="math inline">\(n_j\)</span> は、ある研究 <span class="math inline">\(j\)</span> における効果量の数であるとする。そして、<span class="math inline">\(j\)</span> の効果量は、式 <span class="math inline">\(\boldsymbol{T}_j = (T_{j,1}, \dots, T_{j,{n_j}})^\top\)</span> で見る列ベクトルとして書き下すことが可能である。同様に、<span class="math inline">\(\boldsymbol{X}_j\)</span> は、ある研究 <span class="math inline">\(j\)</span> の共変量を含む<strong>デザイン行列</strong>であり、次のように書くことができる。</p>
+<p><span class="math display" id="eq:mlm10">\[\begin{equation}
+\boldsymbol{X}_j =
+\begin{bmatrix}
+x_{1,1}    &amp; \cdots &amp; x_{1,p}    \\
+\vdots     &amp; \ddots &amp; \vdots     \\
+x_{n_j,1}  &amp; \cdots &amp; x_{n_j,p}
+\end{bmatrix}
+\tag{10.10}
+\end{equation}\]</span></p>
+<p>ここで <span class="math inline">\(p-1\)</span> は共変量の総数である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;線形回帰モデルでは、&lt;strong&gt;デザイン行列&lt;/strong&gt; (または&lt;strong&gt;モデル行列&lt;/strong&gt;) には、回帰係数を推定するために使用されるすべての&lt;strong&gt;共変量値&lt;/strong&gt;が含まれている。最も簡単な形では、デザイン行列は&lt;strong&gt;共変量のデータフレーム&lt;/strong&gt;とみなすことができ、最初の列に1の列が追加される。この最初の列は、回帰の&lt;strong&gt;切片&lt;/strong&gt; をモデル化するために使用される。メタ回帰で、3つの共変量があると仮定する。データ集合の4番目の研究が3つの効果量に寄与する場合、そのデザイン行列は: &lt;span class="math display"&gt;\[\boldsymbol{X}_4 = \begin{bmatrix} 1  &amp;amp; 4.5 &amp;amp; 0 &amp;amp; 2  \\  1  &amp;amp; 7.3 &amp;amp; 1 &amp;amp; 2 \\ 1  &amp;amp; 2.4 &amp;amp; 0 &amp;amp; 2 \end{bmatrix}\]&lt;/span&gt;&lt;/p&gt;'><sup>51</sup></a>。推定したい回帰係数のベクトル <span class="math inline">\(\boldsymbol{\beta} = (\beta_1, \dots, \beta_{p})^\top\)</span> には、添字 <span class="math inline">\(j\)</span> は含まれていない。なぜなら、回帰係数は全ての研究で同じと仮定されているからである。</p>
+<p>全体として、この表記は、研究が複数の効果量に貢献できる場合、私たちのデータは、いくつかの小さなデータセットを<strong>積み重ねたように見える</strong>ことを強調している。<span class="math inline">\(J\)</span> は、このデータにおける研究またはクラスタの合計数である。</p>
+<p><span class="math display" id="eq:mlm11">\[\begin{equation}
+\begin{bmatrix}
+\boldsymbol{T}_1 \\
+\boldsymbol{T}_2 \\
+\vdots \\
+\boldsymbol{T}_J
+\end{bmatrix}
+=
+\begin{bmatrix}
+\boldsymbol{X}_1 \\
+\boldsymbol{X}_2 \\
+\vdots \\
+\boldsymbol{X}_J
+\end{bmatrix}
+\boldsymbol{\beta}
++
+\begin{bmatrix}
+\boldsymbol{u}_1 \\
+\boldsymbol{u}_2 \\
+\vdots \\
+\boldsymbol{u}_J
+\end{bmatrix}
++
+\begin{bmatrix}
+\boldsymbol{e}_1 \\
+\boldsymbol{e}_2 \\
+\vdots \\
+\boldsymbol{e}_J
+\end{bmatrix}.
+\tag{10.11}
+\end{equation}\]</span></p>
+<p>この式に基づいて、メタ回帰の係数 <span class="math inline">\(\boldsymbol{\hat\beta}\)</span> を推定することができる。信頼区間を計算し、係数の有意性検定を行うには、その分散の推定が必要である。これはロバストサンプリング分散推定量 <span class="math inline">\(\boldsymbol{V_{\hat\beta}}\)</span> を使って実現可能である。その式は次のようになる <span class="citation">(<a href="references.html#ref-hedges2010robust">L. Hedges, Tipton, and Johnson 2010</a>; <a href="references.html#ref-pustejovsky2021meta">J. E. Pustejovsky and Tipton 2021</a>, suppl. S1)</span>。</p>
+<p><span class="math display" id="eq:mlm12">\[\begin{equation}
+\scriptsize\boldsymbol{V}^{\text{R}}_{\boldsymbol{\hat\beta}} =
+\left(\sum^J_{j=1}\boldsymbol{X}_j^\top\boldsymbol{W}_j\boldsymbol{X}_j \right)^{-1}
+\left(\sum^J_{j=1}\boldsymbol{X}_j^\top\boldsymbol{W}_j \boldsymbol{A}_j\Phi_j \boldsymbol{A}_j \boldsymbol{W}_j \boldsymbol{X}_j \right)
+\left(\sum^J_{j=1}\boldsymbol{X}_j^\top\boldsymbol{W}_j\boldsymbol{X}_j \right)^{-1}
+\tag{10.12}
+\end{equation}\]</span></p>
+<p>この式はかなり複雑に見えるので、細部まで理解する必要はないだろう。今重要なのは、<strong>形式</strong>と、その<strong>「成分」</strong>の一部である。</p>
+<p>まず、この式が三分木構造であることがわかる。左右の括弧で囲まれた部品は、真ん中の部品を取り囲むように同じものが並んでいる。これは、外側の部分が「パン」で内側の部分が「肉」であるサンドイッチのように見え、<strong>「サンドイッチ推定量」</strong>と名付けられた所以である。この式の重要な「材料」は、<span class="math inline">\(\boldsymbol{\Phi}_j\)</span>, <span class="math inline">\(\boldsymbol{W}_j\)</span> and <span class="math inline">\(\boldsymbol{A}_j\)</span> の行列である。</p>
+<ul>
+<li><p>まず1つ目。<span class="math inline">\(\boldsymbol{\Phi}_j=\text{Var}(\boldsymbol{u}_j +\boldsymbol{e}_j)\)</span>, は、<span class="math inline">\(n_j\)</span> 行と <span class="math inline">\(n_j\)</span> 列の分散共分散行列 (variance-covariance matrix) である。これは、研究 <span class="math inline">\(j\)</span> の<strong>真の依存構造</strong>を表している <span class="citation">(<a href="references.html#ref-pustejovsky2021meta">J. E. Pustejovsky and Tipton 2021</a>, Suppl. S1)</span>。残念ながら、効果量が研究内でどのように、どの程度相関しているかはほとんど知られておらず、私たちのメタ分析で<strong>すべての</strong>研究に関してこれを知ることはさらに困難である。したがって、このモデルでは、いくつかの単純化した仮定を置く必要がある<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Hedges, Tipton and Jacksonによるオリジナルのアプローチ &lt;span class="citation"&gt;(&lt;a href="references.html#ref-hedges2010robust"&gt;2010&lt;/a&gt;)&lt;/span&gt; では、 &lt;span class="math inline"&gt;\(\boldsymbol{\Phi}_j\)&lt;/span&gt; は &lt;strong&gt;cross-product of the model residuals&lt;/strong&gt; &lt;span class="math inline"&gt;\(\boldsymbol{\Phi}_j=\boldsymbol{e}_j{\boldsymbol{e}_j}^\top\)&lt;/span&gt; に置き換えられる。これはすぐに使うことができるからである。これは真の依存構造の粗い推定値であるが、メタアナリシスにおける研究数が多い場合には「最良の推定値」として機能する。&lt;/p&gt;'><sup>52</sup></a>。CHE モデルは、例えば、効果量間の<strong>既知の相関</strong> (known correlation) <span class="math inline">\(\rho\)</span> があり、 <span class="math inline">\(\rho\)</span> は全ての研究で同じ値という仮定がある <span class="citation">(「一定標本相関 (constant sampling correlation)」の仮定、 <a href="references.html#ref-pustejovsky2021meta">J. E. Pustejovsky and Tipton 2021</a>)</span>。</p></li>
+<li><p><span class="math inline">\(\boldsymbol{W}_j\)</span> 行列には、各効果量の<strong>重み</strong>が含まれている。前の章 ( <a href="pooling-es.html#fem">4.1.1</a> and <a href="metareg.html#metareg-model-fit">8.1.3</a> 参照) で、効果量推定値の精度を考慮に入れてからプールする必要があることを既に学びんだ。これを行う最適な方法は、分散の逆数を取ることであり、これは、<span class="math inline">\(\boldsymbol{W}_j = \boldsymbol{\Phi}^{-1}_j\)</span> を意味する。先ほど述べたように、<span class="math inline">\(\boldsymbol{\Phi}_j\)</span> の真の値はほとんど知られていないので、私たちのモデルに基づく推定値、<span class="math inline">\((\boldsymbol{\hat\Phi}_j)^{-1}\)</span> が使われる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Hedges、Tipton、Jackson によるオリジナルのアプローチ &lt;span class="citation"&gt;(&lt;a href="references.html#ref-hedges2010robust"&gt;2010&lt;/a&gt;)&lt;/span&gt; では、単純化対角重み行列を用いた別の方法を採用しているので、おおむね効率が良い&lt;/p&gt;'><sup>53</sup></a>.</p></li>
+<li><p>最後の <span class="math inline">\(\boldsymbol{A}_j\)</span> は<strong>調整行列</strong>で、メタ分析の研究数が少ない <span class="citation">(例えば 40 以下、 <a href="references.html#ref-hedges2010robust">L. Hedges, Tipton, and Johnson 2010</a>; <a href="references.html#ref-tipton2015small">Tipton and Pustejovsky 2015</a>)</span> でも推定量が有効な結果を提供できるようにするものである。推奨されるアプローチは、バイアス低減線形化 (bias-reduced linearization)、つまり<strong>“CR2” 法</strong>に基づく行列を使うことである<span class="citation">(<a href="references.html#ref-tipton2015small">Tipton and Pustejovsky 2015</a>)</span><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;CR2 調整行列は次のようなものである。&lt;span class="math display"&gt;\[\scriptsize \boldsymbol{A}^{\text{CR2}}_j = \boldsymbol{W}_j^{-1/2}\left\{\boldsymbol{W}_j^{-1/2} \left[\boldsymbol{W}_j^{-1}-\boldsymbol{X}_j \left(\sum^J_{j=1}\boldsymbol{X}_j^\top\boldsymbol{W}_j\boldsymbol{X}_j \right)^{-1} \boldsymbol{X}_j^\top \right] \boldsymbol{W}_j^{-1/2}\right\}^{-1/2} \boldsymbol{W}_j^{-1/2}.\]&lt;/span&gt; これは、重み行列 &lt;span class="math inline"&gt;\(\boldsymbol{W}_j\)&lt;/span&gt; の対称平方根を取ることを意味する。&lt;/p&gt;'><sup>54</sup></a>。</p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="fit-rve" class="section level3" number="10.4.2">
+<h3>
+<span class="header-section-number">10.4.2</span> ロバスト分散推定を用いた CHE モデルの適合<a class="anchor" aria-label="anchor" href="#fit-rve"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>それでは、最初の相関・階層効果モデルを <em>R</em> で適合させ、同時にロバスト分散推定を採用し、モデルの誤指定を防ぐ。これまで同様に、<strong>{metafor}</strong> の <code>rma.mv</code> 関数を使用してモデルを実行できる。今回は、<strong>{clubSandwich}</strong> パッケージ <span class="citation">(<a href="references.html#ref-clubSandwich">J. Pustejovsky 2022</a>)</span>が提供するいくつかの追加関数も必要である。そのため、必ずパッケージをインストールし、ライブラリからロードしておこう。</p>
+<div class="sourceCode" id="cb324"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://jepusto.github.io/clubSandwich/">clubSandwich</a></span><span class="op">)</span></span></code></pre></div>
+<p>上記のように、CHE モデルは、研究またはクラスタ内の効果量が<strong>相関</strong>しており、この相関は研究内および研究間で同一であると仮定している。</p>
+<p>したがって、モデル内で使用する<strong>相関係数</strong>を定義する必要がある。今回のチェルノブイリのデータでは、相関が大きいと仮定して、<span class="math inline">\(\rho\)</span> =0.6としよう。これは推測に過ぎず、<span class="math inline">\(\rho\)</span> の値を変えながら<strong>複数の感度分析</strong>を行うことを強く勧める。</p>
+<div class="sourceCode" id="cb325"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 想定される定数相関係数</span></span>
+<span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.6</span></span></code></pre></div>
+<p>さて、この相関を利用して、各研究の仮定された分散共分散行列を計算することが可能である。これは、<strong>{clubSandwich}</strong> の <code>impute_covariance_matrix</code> 関数を使用して行う。</p>
+<ul>
+<li>
+<code>vi</code> の引数には、各効果量の<u>分散</u> (すなわち、標準誤差の二乗) を含むデータセットの変数名を指定した。</li>
+<li>
+<code>cluster</code> 引数は、各効果量を <strong>study</strong> または <strong>cluster</strong> に関連付ける変数を定義する。<code>Chernobyl</code> データセットでは、これは <code>author</code> である。</li>
+<li>引数 <code>r</code> は、効果量間の<strong>定数相関係数</strong>を想定している。</li>
+</ul>
+<div class="sourceCode" id="cb326"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># サンプル定数相関係数の実行モデル</span></span>
+<span><span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">Chernobyl</span>, </span>
+<span>          <span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/impute_covariance_matrix.html">impute_covariance_matrix</a></span><span class="op">(</span>vi <span class="op">=</span> <span class="va">var.z</span>,</span>
+<span>                                   cluster <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                                   r <span class="op">=</span> <span class="va">rho</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code>V</code> で準備した分散共分散行列を用いて、<code>rma.mv</code> モデルの適合を行うことができるようになる。 Chapter <a href="multilevel-ma.html#three-level-subgroup">10.3</a> と同じメタ回帰モデルで、共変量として <code>radiation</code> を用いて解析するとする。</p>
+<p>最初の引数は <code>formula</code> オブジェクトで、効果量 <code>z</code> が切片 (<code>1</code>) と共変量 <code>radiation</code> によって予測されることを関数に渡した。<code>V</code> 引数には、先ほど作成した分散共分散行列のリストを渡す。また、<code>sparse</code> 引数を <code>TRUE</code> に設定することで、計算を高速化することが可能である。</p>
+<p>引数 <code>random</code> と <code>data</code> だけが同じである。結果は <code>che.model</code> という名前で保存される。</p>
+<div class="sourceCode" id="cb327"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">che.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">rma.mv</a></span><span class="op">(</span><span class="va">z</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="va">radiation</span>,</span>
+<span>                    V <span class="op">=</span> <span class="va">V</span>,</span>
+<span>                    random <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">author</span><span class="op">/</span><span class="va">es.id</span>,</span>
+<span>                    data <span class="op">=</span> <span class="va">Chernobyl</span>,</span>
+<span>                    sparse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><strong>{clubSandwich}</strong> の <code>conf_int</code> 関数を使用することで、メタ回帰係数の<strong>信頼区間</strong>を計算することができる。計算は、適合したモデルと <code>vcov</code> で使用する<strong>小サンプル調整</strong> を指定するだけである。推奨通り、<code>"CR2"</code> 調整を使用する (Chapter <a href="multilevel-ma.html#sandwich">10.4.1</a> 参照)。</p>
+<div class="sourceCode" id="cb328"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/conf_int.html">conf_int</a></span><span class="op">(</span><span class="va">che.model</span>, </span>
+<span>         vcov <span class="op">=</span> <span class="st">"CR2"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##            Coef. Estimate    SE d.f. Lower 95% CI Upper 95% CI
+##          intrcpt    0.584 0.578 1.00        -6.76         7.93
+##     radiationlow   -0.190 0.605 1.60        -3.52         3.14
+##  radiationmedium    0.207 0.603 1.98        -2.41         2.83</code></pre>
+<p><code>Estimate</code> の点推定値は、Chapter <a href="multilevel-ma.html#three-level-subgroup">10.3</a> で得たものと同様であることがわかる。しかし、推定された標準誤差と信頼区間は、はるかに大きくなっている。また、<code>coef_test</code>関数を用いて、回帰重みの <span class="math inline">\(p\)</span> <strong>値</strong> を計算することが可能である。</p>
+<div class="sourceCode" id="cb330"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/coef_test.html">coef_test</a></span><span class="op">(</span><span class="va">che.model</span>, </span>
+<span>          vcov <span class="op">=</span> <span class="st">"CR2"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##            Coef. Estimate    SE t-stat d.f. (Satt) p-val (Satt) Sig.
+##          intrcpt    0.584 0.578  1.010        1.00        0.497     
+##     radiationlow   -0.190 0.605 -0.315        1.60        0.789     
+##  radiationmedium    0.207 0.603  0.344        1.98        0.764 </code></pre>
+<p>ロバスト分散推定を用いた場合、どの係数も有意ではないことがわかる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;デフォルトでは、 &lt;code&gt;cont_int&lt;/code&gt; と &lt;code&gt;coef_test&lt;/code&gt; 関数は &lt;strong&gt;Satterthwaite-corrected&lt;/strong&gt; 自由度 &lt;span class="citation"&gt;(&lt;a href="references.html#ref-tipton2015small2"&gt;Tipton 2015&lt;/a&gt;)&lt;/span&gt; を用いている。このデフォルト設定を維持することが推奨される&lt;/p&gt;'><sup>55</sup></a>。</p>
+
+<div class="boxinfo">
+<p><strong>ロバスト分散推定とモデルの誤同定</strong></p>
+<p>読者の中には、なぜ私たちがロバスト分散推定を使ったモデルに大騒ぎするのか不思議に思われるかもしれない。その主な理由は、多変量・マルチレベルのモデルは、<strong>簡単に誤った仕様になりうる</strong>からである。CHE モデルでさえ、相関が研究内と研究間で同一であると仮定することで、やや粗雑なモデルであることをすでに学んだ。モデルがデータ中の複雑な依存関係を<strong>適切に近似している</strong>かどうかが<strong>不明確</strong>なことがよくある。</p>
+<p>この点、ロバスト分散推定は、モデルの潜在的な<strong>誤記定</strong>に対して、私たちの<strong>推論</strong> (すなわち、我々が計算する信頼区間と<span class="math inline">\(p\)</span>値) を<strong>保護する</strong>ことができるため、有用である。</p>
+</div>
+
+<div class="boxinfo">
+<p><strong>{robumeta} パッケージ</strong></p>
+<p>このセクションでは、相関・階層効果モデルと組み合わせたロバスト分散推定を取り上げた。このモデルは、他のいくつかの革新的な技術とともに、Pustejosky and Tiptonによって提案されている <span class="citation">(<a href="references.html#ref-pustejovsky2021meta">2021</a>)</span>。</p>
+<p>Hedges, Tipton and Jackson <span class="citation">(<a href="references.html#ref-hedges2010robust">2010</a>)</span> による <strong>“original” RVE approach</strong> と、いくつかの小サンプルの拡張は、 <strong>{robumeta}</strong> パッケージを使って適用することができる <span class="citation">(<a href="references.html#ref-robumeta">Z. Fisher, Tipton, and Zhipeng 2017</a>)</span>。このパッケージは、Hedges, Tipton and Jackson が最初に提案した2種類のモデル、<strong>階層的</strong>モデルと<strong>相関効果</strong>モデル (ただし両方を組み合わせたモデルは不可) を使ってメタ回帰を適合させることができる。</p>
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="cwb" class="section level2" number="10.5">
+<h2>
+<span class="header-section-number">10.5</span> クラスタワイルドブートストラップ<a class="anchor" aria-label="anchor" href="#cwb"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>前章では、相関効果モデルと階層効果モデルの適合方法、ロバスト分散推定を用いた信頼区間と係数検定の計算方法について学んだ。</p>
+<p>もう一つの、そして時には私たちのモデルの係数を検定するのに有利な方法は、ブートストラップ法で、その特別な変種がいわゆる<strong>クラスタワイルドブートストラップ</strong> <span class="citation">(<a href="references.html#ref-joshi2021clusterwild">Joshi, Pustejovsky, and Beretvas 2021</a>)</span> である。この方法は、メタ分析における研究の総数 <span class="math inline">\(J\)</span> が<strong>小さい</strong>場合に適している。特に、(私たち自身の <code>チェルノブイリ</code> の例で見たように) 小さなサンプルで過度に保守的な結果につながる可能性がある RVE と比較して、この方法は適している。</p>
+<p>この方法は、いわゆる<strong>多重対比仮説</strong> (multiple-contrast hypothesis) を検定したいときにも有効である。多重対比仮説は、たとえば、ダミー・コード化されたカテゴリ共変量の全体効果を検定したい場合に必要である。</p>
+
+<div class="boxinfo">
+<p><strong>クラスタワイルドブートストラップのアルゴリズム</strong></p>
+<p>ワイルドブートストラップは、Null モデル (共変量を追加せずに適合させたモデル) の残差に基づく方法である。クラスタワイルドブートストラップでは、依存効果量を扱うために、例えば CR2 法に基づく調整行列 <span class="math inline">\(\boldsymbol{A}_j\)</span> を用いて残差を変換する (Chapter <a href="multilevel-ma.html#sandwich">10.4.1</a> 参照)。ワイルドブートストラップの一般的なアルゴリズムは以下のようなものである <span class="citation">(<a href="references.html#ref-joshi2021clusterwild">Joshi, Pustejovsky, and Beretvas 2021</a>)</span>。</p>
+<ol style="list-style-type: decimal">
+<li>元のデータからフルモデルを計算し、目的の検定統計量 (<span class="math inline">\(t\)</span> 値または <span class="math inline">\(F\)</span> 値) を導出する。</li>
+<li>元のデータに基づいてヌルモデルを適合し、その残差 <span class="math inline">\(\boldsymbol{e}\)</span> を抽出する。</li>
+<li>各研究またはクラスタ <span class="math inline">\(j\)</span> について、分布<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;本ガイドで使用している &lt;strong&gt;R&lt;/strong&gt; パッケージの &lt;strong&gt;{wildmeta}&lt;/strong&gt; では、このために &lt;strong&gt;Rademacher&lt;/strong&gt; 分布を使用している&lt;/p&gt;"><sup>56</sup></a>からランダムな値を引き、<span class="math inline">\(j\)</span> の残差にこのランダムな値をかける。</li>
+<li>元のデータに基づく Null モデルの予測値に変換された残差を加えることで、新しいブートストラップされた効果量を生成する。</li>
+<li>ブートストラップされた効果量値を用いて，再度フルモデルを適合させ，再度検定統計量を計算する。</li>
+</ol>
+<p>そして、ステップ 3 から 5 を <span class="math inline">\(R\)</span> 回繰り返す。Boostrap <span class="math inline">\(p\)</span> 値は、boostrap 検定統計量が元データに基づくものより<strong>極端</strong>であった回数の<strong>割合</strong>として導出される。</p>
+</div>
+<p>ブートストラップを用いて多重対比仮説を検定するには、<strong>{wildmeta}</strong> パッケージを使用することができる <span class="citation">(<a href="references.html#ref-wildmeta">Joshi and Pustejovsky 2022</a>)</span>。次の例のためにこのパッケージをインストールし、ライブラリからロードしておく必要がある。さらに、<strong>{tidyverse}</strong> の関数を用いて、<code>Chernobyl</code> データセットに新しい変数を生成し、そこに各研究の年号を保存する。</p>
+<div class="sourceCode" id="cb332"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># {wildmeta} と {tidyverse} をロードする</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://meghapsimatrix.github.io/wildmeta/index.html">wildmeta</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># year という変数を追加</span></span>
+<span><span class="va">Chernobyl</span><span class="op">$</span><span class="va">year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html">str_extract</a></span><span class="op">(</span><span class="va">Chernobyl</span><span class="op">$</span><span class="va">author</span>, </span>
+<span>                              <span class="st">"[0-9]{4}"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>次に、この変数をメタ回帰モデル <code>rma.mv</code> の <strong>新しい予測変数</strong> として使用した。これは、単に最初の引数で <code>year</code> を数式に追加し、共変数をセンタリング、スケールするために <code>scale</code> 関数を適用した。また、この式ではもう一つ、切片の <code>1</code> を <code>0</code> に変更している。これは切片がないことを意味し、「年」の予測値は放射線のレベルごとに<strong>層別</strong>される<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;この変更は、放射線のレベルごとの &lt;strong&gt;表示&lt;/strong&gt; に影響を与える: 一つのレベルを基準群として回帰重みを得るのではなく、各レベルについて 3 つの別々の効果量推定値がプールされる&lt;/p&gt;"><sup>57</sup></a>。この結果を <code>che.model.bs</code> として保存する。</p>
+<div class="sourceCode" id="cb333"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">che.model.bs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">rma.mv</a></span><span class="op">(</span><span class="va">z</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">radiation</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span>,</span>
+<span>                       V <span class="op">=</span> <span class="va">V</span>,</span>
+<span>                       random <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">author</span><span class="op">/</span><span class="va">es.id</span>,</span>
+<span>                       data <span class="op">=</span> <span class="va">Chernobyl</span>,</span>
+<span>                       sparse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>ブートストラップを始める前に、実施したい検定について<strong>線形対比</strong>を定義する必要がある。例えば、変数 <code>radiation</code> の<strong>全体的な調整効果</strong>を検定したいとする。これを行うには、 <strong>{clubSandwich}</strong> の <code>constrain_equal</code> 関数を使用して、検定のための制約行列を作成する必要がある。帰無仮説は、変数 <code>radiation</code> の3つのレベルの間で効果が等しいというもので、<code>constraints</code> 引数を <code>1:3</code> にセットする。さらに、<code>coefs</code> 引数には先ほどフィットしたモデルの係数を指定した。結果は <code>rad.constraints</code> という名前で保存される。</p>
+<div class="sourceCode" id="cb334"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rad.constraints</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/constraint_matrices.html">constrain_equal</a></span><span class="op">(</span>constraints <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
+<span>                                   coefs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">che.model.bs</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">rad.constraints</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]   -1    1    0    0
+## [2,]   -1    0    1    0</code></pre>
+<p><strong>{wildmeta}</strong> の <code>Wald_test_cwb</code> 関数を用いて、多重対比仮説のブートストラップ <span class="math inline">\(p\)</span> -値を計算することができる。適合したフルモデル、制約行列、使用したいスモールサンプル調整の種類、そしてブートストラップ複製の数である <code>R</code> を指定する必要がある。検出力が向上するため、<strong>高い複製数</strong> (例: 1000以上) を使用することを勧める。この例では、2000 回を使用し、結果を <code>cw.boot</code> として保存する。繰り返しの回数にもよるが、この処理は終了までに<strong>数分かかることがある</strong>。</p>
+<div class="sourceCode" id="cb336"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cw.boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wildmeta/man/Wald_test_cwb.html">Wald_test_cwb</a></span><span class="op">(</span>full_model <span class="op">=</span> <span class="va">che.model.bs</span>,</span>
+<span>                         constraints <span class="op">=</span> <span class="va">rad.constraints</span>,</span>
+<span>                         adjust <span class="op">=</span> <span class="st">"CR2"</span>,</span>
+<span>                         R <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span></span>
+<span><span class="va">cw.boot</span></span></code></pre></div>
+<pre><code>##           Test Adjustment CR_type Statistic    R  p_val
+## 1 CWB Adjusted        CR2     CR0   Naive-F 2000 0.3595</code></pre>
+<p>調整効果の検定の結果、<span class="math inline">\(p\)</span> -値は 0.36 で、<strong>有意ではない</strong>ことがわかる。私たちは以前、Chapter <a href="multilevel-ma.html#three-level-subgroup">10.3</a> の放射強度の調整効果分析でも同様の所見を得た。</p>
+<p><code>plot</code> 関数を使用すると、すべてのブートストラップ複製における検定統計量の<strong>密度</strong> を可視化することも可能である。</p>
+<div class="sourceCode" id="cb338"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cw.boot</span>, </span>
+<span>     fill <span class="op">=</span> <span class="st">"lightblue"</span>, </span>
+<span>     alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-297-1.png" width="75%" style="display: block; margin: auto;"></div>
+<p></p>
+<p><br></p>
+</div>
+<div id="演習問題-9" class="section level2" number="10.6">
+<h2>
+<span class="header-section-number">10.6</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-9"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+なぜ「マルチレベル」モデルではなく「３レベル」モデルと言う方が正確なのか？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+３レベルメタ分析モデルはいつ有用か？
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+効果量依存性の一般的な原因を2つ挙げなさい。
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+マルチレベル <span class="math inline"><span class="math inline">\(I^2\)</span></span>
+の統計量はどのように解釈すればよいか。
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+調整効果 (moderator)
+変数の効果を取り入れるために、どのように３レベルモデルを拡張することができるのか？
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda10">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+<div id="要約-6" class="section level2" number="10.7">
+<h2>
+<span class="header-section-number">10.7</span> 要約<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84-6"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>すべてのランダム効果メタ分析は、マルチレベルモデルに基づいている。3 レベル目が追加された場合、3 レベルメタ分析モデルと呼ばれる。このようなモデルは、<strong>クラスタ化</strong>した効果量データの取り扱いに適している。</p></li>
+<li><p>3 レベルモデルは、従属効果量に使用することができる。例えば、1 つの研究が複数の効果量に寄与している場合、これらの結果が独立しているとは通常仮定できない。3 レベルモデルは、効果量がより大きなクラスタ (研究など) に <strong>ネスト</strong>されていると仮定することで、この問題を制御する。</p></li>
+<li><p>従来のメタ分析とは異なり、3 レベルモデルでは、クラスタ内のランダム効果分散と、クラスタ間の 2 つの異質性分散を推定することが可能である。</p></li>
+<li><p>3 レベルモデルを用いて、カテゴリまたは連続予測変数を検定することも可能である。これは、3 レベル混合効果モデルをもたらす。</p></li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></div>
+<div class="next"><a href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#multilevel-ma"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="nav-link" href="#multilevel-nature"><span class="header-section-number">10.1</span> メタ分析のマルチレベル性</a></li>
+<li>
+<a class="nav-link" href="#multilevel-R"><span class="header-section-number">10.2</span> R で３レベルのメタ分析モデルを適合</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%81%A9%E5%90%88"><span class="header-section-number">10.2.1</span> モデルの適合</a></li>
+<li><a class="nav-link" href="#%E3%83%AC%E3%83%99%E3%83%AB%E9%96%93%E3%81%AE%E5%88%86%E6%95%A3%E5%88%86%E5%B8%83"><span class="header-section-number">10.2.2</span> レベル間の分散分布</a></li>
+<li><a class="nav-link" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E6%AF%94%E8%BC%83"><span class="header-section-number">10.2.3</span> モデルの比較</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#three-level-subgroup"><span class="header-section-number">10.3</span> ３レベルモデルにおけるサブグループ解析</a></li>
+<li>
+<a class="nav-link" href="#rve"><span class="header-section-number">10.4</span> ロバスト分散推定</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#sandwich"><span class="header-section-number">10.4.1</span> サンドイッチ型分散推定量</a></li>
+<li><a class="nav-link" href="#fit-rve"><span class="header-section-number">10.4.2</span> ロバスト分散推定を用いた CHE モデルの適合</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#cwb"><span class="header-section-number">10.5</span> クラスタワイルドブートストラップ</a></li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-9"><span class="header-section-number">10.6</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84-6"><span class="header-section-number">10.7</span> 要約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

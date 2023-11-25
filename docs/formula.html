@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>B 効果量の計算式 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="Effect Size (\(\hat\theta\))  Standard Error (SE)  Function    Arithmetic Mean (3.2.1)  \(\bar{x} = \dfrac{\sum^{n}_{i=1}x_i}{n}\)  \(\text{SE}_{\bar{x}} = \dfrac{s}{\sqrt{n}}\)  mean   ...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="B 効果量の計算式 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Effect Size (\(\hat\theta\))  Standard Error (SE)  Function    Arithmetic Mean (3.2.1)  \(\bar{x} = \dfrac{\sum^{n}_{i=1}x_i}{n}\)  \(\text{SE}_{\bar{x}} = \dfrac{s}{\sqrt{n}}\)  mean   ...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="B 効果量の計算式 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="Effect Size (\(\hat\theta\))  Standard Error (SE)  Function    Arithmetic Mean (3.2.1)  \(\bar{x} = \dfrac{\sum^{n}_{i=1}x_i}{n}\)  \(\text{SE}_{\bar{x}} = \dfrac{s}{\sqrt{n}}\)  mean   ...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="active" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="formula" class="section level1" number="19">
+<h1>
+<span class="header-section-number">B</span> 効果量の計算式<a class="anchor" aria-label="anchor" href="#formula"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-table"><table class=" lightable-classic" style="font-size: 12px; font-family: Roboto; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<thead><tr>
+<th style="text-align:left;color: #f5f5f5 !important;background-color: #277DB0 !important;">
+</th>
+<th style="text-align:center;color: #f5f5f5 !important;background-color: #277DB0 !important;">
+Effect Size (<span class="math inline">\(\hat\theta\)</span>)
+</th>
+<th style="text-align:center;color: #f5f5f5 !important;background-color: #277DB0 !important;">
+Standard Error (SE)
+</th>
+<th style="text-align:left;color: #f5f5f5 !important;background-color: #277DB0 !important;">
+Function
+</th>
+</tr></thead>
+<tbody>
+<tr grouplength="1">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-bottom: 1px solid">
+Arithmetic Mean (<a href="effects.html#means">3.2.1</a>)
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(\bar{x} = \dfrac{\sum^{n}_{i=1}x_i}{n}\)</span>
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(\text{SE}_{\bar{x}} = \dfrac{s}{\sqrt{n}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;border-bottom: 1px solid">
+mean
+</td>
+</tr>
+<tr grouplength="2">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Proportion (<a href="effects.html#props">3.2.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(p = \dfrac{k}{n}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SE}_{p} = \sqrt{\dfrac{p(1-p)}{n}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Proportion (<a href="effects.html#props">3.2.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(p_{\text{logit}} = \log_{e}\left(\dfrac{p}{1-p}\right)\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SE}_{p_{\text{logit}}} = \sqrt{\dfrac{1}{np}+\dfrac{1}{n(1-p)}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="4" style="background-color: #277DB0; color: #fff;">
+<strong>Correlation</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Product-Moment Correlation (<a href="effects.html#pearson-cors">3.2.3.1</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(r_{xy} = \dfrac{\sigma^{2}_{xy}}{\sigma_x \sigma_y}\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(SE_{r_{xy}} = \frac{1-r_{xy}^2}{\sqrt{n-2}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;">
+cor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Product-Moment Correlation (<a href="effects.html#pearson-cors">3.2.3.1</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(z = 0.5\log_{e}\left(\dfrac{1+r}{1-r}\right)\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(\text{SE}_{z} = \dfrac{1}{\sqrt{n-3}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr grouplength="1">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;border-top: 1px solid">
+Point-Biserial Correlation<sup>1</sup> (<a href="effects.html#pb-cors">3.2.3.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;border-top: 1px solid">
+<span class="math inline">\({r_{\text{pb}}}= \dfrac{(\bar{y_1}-\bar{y_2})\sqrt{\dfrac{n_1}{N}\left(1-\dfrac{n_1}{N}\right)}}{s_y}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;border-top: 1px solid">
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;border-top: 1px solid">
+cor
+</td>
+</tr>
+<tr grouplength="4">
+<td colspan="4" style="background-color: #277DB0; color: #fff;">
+<strong>(Standardized) Mean Difference</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-bottom: 1px solid">
+Between-Group Mean Difference (<a href="effects.html#b-group-md">3.3.1.1</a>)
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(\text{MD} = \bar{x}_1 - \bar{x}_2\)</span>
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(\text{SE}_{\text{MD}} = {s_{\text{pooled}}}^*\sqrt{\dfrac{1}{n_1}+\dfrac{1}{n_2}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;border-bottom: 1px solid">
+</td>
+</tr>
+<tr grouplength="1">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;border-bottom: 1px solid">
+Between-Group Standardized Mean Difference (<a href="effects.html#b-group-smd">3.3.1.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;border-bottom: 1px solid">
+<span class="math inline">\(\text{SMD} = \dfrac{\bar{x}_1 - \bar{x}_2}{{s_{\text{pooled}}}^*}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;border-bottom: 1px solid">
+<span class="math inline">\(\text{SE}_{\text{SMD}} = \sqrt{\dfrac{n_1+n_2}{n_1n_2} + \dfrac{\text{SMD}^2_{\text{between}}}{2(n_1+n_2)}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;border-bottom: 1px solid">
+esc_mean_sd
+</td>
+</tr>
+<tr grouplength="1">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-bottom: 1px solid">
+Within-Group Mean Difference (<a href="effects.html#w-group-smd">3.3.1.3</a>)
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(\text{MD} = \bar{x}_{t_2} - \bar{x}_{t_1}\)</span>
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(SE_{\text{MD}}=\sqrt{\dfrac{s^2_{\text{t}_{\text{2}}}+s^2_{\text{t}_{\text{1}}}-(2r_{\text{t}_{\text{1}}\text{t}_{\text{2}}}s_{\text{t}_{\text{1}}}s_{\text{t}_{\text{2}}})}{n}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;border-bottom: 1px solid">
+</td>
+</tr>
+<tr grouplength="1">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Within-Group Standardized Mean Difference (<a href="effects.html#w-group-smd">3.3.1.3</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SMD}= \dfrac{\bar{x}_{t_2} - \bar{x}_{t_1}}{s_{\text{t}_1}}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SE}_{\text{SMD}} = \sqrt{\dfrac{2(1-r_{t_1t_2})}{n}+\dfrac{\text{SMD}^2_{\text{within}}}{2n}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr grouplength="10">
+<td colspan="4" style="background-color: #277DB0; color: #fff;">
+<strong>Binary Outcome Effect Size</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Risk Ratio (<a href="effects.html#rr">3.3.2.1</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\({p_{e}}_{\text{treat}} =\dfrac{a}{n_{\text{treat}}}\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(\text{SE}_{\log \text{RR}} = \sqrt{\dfrac{1}{a}+\dfrac{1}{c} - \dfrac{1}{a+b} - \dfrac{1}{c+d}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Risk Ratio (<a href="effects.html#rr">3.3.2.1</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\({p_{e}}_{\text{control}} = \dfrac{c}{n_{\text{control}}}\)</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Risk Ratio (<a href="effects.html#rr">3.3.2.1</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(\text{RR} = \dfrac{{p_{e}}_{\text{treat}}}{{p_{e}}_{\text{control}}}\)</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-bottom: 1px solid">
+Risk Ratio (<a href="effects.html#rr">3.3.2.1</a>)
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(\log \text{RR} = \log_{e}(\text{RR})\)</span>
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+</td>
+<td style="text-align:left;font-family: monospace;border-bottom: 1px solid">
+</td>
+</tr>
+<tr grouplength="4">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Odds Ratio (<a href="effects.html#or">3.3.2.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{Odds}_{\text{treat}} = \dfrac{a}{b}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SE}_{\log \text{OR}} = \sqrt{\dfrac{1}{a}+\dfrac{1}{b}+\dfrac{1}{c}+\dfrac{1}{d}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+esc_2x2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Odds Ratio (<a href="effects.html#or">3.3.2.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{Odds}_{\text{control}} = \dfrac{c}{d}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Odds Ratio (<a href="effects.html#or">3.3.2.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{OR} = \dfrac{a/b}{c/d}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Odds Ratio (<a href="effects.html#or">3.3.2.2</a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\log \text{OR} = \log_{e}(\text{OR})\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr grouplength="2">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-top: 1px solid">
+Incidence Rate Ratio (<a href="effects.html#irr">3.3.3</a>)
+</td>
+<td style="text-align:center;border-top: 1px solid">
+<span class="math inline">\(\text{IRR} = \dfrac{ E_{\text{treat}}/T_{\text{treat}} }{E_{\text{control}}/T_{\text{control}}}\)</span>
+</td>
+<td style="text-align:center;border-top: 1px solid">
+<span class="math inline">\(\text{SE}_{\log \text{IRR}} = \sqrt{\dfrac{1}{E_{\text{treat}}}+\dfrac{1}{E_{\text{control}}}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;border-top: 1px solid">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Incidence Rate Ratio (<a href="effects.html#irr">3.3.3</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(\log \text{IRR} = \log_{e}(\text{IRR})\)</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr grouplength="1">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr grouplength="7">
+<td colspan="4" style="background-color: #277DB0; color: #fff;">
+<strong>Effect Size Correction</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-bottom: 1px solid">
+Small Sample Bias (<a href="effects.html#hedges-g">3.4.1</a>)
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+<span class="math inline">\(g = \text{SMD} \times \left(1-\dfrac{3}{4n-9}\right)\)</span>
+</td>
+<td style="text-align:center;border-bottom: 1px solid">
+</td>
+<td style="text-align:left;font-family: monospace;border-bottom: 1px solid">
+hedges_g
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Unreliability (<a href="#unrealiable"><strong>??</strong></a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\({r_{xy}}_{c} = \dfrac{r_{xy}}{\sqrt{r_{xx}}}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SE}_c = \dfrac{\text{SE}}{\sqrt{r_{xx}}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Unreliability (<a href="#unrealiable"><strong>??</strong></a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\({r_{xy}}_{c} = \dfrac{r_{xy}}{\sqrt{r_{xx}}\sqrt{r_{yy}}}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SE}_c = \dfrac{\text{SE}}{\sqrt{r_{xx}}\sqrt{r_{yy}}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #f5f5f5 !important;">
+Unreliability (<a href="#unrealiable"><strong>??</strong></a>)
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+<span class="math inline">\(\text{SMD}_c = \dfrac{\text{SMD}}{\sqrt{r_{xx}}}\)</span>
+</td>
+<td style="text-align:center;background-color: #f5f5f5 !important;">
+</td>
+<td style="text-align:left;font-family: monospace;background-color: #f5f5f5 !important;">
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="4" style="border-bottom: 0;">
+<strong> </strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-top: 1px solid">
+Range Restriction (<a href="effects.html#range">3.4.3</a>)
+</td>
+<td style="text-align:center;border-top: 1px solid">
+<span class="math inline">\(\text{U} = \dfrac{s_{\text{unrestricted}}}{s_{\text{restricted}}}\)</span>
+</td>
+<td style="text-align:center;border-top: 1px solid">
+<span class="math inline">\(\text{SE}_{{r_{xy}}_c} = \dfrac{{r_{xy}}_c}{r_{xy}}\text{SE}_{r_{xy}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;border-top: 1px solid">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Range Restriction (<a href="effects.html#range">3.4.3</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\({r_{xy}}_c = \dfrac{\text{U}\times r_{xy}}{\sqrt{(\text{U}^2-1)r_{xy}^2+1}}\)</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Range Restriction (<a href="effects.html#range">3.4.3</a>)
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(\text{SMD}_c = \dfrac{\text{U}\times \text{SMD}}{\sqrt{(\text{U}^2-1)\text{SMD}^2+1}}\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(\text{SE}_{{\text{SMD}}_c} = \dfrac{{\text{SMD}}_c}{\text{SMD}}\text{SE}_{\text{SMD}}\)</span>
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:left;font-family: monospace;">
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>1</sup> Point-biserial correlations may be converted to SMDs for meta-analysis (see Chapter <a href="effects.html#pb-cors">3.2.3.2</a>).
+</td>
+</tr>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>*</sup> The pooled standard deviation is defined as <span class="math inline">\(s_{\text{pooled}} = \sqrt{\dfrac{(n_1-1)s^2_1+(n_2-1)s^2_2}{(n_1-1)+(n_2-1)}}\)</span>.
+</td>
+</tr>
+</tfoot>
+</table></div>
+<p>\renewcommand{arraystretch}{1}</p>
+<p><br></p>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></div>
+<div class="next"><a href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#formula"><span class="header-section-number">B</span> 効果量の計算式</a></li></ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

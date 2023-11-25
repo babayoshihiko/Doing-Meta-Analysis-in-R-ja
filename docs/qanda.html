@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>A Q&amp;A | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="A.1 Chapter 1: はじめに 1. メタ分析はどのように定義することができるか？メタ分析と他の文献レビューの違いは何か？ メタ分析は、分析の分析と定義することができる (Glassによる定義)。他のタイプの (システマティック)...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="A Q&amp;A | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="A.1 Chapter 1: はじめに 1. メタ分析はどのように定義することができるか？メタ分析と他の文献レビューの違いは何か？ メタ分析は、分析の分析と定義することができる (Glassによる定義)。他のタイプの (システマティック)...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A Q&amp;A | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="A.1 Chapter 1: はじめに 1. メタ分析はどのように定義することができるか？メタ分析と他の文献レビューの違いは何か？ メタ分析は、分析の分析と定義することができる (Glassによる定義)。他のタイプの (システマティック)...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="active" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="qanda" class="section level1" number="18">
+<h1>
+<span class="header-section-number">A</span> Q&amp;A<a class="anchor" aria-label="anchor" href="#qanda"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div id="qanda1" class="section level2" number="18.1">
+<h2>
+<span class="header-section-number">A.1</span> Chapter 1: はじめに<a class="anchor" aria-label="anchor" href="#qanda1"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. メタ分析はどのように定義することができるか？メタ分析と他の文献レビューの違いは何か？</strong></p>
+<p>メタ分析は、<strong>分析の分析</strong>と定義することができる (Glassによる定義)。他のタイプの (システマティック) レビューとは対照的に、メタ分析は、定量的な方法でエビデンスを統合することを目的としている。通常、その目的は、明確に区分された研究分野<strong>全体</strong>を記述する数値的な推定値を導き出すことである。</p>
+<p><strong>2. メタ分析の生みの親、生みの親を一人挙げることができるか？その人物はどのような功績を残したか？</strong></p>
+<p>Karl Pearson: 大英帝国全体の腸チフス接種データの組み合わせ; Ronald Fisher: 農業調査研究のデータを統合するアプローチ; Mary Smith and Gene Glass: 「メタ分析」という言葉を作り、心理療法試験の最初のメタ分析; John Hunter and Frank Schmidt: 測定アーチファクトを補正したメタ分析 (心理測定メタ分析) ; Rebecca DerSimonian and Nan Laird: ランダム効果モデルのメタ分析計算法; Peter Elwood and Archie Cochrane: 医学におけるメタ分析のパイオニア的存在である。</p>
+<p><strong>3. メタ分析のよくある問題点を3つ挙げ、1～2文で説明しなさい。</strong></p>
+<p>“リンゴとオレンジ”: 研究が違いすぎて合成できない、“Garbage In, Garbage Out”: 無効なエビデンスがメタ分析で再現されるだけ、“ファイルの引き出し”: ネガティブな結果は公表されず、メタ分析に偏った結果が出る、“研究者のアジェンダ”: 研究者は証明したいことを証明するためにメタ分析をいじることができる、などである。</p>
+<p><strong>4. メタ分析のための良いリサーチクエスチョンを定義する資質を挙げなさい。</strong></p>
+<p>FINER: 実現可能、興味深い、新規、倫理的、関連性；PICO: 明確に定義された集団、介入／曝露、対照群／比較、分析されたアウトカム。</p>
+<p><strong>5. 大学生の睡眠介入に関するメタ分析の適格基準をもう一度見てみよう (Chapter 1.4.1 の終わり)。この研究の適格基準、除外基準から PICO を抽出できるか。</strong></p>
+<p>対象: 高等教育機関学生；介入: 睡眠焦点型心理学的介入；比較: 受動的対照条件；アウトカム: 睡眠障害、標準化症状測定による。</p>
+<p><strong>6. 研究を検索するために使用できるいくつかの重要なソースを挙げなさい。</strong></p>
+<p>総説、研究中の参考文献、「フォワードサーチ」 (関連論文を引用した研究の検索)、関連雑誌の検索、書誌データベース検索。</p>
+<p><strong>7. 「研究の質」と「バイアスのリスク」の違いを1～2文で説明しなさい。</strong></p>
+<p>研究分野において重要とされる研究品質基準をすべて満たしていても、バイアスのリスクが高い場合がある (この種の研究または研究テーマではバイアスの回避が困難なためなど)。</p>
+<p><br></p>
+</div>
+<div id="qanda2" class="section level2" number="18.2">
+<h2>
+<span class="header-section-number">A.2</span> Chapter 2: Rの発見<a class="anchor" aria-label="anchor" href="#qanda2"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 変数 <code>Author</code> を表示しなさい。</strong></p>
+<div class="sourceCode" id="cb549"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data</span><span class="op">$</span><span class="va">Author</span></span></code></pre></div>
+<p><strong>2. <code>subgroup</code> を因子型 (factor) に変換しなさい。</strong></p>
+<div class="sourceCode" id="cb550"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data</span><span class="op">$</span><span class="va">subgroup</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">subgroup</span><span class="op">)</span></span></code></pre></div>
+<p><strong>3. “Jones” と “Martin” の研究のデータをすべて選択しなさい。</strong></p>
+<div class="sourceCode" id="cb551"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Author</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Jones"</span>, <span class="st">"Martin"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><strong>4. 研究名 “Rose” を “Bloom” に変更しなさい。</strong></p>
+<div class="sourceCode" id="cb552"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data</span><span class="op">[</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Bloom"</span></span></code></pre></div>
+<p><strong>5. <code>TE</code> から <code>seTE</code> を引いて、新しい変数 <code>TE_seTE_diff</code> を作成し、結果を <code>data</code> に保存しなさい。</strong></p>
+<div class="sourceCode" id="cb553"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">TE_seTE_diff</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">$</span><span class="va">TE</span> <span class="op">-</span> <span class="va">data</span><span class="op">$</span><span class="va">seTE</span></span></code></pre></div>
+<p><strong>6. パイプを使用して、(1) <code>subgroup</code> が”one” または “two” に属するすべての研究をフィルタし、(2) 変数 <code>TE_seTE_diff</code> を選択し、(3) その変数の平均をとり、それに <code>exp</code> 関数を適用しなさい。</strong></p>
+<div class="sourceCode" id="cb554"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">deplyr</span><span class="fu">::</span><span class="fu">filter</span><span class="op">(</span><span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"two"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">TE_seTE_diff</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="qanda3" class="section level2" number="18.3">
+<h2>
+<span class="header-section-number">A.3</span> Chapter 3: 効果の大きさ<a class="anchor" aria-label="anchor" href="#qanda3"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 効果量という言葉に明確な定義はあるか？人々は、効果量という言葉で何を指すか？</strong></p>
+<p>いいえ、普遍的に受け入れられる定義はない。ある人は、介入群と対照群の間の差に対して「効果量」という言葉を留保している。また、より自由な定義を使用し、「1変数」の測定値 (例えば、平均値や割合) のみを除外する者もいる。</p>
+<p><strong>2. 観測された効果量が母集団の真の効果量から乖離する主な理由を挙げなさい。それはどのように定量化できるのか。</strong></p>
+<p>観察された効果量は、サンプル誤差のために真の効果量から乖離することが想定されている。研究のサンプル・エラーの予想サイズは、その標準誤差で表すことができる。</p>
+<p><strong>3. なぜ大規模な研究は小規模な研究よりも真の効果の推定に優れているのか？</strong></p>
+<p>なぜなら、サンプリング誤差が小さく、より正確な効果推定ができると想定されることがあるからである。</p>
+<p><strong>4. 効果量の指標は、どのような基準を満たせばメタ分析に使えるのか？</strong></p>
+<p>比較可能で、計算可能で、信頼性があり、解釈可能である必要がある。</p>
+<p><strong>5. 標準化平均差 (Standardized Mean Difference, SMD) が1であることは何を表しているのか？</strong></p>
+<p>2群の平均値がプール標準偏差の1倍だけ異なることを表している。</p>
+<p><strong>6. 比 (オッズ比など) に基づく効果量をプールするためには、どのような変換が必要か。</strong></p>
+<p>効果量は対数変換する必要がある (逆変量プール法を使用するため)。</p>
+<p><strong>7. 効果量補正の種類を3つ挙げよ。</strong></p>
+<p>標準化平均差のスモールサンプルバイアス補正 (Hedges’ <span class="math inline">\(g\)</span>)、信頼性の低さに関する補正、範囲制限に関する補正。</p>
+<p><strong>8. 分析単位の問題はどのような場合に発生するか？どうすれば回避できるか？</strong></p>
+<p>データセット内の効果量に相関がある場合 (例えば、同じ研究の一部であるため)。分析単位の問題は、(1)共有グループのサンプルサイズを分割する、(2)比較を取り除く、(3)グループを組み合わせる、(4)効果量の依存性を考慮したモデル (例: ３レベルモデル) を使用する、などによって (一部または全部) 回避することができる。</p>
+<p><br></p>
+</div>
+<div id="qanda4" class="section level2" number="18.4">
+<h2>
+<span class="header-section-number">A.4</span> Chapter 4: 効果量のプール<a class="anchor" aria-label="anchor" href="#qanda4"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 固定効果モデルとランダム効果モデルの違いは何か？</strong></p>
+<p>固定効果モデルは、すべての研究が同じ真の効果量の推定者であると仮定している。ランダム効果モデルは、研究間の異質性 (分散 <span class="math inline">\(\tau^2\)</span>) によって、研究の真の効果量が変化すると仮定し、それを推定する必要がある。</p>
+<p><strong>2. 固定効果モデルとランダム効果モデルの結果が同じになるケースは考えられるか。</strong></p>
+<p>研究間異質性分散 <span class="math inline">\(\tau^2\)</span> がゼロの場合。</p>
+<p><strong>3. <span class="math inline">\(\tau^2\)</span> とは何か？どのように推定するのか？</strong></p>
+<p>研究間の異質性分散。制限付き最尤法 (REML)、Paule-Mandel 推定量、DerSimonian-Laird 推定量など、さまざまな方法を用いて推定することができる。</p>
+<p><strong>4. Knapp-Hartung の調整はどの分布に基づいているか？どのような効果があるか？</strong></p>
+<p>この調整は <span class="math inline">\(t\)</span>-分布に基づくものである。Knapp-Hartung の調整は、通常、より保守的な (すなわち、より広い) 信頼区間をもたらす。</p>
+<p><strong>5. 「逆分散」 (inverse-variance) プーリングとはどういう意味か？この方法が最適解でないのはどのような場合か？</strong></p>
+<p>この方法は、研究の分散の逆数をプーリングの重みとして使用するため、逆分散プーリングと呼ばれる。一般的な逆分散法は、二値アウトカム・データ (例えば、リスクやオッズ比) のメタ分析には好まれない。</p>
+<p><strong>6. 二値アウトカムデータをメタ分析したい。試験群の観察数はほぼ同じで、観察された事象は非常にまれで、治療効果が大きくなることは期待できない。どのようなプール方法を使用するか？</strong></p>
+<p>このような場合、Peto 法がうまく機能する可能性がある。</p>
+<p><strong>7. GLMM はどのようなアウトカム指標に使用できるのか。</strong></p>
+<p>割合(Proportions)。他の二値アウトカム指標に使用することも可能であるが、一般的には推奨されていない。</p>
+<p><br></p>
+</div>
+<div id="qanda5" class="section level2" number="18.5">
+<h2>
+<span class="header-section-number">A.5</span> Chapter 5: 研究間異質性<a class="anchor" aria-label="anchor" href="#qanda5"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. なぜメタ分析の研究間異質性を調べることが重要なのか。</strong></p>
+<p>研究間の異質性が大きい場合、真の効果の大きさはかなり異なることが想定される。この場合、平均的な真の効果の点推定値は、データを全体的によく表していない可能性がある。また、研究間の異質性は、例えば、少数の外れた研究が全体の結果を歪めてしまうため、効果推定値が頑健でなくなる可能性がある。</p>
+<p><strong>2. 異質性の2つのタイプを挙げられるか？メタ分析の計算にはどちらが関係するか？</strong></p>
+<p>ベースライン/デザインに関連した異質性と統計的異質性。メタ分析では統計的異質性のみが定量的に評価される。</p>
+<p><strong>3. Cochran’s <span class="math inline">\(Q\)</span> の</strong>有意性<strong>が、研究間異質性の十分な指標とならないのはなぜか。</strong></p>
+<p><span class="math inline">\(Q\)</span> 検定の有意性は、メタ分析に含まれる研究数とその規模に大きく依存することがある。</p>
+<p><strong>4. メタ分析で異質性の大きさを表現するために予測区間を使うメリットは何か。</strong></p>
+<p>予測区間は、要約尺度と同じ尺度で、研究間の異質性が将来の研究に与える影響を表現することができる。</p>
+<p><strong>5. 統計的外れ値と影響力のある研究の違いは何か？</strong></p>
+<p>統計的外れ値とは、効果量が<strong>極端</strong>な研究のことである。研究は、全体の結果に対する影響が大きい場合、影響力がある。ある研究があまり影響力がなくても統計的外れ値として定義されることがあり、またその逆もありえる。例えば、大規模な研究は、その効果量が特に小さくもなく大きくもないのに、プール結果に大きな影響を与えることがある。</p>
+<p><strong>6. GOSH のプロットは何に使えるのか。</strong></p>
+<p>GOSH プロットは、データにおける異質性のパターンや、どの研究がそれに寄与しているかを調べるために使用することができる。</p>
+<p><br></p>
+</div>
+<div id="qanda6" class="section level2" number="18.6">
+<h2>
+<span class="header-section-number">A.6</span> Chapter 6: フォレストプロット<a class="anchor" aria-label="anchor" href="#qanda6"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. フォレストプロットの主要な構成要素は何か？</strong></p>
+<p>各研究の観察された効果量と信頼区間、観察された効果量を囲む四角の大きさで表される各研究の重み、各研究の観察された効果量と重みの数値、菱形で表されるプール効果、通常は効果なしを表す参照線などのグラフィカル表示。</p>
+<p>**2. メタ分析でフォレストプロットを提示するメリットは何か？</p>
+<p>これにより、含まれるすべての研究の数、効果量、精度、および観察された効果がどのようにプールされた効果に「加算」されるかを迅速に調べることができる。</p>
+<p><strong>3. フォレストプロットの限界は何か、Drapery プロットはこの限界をどのように克服しているのか。</strong></p>
+<p>フォレストプロットは、固定された有意閾値 (通常、<span class="math inline">\(\alpha\)</span> = 0.05) を仮定した効果の信頼区間を示すことができるだけである。Drapery プロットは、<span class="math inline">\(p\)</span> -値を変化させた場合の効果量の信頼区間 (したがって有意性) を表示すために使用できる。</p>
+<p><br></p>
+</div>
+<div id="qanda7" class="section level2" number="18.7">
+<h2>
+<span class="header-section-number">A.7</span> Chapter 7: サブグループ解析<a class="anchor" aria-label="anchor" href="#qanda7"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 影響度分析や異常値分析ではわからないことのうち、何がサブグループ解析ではわかることがあるか？</strong></p>
+<p>サブグループ解析は、データにある異質性のパターンが存在することを教えてくれるだけでなく、なぜ存在するのかを説明できる可能性がある。</p>
+<p><strong>2. サブグループ解析の背景にあるモデルが、なぜ固定効果 (複数) モデルと呼ばれるのか。</strong></p>
+<p>なぜなら、サブグループ内の研究はランダム効果モデルに従うが、サブグループのレベル自体は固定されていると仮定しているからである。固定サブグループ効果はいくつかある。</p>
+<p><strong>3. メタ分析の一環として、ある教育研修プログラムの効果が、実施された学区によって異なるかどうかを調べたいと考えている。この問いに答えるために、固定効果 (複数) モデルを用いたサブグループ解析は適切か？</strong></p>
+<p>おそらく、そうではないだろう。学区は、すべての学区ではなく、より多くの学区から選ばれたものであると考える方が理にかなっている。</p>
+<p><strong>4. あなたの友人が、合計9つの研究を含むメタ分析を行った。これらの研究のうち5つが1つのサブグループに分類され、4つが他のサブグループに分類されている。彼女は、サブグループ解析を行うことに意味があるかどうかをあなたに尋ねている。あなたならどうするか？</strong></p>
+<p>研究数の合計が10より少ないので、サブグループ解析を行うのは得策ではないだろう。</p>
+<p><strong>5. メタ分析で、分析した治療法が男性よりも女性でより効果的であると著者が主張しているものがあった。この知見は、研究対象者に含まれる女性の割合に基づいて研究をサブグループに分けたサブグループ解析に基づいている。この知見は信頼できるか、またその理由は？</strong></p>
+<p>この所見は、集計された研究データを用いて作成されたサブグループ変数に基づくものである。これは生態学的なバイアスをもたらす可能性があり、その結果には疑問が残る。</p>
+<p><br></p>
+</div>
+<div id="qanda8" class="section level2" number="18.8">
+<h2>
+<span class="header-section-number">A.8</span> Chapter 8: メタ回帰<a class="anchor" aria-label="anchor" href="#qanda8"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 一次研究で用いられる従来の回帰分析と、メタ回帰の違いは何か？</strong></p>
+<p>分析の単位は (人ではなく) 研究であり、その効果量はだいたい正確である。メタ回帰では、ある研究が他の研究よりも大きなウェイトを持つという事実を考慮した回帰モデルを構築しなければならない。</p>
+<p><strong>2. サブグループ解析とメタ回帰は密接な関係がある。メタ回帰の公式をどのようにサブグループデータに適応させることができるか。</strong></p>
+<p>ダミー／カテゴリー予測変数の使用による。</p>
+<p><strong>3. メタ回帰において、個々の研究に異なる重みを与えるためにどのような方法が用いられるか？</strong></p>
+<p>メタ回帰では、<strong>加重最小二乗法</strong>を用いて、精度の高い研究をより重要視している。</p>
+<p><strong>4. データによく適合するメタ回帰モデルにはどのような特徴があるか？これを調べるには、どのような指標を用いればよいか？</strong></p>
+<p>「良い」メタ回帰モデルは、説明されない研究間異質性分散の量を大きく減少させるはずである。この説明される分散の増加をカバーする指数が、<span class="math inline">\(R^2\)</span> のアナログである。</p>
+<p><strong>5. メタ分析の手法でサブグループ解析を計算する場合、<span class="math inline">\(\tau^2\)</span> の値をサブグループで別々にするか、共通にするか。</strong></p>
+<p>サブグループで共通の推定値 <span class="math inline">\(\tau^2\)</span> を想定している。</p>
+<p><strong>6. (多重) メタ回帰の限界と落とし穴は何か。</strong></p>
+<p>メタ回帰の過剰適合は偽陽性の結果につながり、多重共線性はロバストでないパラメータ推定値につながる可能性がある。</p>
+<p><strong>7. (複数の) メタ回帰モデルの頑健性を向上させるために利用できる方法を2つ挙げ、それが有用である理由を述べよ。</strong></p>
+<p>並べ替え検定を行うか、マルチモデル推論を利用することができる。</p>
+<p><br></p>
+</div>
+<div id="qanda9" class="section level2" number="18.9">
+<h2>
+<span class="header-section-number">A.9</span> Chapter 9: 出版バイアス<a class="anchor" aria-label="anchor" href="#qanda9"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 「出版バイアス」という言葉はどのように定義できるか？なぜメタ分析で問題になるのか？</strong></p>
+<p>出版バイアスは、ある研究が出版される確率がその結果に依存する場合に存在した。これは、メタ分析において偏った結果を導き出す可能性があるため、問題となる。すべてのエビデンスが考慮されているわけではないので、メタ分析では、既存のすべての情報を考慮したときには現れなかったであろう結果が得られることがある。</p>
+<p><strong>2. 他にどのような報告バイアスがあるか？少なくとも3つ挙げて説明しなさい。</strong></p>
+<p>引用バイアス: ネガティブな知見を持つ研究は引用されにくい、タイムラグバイアス: ネガティブな知見を持つ研究は後に出版される、多重出版バイアス: ポジティブな知見を持つ研究は複数の論文で報告されやすい、言語バイアス: 英語で出版されていないため証拠が省略されることがある、結果報告バイアス: 研究結果がポジティブであればネガティブよりも多く報告される傾向がある。</p>
+<p><strong>3. 疑わしい研究慣行 (QRP) を2つ挙げ、どのようにメタ分析の妥当性を脅かすかを説明しなさい。</strong></p>
+<p>P-hacking、HARKing。どちらも、真の効果がないにもかかわらず、肯定的な知見を膨らませることにつながる。</p>
+<p><strong>4. 小規模研究効果法の基本的な前提を説明しなさい。</strong></p>
+<p>大規模な研究 (すなわち標準誤差が小さい研究) は、その結果がどうであれ、出版される可能性が非常に高い。小規模な研究は精度が小さいので、統計的有意性を得るためには非常に高い効果量が必要となる。したがって、非常に高い効果を持つ小規模な研究だけが出版され、それ以外は「ファイルの引き出し」に入ったままになってしまうのである。</p>
+<p><strong>5. データが小規模研究の効果を示すことがわかったとき、自動的に出版バイアスがあることを意味するか？</strong></p>
+<p>研究間の異質性、共変量の影響 (例えば、小規模な研究ほど治療の忠実度が高い)、偶然性など、小規模な研究の効果を見つける理由は他にもいくつかある。</p>
+<p><strong>6. p-曲線は、メタ分析に含まれるすべての研究の真の効果を推定するのか、それとも「有意な」効果量を持つすべての研究の真の効果だけを推定するのか、どちらか？</strong></p>
+<p>P曲線は、すべての有意な効果量の真の効果を推定するだけである。これは、研究間の異質性がある場合にうまく機能しない理由の一つである。</p>
+<p><strong>7. どの出版バイアス法が一番性能が良いか。</strong></p>
+<p>出版バイアス方法は、一貫して他のすべての方法より優れているものはない。したがって、いくつかの方法を適用して、その結果が一致するかどうかを確認することは有用である。</p>
+<p><br></p>
+</div>
+<div id="qanda10" class="section level2" number="18.10">
+<h2>
+<span class="header-section-number">A.10</span> Chapter 10:「マルチレベルメタ分析<a class="anchor" aria-label="anchor" href="#qanda10"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. なぜ「マルチレベル」モデルではなく「３レベル」モデルと言う方が正確なのか？</strong></p>
+<p>なぜなら、「従来の」ランダム効果モデルは、すでにマルチレベルモデルであることがある。参加者が研究内にネストされており、研究自体が真の効果量の母集団から引き出されていることを仮定している。</p>
+<p><strong>2. ３レベルメタ分析モデルはいつ有用か？</strong></p>
+<p>相関のあるデータやネストされたデータを扱う場合。３レベルモデルは、研究が複数の効果量に寄与している場合や、研究自体がより大きなクラスターに分類されると信じるに足る理由がある場合に特に有用である。</p>
+<p><strong>3. 効果量依存性の一般的な原因を2つ挙げなさい。</strong></p>
+<p>一次研究に携わった研究者が引き起こした依存、メタ分析者自身が作り出した依存。</p>
+<p><strong>4. マルチレベル <span class="math inline">\(I^2\)</span> の統計量はどのように解釈すればよいか。</strong></p>
+<p>これは、サンプル誤差に起因しない分散の量を示し、クラスタ内の異質性分散とクラスタ間の異質性分散を区別するものである。</p>
+<p><strong>5. モデレータ変数の効果を取り入れるために、どのように３レベルモデルを拡張することができるのか？</strong></p>
+<p>モデル式に固定効果項を積算することで</p>
+<p><br></p>
+</div>
+<div id="qanda11" class="section level2" number="18.11">
+<h2>
+<span class="header-section-number">A.11</span> Chapter 11: 構造方程式モデリングメタ分析<a class="anchor" aria-label="anchor" href="#qanda11"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 構造方程式モデリングとは何か、何のために使うのか。</strong></p>
+<p>構造方程式モデリングは、顕在変数と潜在変数の間に想定される関係を検証するために用いることができる統計手法である。</p>
+<p><strong>2. SEM の表現方法として、どのようなものがあるか？</strong></p>
+<p>SEM はグラフやマトリックスで表現することができる。</p>
+<p><strong>3. ランダム効果メタ分析を SEM の観点から説明しなさい。</strong></p>
+<p>SEM の観点からは、ランダム効果メタ分析における真の全体効果量は、潜在変数と見なすことができる。それは、レベル1のサンプル誤差とレベル2の真の効果量の異質性分散という2つのアームによって “影響”される。</p>
+<p><strong>4. 多変量メタ分析とは何か、どのような場合に有用か。</strong></p>
+<p>多変量メタ分析では、2つ (またはそれ以上) の研究のアウトカムを同時にプールすることができる。2つのアウトカム変数を共同で推定することの利点は、アウトカム間の相関を考慮することができることである。</p>
+<p><strong>5. 提案したメタ分析 SEM がデータによく適合することがわかったとき、このモデルが自動的に「正しい」モデルであることを意味するのだろうか。</strong></p>
+<p>いいえ、データによく合うモデルは1つだけではないことが多い。</p>
+<p><br></p>
+</div>
+<div id="qanda12" class="section level2" number="18.12">
+<h2>
+<span class="header-section-number">A.12</span> Chapter 12: ネットワークメタ分析<a class="anchor" aria-label="anchor" href="#qanda12"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. ネットワークメタ分析はどんな時に有用か？標準的なメタ分析と比較して、どのような利点があるか？</strong></p>
+<p>ネットワークメタ分析は、ある問題領域に対して複数の競合する治療法があり、どの治療法が最も効果が大きいかを推定したい場合に有効である。従来のメタ分析とは対照的に、ネットワーク・メタ分析モデルは、直接および間接のエビデンスを統合することができる。</p>
+<p><strong>2. 治療ネットワークにおける直接エビデンスと間接エビデンスの違いは何か？間接エビデンスの生成に直接エビデンスをどのように利用できるのか？</strong></p>
+<p>直接エビデンスとは、対象となる研究で実際に調査された比較によって提供される情報である。間接エビデンスは、ある (直接観察された) 比較の効果を、関連する比較 (例えば、同じ対照群を用いた比較) の効果から差し引くことによって、直接エビデンスから導き出されるものである。</p>
+<p><strong>3. ネットワークメタ分析における推移性 (transitivity) の仮定の主な考え方は何か？</strong></p>
+<p>推移性の仮定は、直接証拠が観察されない間接証拠を推論するために使用できること、および直接証拠と間接証拠は一致することを規定している。</p>
+<p><strong>4. 推移性 (transivity) と一貫性 (consistency) の関係は？</strong></p>
+<p>推移性は、ネットワークメタ分析を行うための前提条件であり、直接的に検証することはできない。推移性統計的な現れ方は一貫性であり、直接エビデンスに基づく効果量の推定値が間接エビデンスに基づく推定値と同一または類似している場合に満たされる。</p>
+<p><strong>5. ネットワークメタ分析に使用できる2つのモデリングアプローチを挙げなさい。どちらか一方が優れているか？</strong></p>
+<p>ネットワークメタ分析は、頻度論的モデルまたはベイズモデルを用いて実施することができる。どちらのモデルも同等で、サンプルサイズが大きくなるにつれて収束する結果が得られる。</p>
+<p><strong>6. 1つの試験から複数の比較を含める場合 (マルチアーム試験など)、どのような問題が発生するか？</strong></p>
+<p>つまり、効果推定値に相関があり、解析単位に誤差が生じる。</p>
+<p><strong>7. 異なる治療法の P-スコアまたは SUCRA スコアを解釈する際、どのような点に注意しなければならないか？</strong></p>
+<p>異なる治療法の効果推定値が重なることが多いこと。つまり、P-/SUCRAスコアは常に慎重に解釈されるべきものである。</p>
+<p><br></p>
+</div>
+<div id="qanda13" class="section level2" number="18.13">
+<h2>
+<span class="header-section-number">A.13</span> Chapter 13: ベイズメタ分析<a class="anchor" aria-label="anchor" href="#qanda13"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p><strong>1. 「従来の」ランダム効果モデルとベイズ型階層モデルの相違点と類似点は何か？</strong></p>
+<p>頻度論的メタ分析の基礎となるランダム効果モデルは、概念的にはベイズ階層モデルと同じである。主な違いは、ベイズ型階層モデルは、全体の真の効果量 <span class="math inline">\(\mu\)</span> と研究間の異質性 <span class="math inline">\(\tau\)</span> に対する (弱い情報量の) 事前分布を含むということである。</p>
+<p><strong>2. ベイズメタ分析の頻度論的な利点と比較した場合の利点を3つ挙げよ。</strong></p>
+<p><span class="math inline">\(\tau^2\)</span> の推定値の不確実性を直接モデル化する。<span class="math inline">\(\mu\)</span> の事後分布を作成し、<span class="math inline">\(\mu\)</span> がある値以下になる確率を計算するために使用できる。事前知識や信念をモデルに統合することができる。</p>
+<p><strong>3. 弱情報的事前分布と非情報的事前分布の違いを説明しなさい。</strong></p>
+<p>非情報的 prior は、すべて、あるいはある範囲の可能な値が等しくあり得ると仮定する。弱情報的 prior は、ある値が他の値よりも確率が高いという<strong>弱い</strong>信念を表している。</p>
+<p><strong>4. Half-Cauchy 分布とは何か、なぜベイズメタ分析に有用なのか。</strong></p>
+<p>Half-Cauchy 分布は、正の値に対してのみ定義される Cauchy 分布である。これは、位置とスケーリング・パラメータによって制御され、後者は分布の尾がどの程度重いかを決定する。Half-Cauchy 分布は、<span class="math inline">\(\tau\)</span> の事前分布として使うことができる。</p>
+<p><strong>5. ECDF とは何か、ベイズメタ分析にどう使えるか？</strong></p>
+<p>ECDF とは、<strong>経験的累積分布関数</strong>の略である。<span class="math inline">\(\mu\)</span> (または <span class="math inline">\(\tau\)</span>) の事後分布に基づく ECDF は、推定されたパラメータがある指定された閾値より下または上にある (累積) 確率を決定するために使用されることができる。</p>
+<p><br></p>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></div>
+<div class="next"><a href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#qanda"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="nav-link" href="#qanda1"><span class="header-section-number">A.1</span> Chapter 1: はじめに</a></li>
+<li><a class="nav-link" href="#qanda2"><span class="header-section-number">A.2</span> Chapter 2: Rの発見</a></li>
+<li><a class="nav-link" href="#qanda3"><span class="header-section-number">A.3</span> Chapter 3: 効果の大きさ</a></li>
+<li><a class="nav-link" href="#qanda4"><span class="header-section-number">A.4</span> Chapter 4: 効果量のプール</a></li>
+<li><a class="nav-link" href="#qanda5"><span class="header-section-number">A.5</span> Chapter 5: 研究間異質性</a></li>
+<li><a class="nav-link" href="#qanda6"><span class="header-section-number">A.6</span> Chapter 6: フォレストプロット</a></li>
+<li><a class="nav-link" href="#qanda7"><span class="header-section-number">A.7</span> Chapter 7: サブグループ解析</a></li>
+<li><a class="nav-link" href="#qanda8"><span class="header-section-number">A.8</span> Chapter 8: メタ回帰</a></li>
+<li><a class="nav-link" href="#qanda9"><span class="header-section-number">A.9</span> Chapter 9: 出版バイアス</a></li>
+<li><a class="nav-link" href="#qanda10"><span class="header-section-number">A.10</span> Chapter 10:「マルチレベルメタ分析</a></li>
+<li><a class="nav-link" href="#qanda11"><span class="header-section-number">A.11</span> Chapter 11: 構造方程式モデリングメタ分析</a></li>
+<li><a class="nav-link" href="#qanda12"><span class="header-section-number">A.12</span> Chapter 12: ネットワークメタ分析</a></li>
+<li><a class="nav-link" href="#qanda13"><span class="header-section-number">A.13</span> Chapter 13: ベイズメタ分析</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

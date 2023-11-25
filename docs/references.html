@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>References | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="p { margin-top: 0; margin-bottom: 20px; }   Aaron, Bruce, Jeffrey D Kromrey, and John Ferron. 1998. “Equating \(r\)-Based and \(d\)-Based Effect Size Indices: Problems with a Commonly Recommended...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="References | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="p { margin-top: 0; margin-bottom: 20px; }   Aaron, Bruce, Jeffrey D Kromrey, and John Ferron. 1998. “Equating \(r\)-Based and \(d\)-Based Effect Size Indices: Problems with a Commonly Recommended...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="References | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="p { margin-top: 0; margin-bottom: 20px; }   Aaron, Bruce, Jeffrey D Kromrey, and John Ferron. 1998. “Equating \(r\)-Based and \(d\)-Based Effect Size Indices: Problems with a Commonly Recommended...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="active" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="references" class="section level1 unnumbered">
+<h1>References<a class="anchor" aria-label="anchor" href="#references"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<style>
+p { margin-top: 0; margin-bottom: 20px; }
+</style>
+<p><br></p>
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-aaron1998equating" class="csl-entry">
+Aaron, Bruce, Jeffrey D Kromrey, and John Ferron. 1998. <span>“Equating <span><span class="math inline">\(r\)</span></span>-Based and <span><span class="math inline">\(d\)</span></span>-Based Effect Size Indices: Problems with a Commonly Recommended Formula.”</span> <a href="https://files.eric.ed.gov/fulltext/ED433353.pdf" class="uri">https://files.eric.ed.gov/fulltext/ED433353.pdf</a>; ERIC. <a href="https://files.eric.ed.gov/fulltext/ED433353.pdf">https://files.eric.ed.gov/fulltext/ED433353.pdf</a>.
+</div>
+<div id="ref-adler2014osteoporosis" class="csl-entry">
+Adler, Robert A. 2014. <span>“Osteoporosis in Men: A Review.”</span> <em>Bone Research</em> 2: 14001.
+</div>
+<div id="ref-aert2016conducting" class="csl-entry">
+Aert, Robbie CM van, Jelte M Wicherts, and Marcel ALM van Assen. 2016. <span>“Conducting Meta-Analyses Based on <span><span class="math inline">\(p\)</span></span> Values: Reservations and Recommendations for Applying p-Uniform and p-Curve.”</span> <em>Perspectives on Psychological Science</em> 11 (5).
+</div>
+<div id="ref-alexander1989statistical" class="csl-entry">
+Alexander, Ralph A, Michael J Scozzaro, and Lawrence J Borodkin. 1989. <span>“Statistical and Empirical Examination of the Chi-Square Test for Homogeneity of Correlations in Meta-Analysis.”</span> <em>Psychological Bulletin</em> 106 (2): 329.
+</div>
+<div id="ref-altman2011obtain" class="csl-entry">
+Altman, Douglas G, and J Martin Bland. 2011. <span>“How to Obtain the Confidence Interval from a <span><span class="math inline">\(P\)</span></span> Value.”</span> <em>BMJ</em> 343: d2090.
+</div>
+<div id="ref-appelbaum2018journal" class="csl-entry">
+Appelbaum, Mark, Harris Cooper, Rex B Kline, Evan Mayo-Wilson, Arthur M Nezu, and Stephen M Rao. 2018. <span>“Journal Article Reporting Standards for Quantitative Research in Psychology: The <span>APA</span> Publications and Communications Board Task Force Report.”</span> <em>American Psychologist</em> 73 (1): 3.
+</div>
+<div id="ref-aronow2019foundations" class="csl-entry">
+Aronow, Peter M, and Benjamin T Miller. 2019. <em>Foundations of Agnostic Statistics</em>. Cambridge University Press.
+</div>
+<div id="ref-assink2016fitting" class="csl-entry">
+Assink, Mark, Carlijn JM Wibbelink, et al. 2016. <span>“Fitting Three-Level Meta-Analytic Models in <span class="sans-serif">r</span>: A Step-by-Step Tutorial.”</span> <em>The Quantitative Methods for Psychology</em> 12 (3): 154–74.
+</div>
+<div id="ref-bakbergenuly2020methods" class="csl-entry">
+Bakbergenuly, Ilyas, David C Hoaglin, and Elena Kulinskaya. 2020. <span>“Methods for Estimating Between-Study Variance and Overall Effect in Meta-Analysis of Odds Ratios.”</span> <em>Research Synthesis Methods</em> 11 (3): 426–42.
+</div>
+<div id="ref-bakbergenuly2018meta" class="csl-entry">
+Bakbergenuly, Ilyas, and Elena Kulinskaya. 2018. <span>“Meta-Analysis of Binary Outcomes via Generalized Linear Mixed Models: A Simulation Study.”</span> <em>BMC Medical Research Methodology</em> 18 (1): 70.
+</div>
+<div id="ref-meta" class="csl-entry">
+Balduzzi, Sara, Gerta Rücker, and Guido Schwarzer. 2019. <span>“How to Perform a Meta-Analysis with <span class="sans-serif">r</span>: A Practical Tutorial.”</span> <em>Evidence-Based Mental Health</em> 22 (4): 153–60.
+</div>
+<div id="ref-bauer2003estimating" class="csl-entry">
+Bauer, Daniel J. 2003. <span>“Estimating Multilevel Linear Models as Structural Equation Models.”</span> <em>Journal of Educational and Behavioral Statistics</em> 28 (2): 135–67.
+</div>
+<div id="ref-baujat2002graphical" class="csl-entry">
+Baujat, Bertrand, Cédric Mahé, Jean-Pierre Pignon, and Catherine Hill. 2002. <span>“A Graphical Method for Exploring Heterogeneity in Meta-Analyses: Application to a Meta-Analysis of 65 Trials.”</span> <em>Statistics in Medicine</em> 21 (18): 2641–52.
+</div>
+<div id="ref-beck1996beck" class="csl-entry">
+Beck, Aaron T, Robert A Steer, and Gregory Brown. 1996. <span>“Beck <span>Depression</span> <span>Inventory</span>–<span>II</span>.”</span> <em>Psychological Assessment</em>.
+</div>
+<div id="ref-becker1988synthesizing" class="csl-entry">
+Becker, Betsy Jane. 1988. <span>“Synthesizing Standardized Mean-Change Measures.”</span> <em>British Journal of Mathematical and Statistical Psychology</em> 41 (2): 257–78.
+</div>
+<div id="ref-bellhouse2004reverend" class="csl-entry">
+Bellhouse, David R et al. 2004. <span>“The <span>Reverend Thomas Bayes, FRS</span>: A Biography to Celebrate the Tercentenary of His Birth.”</span> <em>Statistical Science</em> 19 (1): 3–43.
+</div>
+<div id="ref-bender2019limitations" class="csl-entry">
+Bender, Ralf, and Lars Beckmann. 2019. <span>“Limitations of the Incidence Density Ratio as Approximation of the Hazard Ratio.”</span> <em>Trials</em> 20 (1): 1–8.
+</div>
+<div id="ref-berlin1994advantages" class="csl-entry">
+Berlin, Jesse A, and Elliott M Antman. 1994. <span>“Advantages and Limitations of Metaanalytic Regressions of Clinical Trials Data.”</span> <em>The Online Journal of Current Clinical Trials</em>.
+</div>
+<div id="ref-betancourt2015hamiltonian" class="csl-entry">
+Betancourt, Michael, and Mark Girolami. 2015. <span>“Hamiltonian Monte Carlo for Hierarchical Models.”</span> In <em>Current Trends in <span>Bayesian</span> Methodology with Applications</em>, edited by SK Upadhyay, U Singh, DK Dey, and A Loganathan. Chapman &amp; Hall/CRC Press.
+</div>
+<div id="ref-bjork2008global" class="csl-entry">
+Björk, Bo-Christer, Annikki Roos, and Mari Lauri. 2008. <span>“Global Annual Volume of Peer Reviewed Scholarly Articles and the Share Available via Different Open Access Options.”</span> In <em>Proceedings ELPUB 2008 Conference on Electronic Publishing</em>, 178–86.
+</div>
+<div id="ref-bonett2019point" class="csl-entry">
+Bonett, Douglas G. 2020. <span>“Point-Biserial Correlation: Interval Estimation, Hypothesis Testing, Meta-Analysis, and Sample Size Determination.”</span> <em>British Journal of Mathematical and Statistical Psychology</em> 73: 113–44.
+</div>
+<div id="ref-borenstein2011introduction" class="csl-entry">
+Borenstein, Michael, Larry V Hedges, Julian PT Higgins, and Hannah R Rothstein. 2011. <em>Introduction to Meta-Analysis</em>. John Wiley &amp; Sons.
+</div>
+<div id="ref-borenstein2013meta" class="csl-entry">
+Borenstein, Michael, and Julian PT Higgins. 2013. <span>“Meta-Analysis and Subgroups.”</span> <em>Prevention Science</em> 14 (2): 134–43.
+</div>
+<div id="ref-borenstein2017basics" class="csl-entry">
+Borenstein, Michael, Julian PT Higgins, Larry V Hedges, and Hannah R Rothstein. 2017. <span>“Basics of Meta-Analysis: <span><span class="math inline">\(I^2\)</span></span> Is Not an Absolute Measure of Heterogeneity.”</span> <em>Research Synthesis Methods</em> 8 (1): 5–18.
+</div>
+<div id="ref-bradburn2007much" class="csl-entry">
+Bradburn, Michael J, Jonathan J Deeks, Jesse A Berlin, and A Russell Localio. 2007. <span>“Much Ado about Nothing: A Comparison of the Performance of Meta-Analytical Methods with Rare Events.”</span> <em>Statistics in Medicine</em> 26 (1): 53–77.
+</div>
+<div id="ref-bramer2018systematic" class="csl-entry">
+Bramer, Wichor M, Gerdien B de Jonge, Melissa L Rethlefsen, Frans Mast, and Jos Kleijnen. 2018. <span>“A Systematic Approach to Searching: An Efficient and Complete Method to Develop Literature Searches.”</span> <em>Journal of the Medical Library Association: JMLA</em> 106 (4): 531.
+</div>
+<div id="ref-breiman2001statistical" class="csl-entry">
+Breiman, Leo. 2001. <span>“Statistical Modeling: The Two Cultures (with Comments and a Rejoinder by the Author).”</span> <em>Statistical Science</em> 16 (3): 199–231.
+</div>
+<div id="ref-rmsea" class="csl-entry">
+Browne, MW, and R Cudeck. 1993. <span>“Alternative Ways of Assessing Model Fit.”</span> In <em>Testing Structural Equation Models</em>, edited by KA Bollen and JS Long. Sage Publications.
+</div>
+<div id="ref-burkner2017advanced" class="csl-entry">
+Bürkner, Paul-Christian. 2017a. <span>“Advanced <span>Bayesian</span> Multilevel Modeling with the <span class="sans-serif">r</span> Package Brms.”</span> <em>ArXiv Preprint 1705.11123</em>.
+</div>
+<div id="ref-burknerJSS" class="csl-entry">
+———. 2017b. <span>“Brms: An <span class="sans-serif">r</span> Package for <span>Bayesian</span> Multilevel Models Using <span>Stan</span>.”</span> <em>Journal of Statistical Software, Articles</em> 80 (1): 1–28.
+</div>
+<div id="ref-buscher2019effectiveness" class="csl-entry">
+Büscher, Rebekka, Michelle Torok, and Lasse Sander. 2019. <span>“The Effectiveness of Internet-Based Self-Help Interventions to Reduce Suicidal Ideation: Protocol for a Systematic Review and Meta-Analysis.”</span> <em>JMIR Research Protocols</em> 8 (7): e14174.
+</div>
+<div id="ref-methods2016methodological" class="csl-entry">
+Campbell Collaboration. 2016. <span>“Methodological Expectations of <span>Campbell Collaboration</span> Intervention Reviews (<span>MECCIR</span>): Conduct Standards.”</span> <em>Campbell Policies and Guidelines Series</em>. <a href="https://onlinelibrary.wiley.com/page/journal/18911803/homepage/author-guidelines" class="uri">https://onlinelibrary.wiley.com/page/journal/18911803/homepage/author-guidelines</a>.
+</div>
+<div id="ref-carter2019correcting" class="csl-entry">
+Carter, Evan C, Felix D Schönbrodt, Will M Gervais, and Joseph Hilgard. 2019. <span>“Correcting for Bias in Psychology: A Comparison of Meta-Analytic Methods.”</span> <em>Advances in Methods and Practices in Psychological Science</em> 2 (2): 115–44.
+</div>
+<div id="ref-chan2014increasing" class="csl-entry">
+Chan, An-Wen, Fujian Song, Andrew Vickers, Tom Jefferson, Kay Dickersin, Peter C Gøtzsche, Harlan M Krumholz, Davina Ghersi, and H Bart Van Der Worp. 2014. <span>“Increasing Value and Reducing Waste: Addressing Inaccessible Research.”</span> <em>The Lancet</em> 383 (9913): 257–66.
+</div>
+<div id="ref-chatfield1995model" class="csl-entry">
+Chatfield, Chris. 1995. <span>“Model Uncertainty, Data Mining and Statistical Inference.”</span> <em>Journal of the Royal Statistical Society: Series A (Statistics in Society)</em> 158 (3): 419–44.
+</div>
+<div id="ref-cheung2008model" class="csl-entry">
+Cheung, Mike. 2008. <span>“A Model for Integrating Fixed-, Random-, and Mixed-Effects Meta-Analyses into Structural Equation Modeling.”</span> <em>Psychological Methods</em> 13 (3): 182.
+</div>
+<div id="ref-cheung2014modeling" class="csl-entry">
+———. 2014. <span>“Modeling Dependent Effect Sizes with Three-Level Meta-Analyses: A Structural Equation Modeling Approach.”</span> <em>Psychological Methods</em> 19 (2): 211.
+</div>
+<div id="ref-cheung2015meta" class="csl-entry">
+———. 2015a. <em>Meta-Analysis: A Structural Equation Modeling Approach</em>. John Wiley &amp; Sons.
+</div>
+<div id="ref-metasem" class="csl-entry">
+———. 2015b. <span>“metaSEM: An <span class="sans-serif">r</span> Package for Meta-Analysis Using Structural Equation Modeling.”</span> <em>Frontiers in Psychology</em> 5: 1521.
+</div>
+<div id="ref-cheung2009two" class="csl-entry">
+Cheung, Mike, and Wai Chan. 2009. <span>“A Two-Stage Approach to Synthesizing Covariance Matrices in Meta-Analytic Structural Equation Modeling.”</span> <em>Structural Equation Modeling: A Multidisciplinary Journal</em> 16 (1): 28–53.
+</div>
+<div id="ref-christensen2006number" class="csl-entry">
+Christensen, Palle Mark, and Ivar Sønbø Kristiansen. 2006. <span>“<span class="nocase">Number-Needed-to-Treat</span> (<span>NNT</span>)–Needs Treatment with Care.”</span> <em>Basic &amp; Clinical Pharmacology &amp; Toxicology</em> 99 (1): 12–16.
+</div>
+<div id="ref-chung2013nondegenerate" class="csl-entry">
+Chung, Yeojin, Sophia Rabe-Hesketh, Vincent Dorie, Andrew Gelman, and Jingchen Liu. 2013. <span>“A Nondegenerate Penalized Likelihood Estimator for Variance Parameters in Multilevel Models.”</span> <em>Psychometrika</em> 78 (4): 685–709.
+</div>
+<div id="ref-cipriani2013conceptual" class="csl-entry">
+Cipriani, Andrea, Julian PT Higgins, John R Geddes, and Georgia Salanti. 2013. <span>“Conceptual and Technical Challenges in Network Meta-Analysis.”</span> <em>Annals of Internal Medicine</em> 159 (2): 130–37.
+</div>
+<div id="ref-cochran1954some" class="csl-entry">
+Cochran, William G. 1954. <span>“Some Methods for Strengthening the Common <span><span class="math inline">\(\chi^2\)</span></span> Tests.”</span> <em>Biometrics</em> 10 (4): 417–51.
+</div>
+<div id="ref-cohen1988statistical" class="csl-entry">
+Cohen, J. 1988. <em>Statistical Power Analysis for the Behavioral Sciences</em>. Erlbaum Press.
+</div>
+<div id="ref-cohen1994earth" class="csl-entry">
+Cohen, Jacob. 1994. <span>“The Earth Is Round (<span><span class="math inline">\(p&lt;.05\)</span></span>).”</span> <em>American Psychologist</em> 49 (12): 997.
+</div>
+<div id="ref-cousineau2020approximating" class="csl-entry">
+Cousineau, Denis. 2020. <span>“Approximating the Distribution of <span class="nocase">Cohen’s</span> <span><span class="math inline">\(d_p\)</span></span> in Within-Subject Designs.”</span> <em>Quant. Methods Psychol</em> 16: 418–21.
+</div>
+<div id="ref-cousineau2021ci" class="csl-entry">
+Cousineau, Denis, and Jean-Christophe Goulet-Pelletier. 2021. <span>“A Study of Confidence Intervals for <span class="nocase">Cohen’s</span> <span><span class="math inline">\(d_p\)</span></span> in Within-Subject Designs with New Proposals.”</span> In <em>Quant. Methods Psychol</em>, 17:51–75.
+</div>
+<div id="ref-igraph" class="csl-entry">
+Csardi, Gabor, and Tamas Nepusz. 2006. <span>“The Igraph Software Package for Complex Network Research.”</span> <em>InterJournal</em> Complex Systems: 1695. <a href="https://igraph.org">https://igraph.org</a>.
+</div>
+<div id="ref-cuijpers2016meta" class="csl-entry">
+Cuijpers, Pim. 2016. <span>“Meta-Analyses in Mental Health Research. A Practical Guide.”</span> <em>Amsterdam, the Netherlands: Pim Cuijpers Uitgeverij</em>.
+</div>
+<div id="ref-cuijpers2019role" class="csl-entry">
+Cuijpers, Pim, Mirjam Reijnders, and Marcus JH Huibers. 2019. <span>“The Role of Common Factors in Psychotherapy Outcomes.”</span> <em>Annual Review of Clinical Psychology</em> 15: 207–31.
+</div>
+<div id="ref-cuijpers2002excess" class="csl-entry">
+Cuijpers, Pim, and Filip Smit. 2002. <span>“Excess Mortality in Depression: A Meta-Analysis of Community Studies.”</span> <em>Journal of Affective Disorders</em> 72 (3): 227–36.
+</div>
+<div id="ref-cuijpers2014threshold" class="csl-entry">
+Cuijpers, Pim, Erick H Turner, Sander L Koole, Annemiek Van Dijke, and Filip Smit. 2014. <span>“What Is the Threshold for a Clinically Relevant Effect? The Case of Major Depressive Disorders.”</span> <em>Depression and Anxiety</em> 31 (5): 374–78.
+</div>
+<div id="ref-cuijpers2017pre" class="csl-entry">
+Cuijpers, Pim, E Weitz, IA Cristea, and J Twisk. 2017. <span>“Pre-Post Effect Sizes Should Be Avoided in Meta-Analyses.”</span> <em>Epidemiology and Psychiatric Sciences</em> 26 (4): 364–68.
+</div>
+<div id="ref-cuijpers2019eysenck" class="csl-entry">
+Cuijpers, P, E Karyotaki, M Reijnders, and DD Ebert. 2019. <span>“Was <span>Eysenck</span> Right After All? A Reassessment of the Effects of Psychotherapy for Adult Depression.”</span> <em>Epidemiology and Psychiatric Sciences</em> 28 (1): 21–30.
+</div>
+<div id="ref-cuijpers2019effectiveness" class="csl-entry">
+Cuijpers, P, H Noma, E Karyotaki, A Cipriani, and T Furukawa. 2019. <span>“Effectiveness and Acceptability of Cognitive Behavior Therapy Delivery Formats in Adults with Depression: A Network Meta-Analysis.”</span> <em>JAMA Psychiatry</em> 76 (7): 700–707.
+</div>
+<div id="ref-cummings2013conceiving" class="csl-entry">
+Cummings, Steven R, Warren S Browner, and Stephen B Hulley. 2013. <span>“Conceiving the Research Question and Developing the Study Plan.”</span> <em>Designing Clinical Research</em> 4: 14–22.
+</div>
+<div id="ref-psychmeta" class="csl-entry">
+Dahlke, Jeffrey A., and Brenton M. Wiernik. 2019. <span>“<span class="nocase">psychmeta</span>: An <span class="sans-serif">r</span> Package for Psychometric Meta-Analysis.”</span> <em>Applied Psychological Measurement</em> 43 (5): 415–16.
+</div>
+<div id="ref-dechartres2018association" class="csl-entry">
+Dechartres, Agnes, Ignacio Atal, Carolina Riveros, Joerg Meerpohl, and Philippe Ravaud. 2018. <span>“Association Between Publication Characteristics and Treatment Effect Estimates: A Meta-Epidemiologic Study.”</span> <em>Annals of Internal Medicine</em> 169 (6): 385–93.
+</div>
+<div id="ref-dersimonian1986meta" class="csl-entry">
+DerSimonian, Rebecca, and Nan Laird. 1986. <span>“Meta-Analysis in Clinical Trials.”</span> <em>Controlled Clinical Trials</em> 7 (3): 177–88.
+</div>
+<div id="ref-dias2018network" class="csl-entry">
+Dias, Sofia, Anthony E Ades, Nicky J Welton, Jeroen P Jansen, and Alexander J Sutton. 2018. <em>Network Meta-Analysis for Decision-Making</em>. John Wiley &amp; Sons.
+</div>
+<div id="ref-dias2013evidence" class="csl-entry">
+Dias, Sofia, Alex J Sutton, AE Ades, and Nicky J Welton. 2013. <span>“Evidence Synthesis for Decision Making 2: A Generalized Linear Modeling Framework for Pairwise and Network Meta-Analysis of Randomized Controlled Trials.”</span> <em>Medical Decision Making</em> 33 (5): 607–17.
+</div>
+<div id="ref-dias2010checking" class="csl-entry">
+Dias, Sofia, Nicky J Welton, DM Caldwell, and Anthony E Ades. 2010. <span>“Checking Consistency in Mixed Treatment Comparison Meta-Analysis.”</span> <em>Statistics in Medicine</em> 29 (7-8): 932–44.
+</div>
+<div id="ref-diciccio1996bootstrap" class="csl-entry">
+DiCiccio, Thomas J, and Bradley Efron. 1996. <span>“Bootstrap Confidence Intervals.”</span> <em>Statistical Science</em>, 189–212.
+</div>
+<div id="ref-duval2000trim" class="csl-entry">
+Duval, Sue, and Richard Tweedie. 2000. <span>“Trim and Fill: A Simple Funnel-Plot–Based Method of Testing and Adjusting for Publication Bias in Meta-Analysis.”</span> <em>Biometrics</em> 56 (2): 455–63.
+</div>
+<div id="ref-ebrahim2016meta" class="csl-entry">
+Ebrahim, Shanil, Sheena Bance, Abha Athale, Cindy Malachowski, and John PA Ioannidis. 2016. <span>“Meta-Analyses with Industry Involvement Are Massively Published and Report No Caveats for Antidepressants.”</span> <em>Journal of Clinical Epidemiology</em> 70: 155–63.
+</div>
+<div id="ref-edwards2009indirect" class="csl-entry">
+Edwards, SJ, MJ Clarke, S Wordsworth, and J Borrill. 2009. <span>“Indirect Comparisons of Treatments Based on Systematic Reviews of Randomised Controlled Trials.”</span> <em>International Journal of Clinical Practice</em> 63 (6): 841–54.
+</div>
+<div id="ref-efthimiou2018practical" class="csl-entry">
+Efthimiou, Orestis. 2018. <span>“Practical Guide to the Meta-Analysis of Rare Events.”</span> <em>Evidence-Based Mental Health</em> 21 (2): 72–76.
+</div>
+<div id="ref-efthimiou2016getreal" class="csl-entry">
+Efthimiou, Orestis, Thomas PA Debray, Gert van Valkenhoef, Sven Trelle, Klea Panayidou, Karel GM Moons, Johannes B Reitsma, Aijing Shang, Georgia Salanti, and GetReal Methods Review Group. 2016. <span>“<span>GetReal</span> in Network Meta-Analysis: A Review of the Methodology.”</span> <em>Research Synthesis Methods</em> 7 (3): 236–63.
+</div>
+<div id="ref-egger1997bias" class="csl-entry">
+Egger, Matthias, George Davey Smith, Martin Schneider, and Christoph Minder. 1997. <span>“Bias in Meta-Analysis Detected by a Simple, Graphical Test.”</span> <em>BMJ</em> 315 (7109): 629–34.
+</div>
+<div id="ref-elwood2006first" class="csl-entry">
+Elwood, Peter. 2006. <span>“The First Randomized Trial of Aspirin for Heart Attack and the Advent of Systematic Overviews of Trials.”</span> <em>Journal of the Royal Society of Medicine</em> 99 (11): 586–88.
+</div>
+<div id="ref-semplot" class="csl-entry">
+Epskamp, Sacha. 2019. <span>“semPlot: Path Diagrams and Visual Analysis of Various SEM Packages’ Output. <span class="sans-serif">R</span> Package Version 1.1.2.”</span> <a href="https://CRAN.R-project.org/package=semPlot" class="uri">https://CRAN.R-project.org/package=semPlot</a>.
+</div>
+<div id="ref-etz2018introduction" class="csl-entry">
+Etz, Alexander. 2018. <span>“Introduction to the Concept of Likelihood and Its Applications.”</span> <em>Advances in Methods and Practices in Psychological Science</em> 1 (1): 60–69.
+</div>
+<div id="ref-eysenck1978exercise" class="csl-entry">
+Eysenck, Hans J. 1978. <span>“An Exercise in Mega-Silliness.”</span> <em>American Psychologist</em> 33 (5).
+</div>
+<div id="ref-fanelli2012negative" class="csl-entry">
+Fanelli, Daniele. 2012. <span>“Negative Results Are Disappearing from Most Disciplines and Countries.”</span> <em>Scientometrics</em> 90 (3): 891–904.
+</div>
+<div id="ref-fisher19351he" class="csl-entry">
+Fisher, Ronald A. 1935. <em>The Design of Experiments</em>. Oliver &amp; Boyd, Edinburgh, UK.
+</div>
+<div id="ref-robumeta" class="csl-entry">
+Fisher, Zachary, Elizabeth Tipton, and Hou Zhipeng. 2017. <em>Robumeta: Robust Variance Meta-Regression</em>. <a href="https://CRAN.R-project.org/package=robumeta">https://CRAN.R-project.org/package=robumeta</a>.
+</div>
+<div id="ref-follmann1999valid" class="csl-entry">
+Follmann, Dean A, and Michael A Proschan. 1999. <span>“Valid Inference in Random Effects Meta-Analysis.”</span> <em>Biometrics</em> 55 (3): 732–37.
+</div>
+<div id="ref-fraley2002model" class="csl-entry">
+Fraley, Chris, and Adrian E Raftery. 2002. <span>“Model-Based Clustering, Discriminant Analysis, and Density Estimation.”</span> <em>Journal of the American Statistical Association</em> 97 (458): 611–31.
+</div>
+<div id="ref-friese2019ego" class="csl-entry">
+Friese, Malte, David D Loschelder, Karolin Gieseler, Julius Frankenbach, and Michael Inzlicht. 2019. <span>“Is Ego Depletion Real? <span>An</span> Analysis of Arguments.”</span> <em>Personality and Social Psychology Review</em> 23 (2): 107–31.
+</div>
+<div id="ref-furukawa2011obtain" class="csl-entry">
+Furukawa, Toshi A, and Stefan Leucht. 2011. <span>“How to Obtain <span>NNT</span> from <span class="nocase">Cohen’s</span> <span><span class="math inline">\(d\)</span></span>: Comparison of Two Methods.”</span> <em>PLOS ONE</em> 6 (4): e19070.
+</div>
+<div id="ref-furukawa2003low" class="csl-entry">
+Furukawa, Toshi A, Hugh McGuire, and Corrado Barbui. 2003. <span>“Low Dosage Tricyclic Antidepressants for Depression.”</span> <em>Cochrane Database of Systematic Reviews</em>, no. 3.
+</div>
+<div id="ref-furukawa2020translating" class="csl-entry">
+Furukawa, Toshi A, Mirjam Reijnders, Sanae Kishimoto, Masatsugu Sakata, Robert J DeRubeis, Sona Dimidjian, David JA Dozois, et al. 2020. <span>“Translating the <span>BDI</span> and <span>BDI-II </span>into the <span>HAMD</span> and Vice Versa with Equipercentile Linking.”</span> <em>Epidemiology and Psychiatric Sciences</em> 29.
+</div>
+<div id="ref-gart1967bias" class="csl-entry">
+Gart, John J, and James R Zweifel. 1967. <span>“On the Bias of Various Estimators of the Logit and Its Variance with Application to Quantal Bioassay.”</span> <em>Biometrika</em>, 181–87.
+</div>
+<div id="ref-mvmeta" class="csl-entry">
+Gasparrini, A., B. Armstrong, and M. G. Kenward. 2012. <span>“Multivariate Meta-Analysis for Non-Linear and Other Multi-Parameter Associations.”</span> <em>Statistics in Medicine</em> 31 (29): 3821–39.
+</div>
+<div id="ref-gigerenzer2004mindless" class="csl-entry">
+Gigerenzer, G. 2004. <span>“Mindless Statistics.”</span> <em>The Journal of Socio-Economics</em> 33 (5): 587–606.
+</div>
+<div id="ref-glass1976primary" class="csl-entry">
+Glass, Gene V. 1976. <span>“Primary, Secondary, and Meta-Analysis of Research.”</span> <em>Educational Researcher</em> 5 (10): 3–8.
+</div>
+<div id="ref-good2013permutation" class="csl-entry">
+Good, Phillip. 2013. <em>Permutation Tests: A Practical Guide to Resampling Methods for Testing Hypotheses</em>. Springer Science &amp; Business.
+</div>
+<div id="ref-greco2013meta" class="csl-entry">
+Greco, T, A Zangrillo, G Biondi-Zoccai, and G Landoni. 2013. <span>“Meta-Analysis: Pitfalls and Hints.”</span> <em>Heart, Lung and Vessels</em> 5 (4): 219.
+</div>
+<div id="ref-grolemund2014hands" class="csl-entry">
+Grolemund, Garrett. 2014. <em>Hands-on Programming with <span class="sans-serif">r</span>: Write Your Own Functions and Simulations</em>. O’Reilly.
+</div>
+<div id="ref-prisma2020package" class="csl-entry">
+Haddaway, Neil R, and Luke A McGuinness. 2020. <span>“<span>PRISMA2020</span>: <span>R</span> Package and <span>ShinyApp</span> for Producing <span>PRISMA</span> 2020 Compliant Flow Diagrams (Version 0.0.1).”</span> <a href="http://doi.org/10.5281/zenodo.4287835" class="uri">http://doi.org/10.5281/zenodo.4287835</a>.
+</div>
+<div id="ref-hamberg2008gender" class="csl-entry">
+Hamberg, Katarina. 2008. <span>“Gender Bias in Medicine.”</span> <em>Women’s Health</em> 4 (3): 237–43.
+</div>
+<div id="ref-harrer2020prevention" class="csl-entry">
+Harrer, Mathias, Sophia H Adam, Eva-Maria Messner, Harald Baumeister, Pim Cuijpers, Ronny Bruffaerts, Randy P Auerbach, et al. 2020. <span>“Prevention of Eating Disorders at Universities: A Systematic Review and Meta-Analysis.”</span> <em>International Journal of Eating Disorders</em> 53 (3): 823–33.
+</div>
+<div id="ref-hartigan1979algorithm" class="csl-entry">
+Hartigan, John A, and Manchek A Wong. 1979. <span>“Algorithm <span>AS</span> 136: A <span><span class="math inline">\(k\)</span></span>-Means Clustering Algorithm.”</span> <em>Journal of the Royal Statistical Society. Series C (Applied Statistics)</em> 28 (1): 100–108.
+</div>
+<div id="ref-hartung1999alternative" class="csl-entry">
+Hartung, Joachim. 1999. <span>“An Alternative Method for Meta-Analysis.”</span> <em>Biometrical Journal: Journal of Mathematical Methods in Biosciences</em> 41 (8): 901–16.
+</div>
+<div id="ref-hartung2001refined" class="csl-entry">
+Hartung, Joachim, and Guido Knapp. 2001a. <span>“A Refined Method for the Meta-Analysis of Controlled Clinical Trials with Binary Outcome.”</span> <em>Statistics in Medicine</em> 20 (24): 3875–89.
+</div>
+<div id="ref-hartung2001tests" class="csl-entry">
+———. 2001b. <span>“On Tests of the Overall Treatment Effect in Meta-Analysis with Normally Distributed Responses.”</span> <em>Statistics in Medicine</em> 20 (12): 1771–82.
+</div>
+<div id="ref-hedges1981distribution" class="csl-entry">
+Hedges, Larry V. 1981. <span>“Distribution Theory for <span class="nocase">Glass’s</span> Estimator of Effect Size and Related Estimators.”</span> <em>Journal of Educational Statistics</em> 6 (2): 107–28.
+</div>
+<div id="ref-hedges1984estimation" class="csl-entry">
+———. 1984. <span>“Estimation of Effect Size Under Nonrandom Sampling: The Effects of Censoring Studies Yielding Statistically Insignificant Mean Differences.”</span> <em>Journal of Educational Statistics</em> 9 (1): 61–85.
+</div>
+<div id="ref-hedges1992modeling" class="csl-entry">
+———. 1992. <span>“Modeling Publication Selection Effects in Meta-Analysis.”</span> <em>Statistical Science</em> 7 (2): 246–55.
+</div>
+<div id="ref-hedges2001power" class="csl-entry">
+Hedges, Larry V, and Therese D Pigott. 2001. <span>“The Power of Statistical Tests in Meta-Analysis.”</span> <em>Psychological Methods</em> 6 (3): 203.
+</div>
+<div id="ref-hedges2004power" class="csl-entry">
+———. 2004. <span>“The Power of Statistical Tests for Moderators in Meta-Analysis.”</span> <em>Psychological Methods</em> 9 (4): 426.
+</div>
+<div id="ref-hedges1996estimating" class="csl-entry">
+Hedges, Larry V, and Jack L Vevea. 1996. <span>“Estimating Effect Size Under Publication Bias: Small Sample Properties and Robustness of a Random Effects Selection Model.”</span> <em>Journal of Educational and Behavioral Statistics</em> 21 (4): 299–332.
+</div>
+<div id="ref-hedges1998fixed" class="csl-entry">
+———. 1998. <span>“Fixed-and Random-Effects Models in Meta-Analysis.”</span> <em>Psychological Methods</em> 3 (4): 486.
+</div>
+<div id="ref-hedges2014statistical" class="csl-entry">
+Hedges, Larry, and Ingram Olkin. 2014. <em>Statistical Methods for Meta-Analysis</em>. Academic Press.
+</div>
+<div id="ref-hedges2010robust" class="csl-entry">
+Hedges, Larry, Elizabeth Tipton, and Matthew Johnson. 2010. <span>“Robust Variance Estimation in Meta-Regression with Dependent Effect Size Estimates.”</span> <em>Research Synthesis Methods</em> 1 (1): 39–65.
+</div>
+<div id="ref-henrich2010most" class="csl-entry">
+Henrich, Joseph, Steven J Heine, and Ara Norenzayan. 2010. <span>“Most People Are Not <span>WEIRD</span>.”</span> <em>Nature</em> 466 (7302): 29.
+</div>
+<div id="ref-higgins2012consistency" class="csl-entry">
+Higgins, J, D Jackson, JK Barrett, G Lu, AE Ades, and IR White. 2012. <span>“Consistency and Inconsistency in Network Meta-Analysis: Concepts and Models for Multi-Arm Studies.”</span> <em>Research Synthesis Methods</em> 3 (2): 98–110.
+</div>
+<div id="ref-higgins2004controlling" class="csl-entry">
+Higgins, JPT, and SG Thompson. 2004. <span>“Controlling the Risk of Spurious Findings from Meta-Regression.”</span> <em>Statistics in Medicine</em> 23 (11): 1663–82.
+</div>
+<div id="ref-higgins2002statistical" class="csl-entry">
+Higgins, J, S Thompson, J Deeks, and D Altman. 2002. <span>“Statistical Heterogeneity in Systematic Reviews of Clinical Trials: A Critical Appraisal of Guidelines and Practice.”</span> <em>Journal of Health Services Research Policy</em> 7 (1): 51–61.
+</div>
+<div id="ref-higgins2002quantifying" class="csl-entry">
+Higgins, Julian PT, and Simon G Thompson. 2002. <span>“Quantifying Heterogeneity in a Meta-Analysis.”</span> <em>Statistics in Medicine</em> 21 (11): 1539–58.
+</div>
+<div id="ref-higgins2011cochrane" class="csl-entry">
+Higgins, Julian, Douglas G Altman, Peter C Gøtzsche, Peter Jüni, David Moher, Andrew D Oxman, Jelena Savović, Kenneth F Schulz, Laura Weeks, and Jonathan AC Sterne. 2011. <span>“The <span class="nocase">Cochrane Collaboration’s</span> Tool for Assessing Risk of Bias in Randomised Trials.”</span> <em>BMJ</em> 343: d5928.
+</div>
+<div id="ref-higgins2019cochrane" class="csl-entry">
+Higgins, Julian, James Thomas, Jacqueline Chandler, Miranda Cumpston, Tianjing Li, Matthew J Page, and Vivian A Welch. 2019. <em>Cochrane Handbook for Systematic Reviews of Interventions</em>. John Wiley &amp; Sons.
+</div>
+<div id="ref-higgins2009re" class="csl-entry">
+Higgins, Julian, Simon G Thompson, and David J Spiegelhalter. 2009. <span>“A Re-Evaluation of Random-Effects Meta-Analysis.”</span> <em>Journal of the Royal Statistical Society: Series A (Statistics in Society)</em> 172 (1): 137–59.
+</div>
+<div id="ref-hoaglin2016misunderstandings" class="csl-entry">
+Hoaglin, David C. 2016. <span>“Misunderstandings about <span><span class="math inline">\(Q\)</span></span> and ‘<span class="nocase">Cochran’s</span> <span><span class="math inline">\(Q\)</span></span> Test’ in Meta-Analysis.”</span> <em>Statistics in Medicine</em> 35 (4): 485–95.
+</div>
+<div id="ref-hoenig2001abuse" class="csl-entry">
+Hoenig, John M, and Dennis M Heisey. 2001. <span>“The Abuse of Power: The Pervasive Fallacy of Power Calculations for Data Analysis.”</span> <em>The American Statistician</em> 55 (1): 19–24.
+</div>
+<div id="ref-hoffman2014no" class="csl-entry">
+Hoffman, Matthew D, and Andrew Gelman. 2014. <span>“The <span>No-U-Turn</span> Sampler: Adaptively Setting Path Lengths in <span>Hamiltonian</span> Monte Carlo.”</span> <em>Journal of Machine Learning Research</em> 15 (1): 1593–623.
+</div>
+<div id="ref-hohn2019primary" class="csl-entry">
+Hohn, Richard E, Kathleen L Slaney, and Donna Tafreshi. 2019. <span>“Primary Study Quality in Psychological Meta-Analyses: An Empirical Assessment of Recent Practice.”</span> <em>Frontiers in Psychology</em> 9: 2667.
+</div>
+<div id="ref-hough1994comparison" class="csl-entry">
+Hough, Susan L, and Bruce W Hall. 1994. <span>“Comparison of the <span>Glass</span> and <span>Hunter-Schmidt</span> Meta-Analytic Techniques.”</span> <em>The Journal of Educational Research</em> 87 (5): 292–96.
+</div>
+<div id="ref-hunter2004methods" class="csl-entry">
+Hunter, John E, and Frank L Schmidt. 2004. <em>Methods of Meta-Analysis: Correcting Error and Bias in Research Findings</em>. Sage.
+</div>
+<div id="ref-hutton2010misleading" class="csl-entry">
+Hutton, Jane L. 2010. <span>“Misleading Statistics.”</span> <em>Pharmaceutical Medicine</em> 24 (3): 145–49.
+</div>
+<div id="ref-infanger2019p" class="csl-entry">
+Infanger, Denis, and Arno Schmidt-Trucksäss. 2019. <span>“<span><span class="math inline">\(P\)</span></span> Value Functions: An Underused Method to Present Research Results and to Promote Quantitative Reasoning.”</span> <em>Statistics in Medicine</em> 38 (21): 4189–97.
+</div>
+<div id="ref-iniesta2016machine" class="csl-entry">
+Iniesta, R, D Stahl, and P McGuffin. 2016. <span>“Machine Learning, Statistical Learning and the Future of Biological Research in Psychiatry.”</span> <em>Psychological Medicine</em> 46 (12): 2455–65.
+</div>
+<div id="ref-inthout2014hartung" class="csl-entry">
+IntHout, Joanna, John PA Ioannidis, and George F Borm. 2014. <span>“The <span>Hartung-Knapp-Sidik-Jonkman</span> Method for Random Effects Meta-Analysis Is Straightforward and Considerably Outperforms the Standard <span>DerSimonian-Laird</span> Method.”</span> <em>BMC Medical Research Methodology</em> 14 (1): 25.
+</div>
+<div id="ref-inthout2016plea" class="csl-entry">
+IntHout, Joanna, John PA Ioannidis, Maroeska M Rovers, and Jelle J Goeman. 2016. <span>“Plea for Routinely Presenting Prediction Intervals in Meta-Analysis.”</span> <em>BMJ Open</em> 6 (7).
+</div>
+<div id="ref-ioannidis2005most" class="csl-entry">
+Ioannidis, John PA. 2005. <span>“Why Most Published Research Findings Are False.”</span> <em>PLOS Medicine</em> 2 (8): e124.
+</div>
+<div id="ref-ioannidis2006indirect" class="csl-entry">
+———. 2006. <span>“Indirect Comparisons: The Mesh and Mess of Clinical Trials.”</span> <em>The Lancet</em> 368 (9546): 1470–72.
+</div>
+<div id="ref-ioannidis2012science" class="csl-entry">
+———. 2012. <span>“Why Science Is Not Necessarily Self-Correcting.”</span> <em>Perspectives on Psychological Science</em> 7 (6): 645–54.
+</div>
+<div id="ref-ioannidis2016mass" class="csl-entry">
+———. 2016. <span>“The Mass Production of Redundant, Misleading, and Conflicted Systematic Reviews and Meta-Analyses.”</span> <em>The Milbank Quarterly</em> 94 (3): 485–514.
+</div>
+<div id="ref-iyengar1988selection" class="csl-entry">
+Iyengar, Satish, and Joel B Greenhouse. 1988. <span>“Selection Models and the File Drawer Problem.”</span> <em>Statistical Science</em> 3 (1): 109–17.
+</div>
+<div id="ref-jackson2013confidence" class="csl-entry">
+Jackson, Dan. 2013. <span>“Confidence Intervals for the Between-Study Variance in Random Effects Meta-Analysis Using Generalised Cochran Heterogeneity Statistics.”</span> <em>Research Synthesis Methods</em> 4 (3): 220–29.
+</div>
+<div id="ref-jackson2013matrix" class="csl-entry">
+Jackson, Dan, Ian R White, and Richard D Riley. 2013. <span>“A Matrix-Based Method of Moments for Fitting the Multivariate Random Effects Model for Meta-Analysis and Meta-Regression.”</span> <em>Biometrical Journal</em> 55 (2): 231–45.
+</div>
+<div id="ref-jordan2017past" class="csl-entry">
+Jordan, Ashly E, Natalie A Blackburn, Don C Des Jarlais, and Holly Hagan. 2017. <span>“Past-Year Prevalence of Prescription Opioid Misuse Among Those 11 to 30 Years of Age in the <span>United States</span>: A Systematic Review and Meta-Analysis.”</span> <em>Journal of Substance Abuse Treatment</em> 77: 31–37.
+</div>
+<div id="ref-joreskog2006lisrel" class="csl-entry">
+Jöreskog, KG, and Dag Sörbom. 2006. <span>“<span>LISREL</span> 8.80. <span>Chicago</span>: <span>Scientific Software International</span>.”</span> <em>Computer Software</em>.
+</div>
+<div id="ref-jorgensen2016evaluation" class="csl-entry">
+Jørgensen, Lars, Asger S Paludan-Müller, David RT Laursen, Jelena Savović, Isabelle Boutron, Jonathan AC Sterne, Julian PT Higgins, and Asbjørn Hróbjartsson. 2016. <span>“Evaluation of the <span>Cochrane</span> Tool for Assessing Risk of Bias in Randomized Clinical Trials: Overview of Published Comments and Analysis of User Practice in <span>Cochrane</span> and <span class="nocase">non-Cochrane</span> Reviews.”</span> <em>Systematic Reviews</em> 5 (1): 80.
+</div>
+<div id="ref-wildmeta" class="csl-entry">
+Joshi, Megha, and James Pustejovsky. 2022. <em>Wildmeta: Cluster Wild Bootstrapping for Meta-Analysis</em>. <a href="https://CRAN.R-project.org/package=wildmeta">https://CRAN.R-project.org/package=wildmeta</a>.
+</div>
+<div id="ref-joshi2021clusterwild" class="csl-entry">
+Joshi, Megha, James E Pustejovsky, and S Natasha Beretvas. 2021. <span>“Cluster Wild Bootstrapping to Handle Dependent Effect Sizes in Meta-Analysis with a Small Number of Studies.”</span> <em>Research Synthesis Methods</em>.
+</div>
+<div id="ref-tidybayes" class="csl-entry">
+Kay, Matthew. 2020. <span>“<span class="nocase">tidybayes</span>: Tidy Data and Geoms for <span>Bayesian</span> Models. <span class="sans-serif">R</span> Package Version 2.1.1.”</span> <a href="http://mjskay.github.io/tidybayes" class="uri">http://mjskay.github.io/tidybayes</a>. <a href="https://doi.org/10.5281/zenodo.1308151">https://doi.org/10.5281/zenodo.1308151</a>.
+</div>
+<div id="ref-kerr1998harking" class="csl-entry">
+Kerr, Norbert L. 1998. <span>“<span>HARKing</span>: Hypothesizing After the Results Are Known.”</span> <em>Personality and Social Psychology Review</em> 2 (3): 196–217.
+</div>
+<div id="ref-kim2009status" class="csl-entry">
+Kim, Esther SH, and Venu Menon. 2009. <span>“Status of Women in Cardiovascular Clinical Trials.”</span> <em>Arteriosclerosis, Thrombosis, and Vascular Biology</em> 29 (3): 279–83.
+</div>
+<div id="ref-kirschemperorbook" class="csl-entry">
+Kirsch, Irving. 2010. <em>The Emperor’s New Drugs: Exploding the Antidepressant Myth</em>. Basic Books.
+</div>
+<div id="ref-kirsch2002emperor" class="csl-entry">
+Kirsch, Irving, Thomas J Moore, Alan Scoboria, and Sarah S Nicholls. 2002. <span>“The Emperor’s New Drugs: An Analysis of Antidepressant Medication Data Submitted to the US Food and Drug Administration.”</span> <em>Prevention &amp; Treatment</em> 5 (1): 23a.
+</div>
+<div id="ref-kline2015principles" class="csl-entry">
+Kline, Rex B. 2015. <em>Principles and Practice of Structural Equation Modeling</em>. Guilford.
+</div>
+<div id="ref-knapp2003improved" class="csl-entry">
+Knapp, Guido, and Joachim Hartung. 2003. <span>“Improved Tests for a Random Effects Meta-Regression with a Single Covariate.”</span> <em>Statistics in Medicine</em> 22 (17): 2693–2710.
+</div>
+<div id="ref-koffel2009two" class="csl-entry">
+Koffel, Erin, and David Watson. 2009. <span>“The Two-Factor Structure of Sleep Complaints and Its Relation to Depression and Anxiety.”</span> <em>Journal of Abnormal Psychology</em> 118 (1): 183.
+</div>
+<div id="ref-konig2013visualizing" class="csl-entry">
+König, Jochem, Ulrike Krahn, and Harald Binder. 2013. <span>“Visualizing the Flow of Evidence in Network Meta-Analysis and Characterizing Mixed Treatment Comparisons.”</span> <em>Statistics in Medicine</em> 32 (30): 5414–29.
+</div>
+<div id="ref-kraemer2009events" class="csl-entry">
+Kraemer, Helena Chmura. 2009. <span>“Events Per Person-Time (Incidence Rate): A Misleading Statistic?”</span> <em>Statistics in Medicine</em> 28 (6): 1028–39.
+</div>
+<div id="ref-kraemer2006size" class="csl-entry">
+Kraemer, Helena Chmura, and David J Kupfer. 2006. <span>“Size of Treatment Effects and Their Importance to Clinical Research and Practice.”</span> <em>Biological Psychiatry</em> 59 (11): 990–96.
+</div>
+<div id="ref-krahn2013graphical" class="csl-entry">
+Krahn, Ulrike, Harald Binder, and Jochem König. 2013. <span>“A Graphical Tool for Locating Inconsistency in Network Meta-Analyses.”</span> <em>BMC Medical Research Methodology</em> 13 (1): 35.
+</div>
+<div id="ref-lakens2017examining" class="csl-entry">
+Lakens, Daniel, Elizabeth Page-Gould, Marcel ALM van Assen, Bobbie Spellman, Felix Schönbrodt, Fred Hasselman, Katherine S Corker, et al. 2017. <span>“Examining the Reproducibility of Meta-Analyses in Psychology: A Preliminary Report.”</span> <a href="https://osf.io/xfbjf/" class="uri">https://osf.io/xfbjf/</a>; MetaArXiv.
+</div>
+<div id="ref-langan2019comparison" class="csl-entry">
+Langan, Dean, Julian PT Higgins, Dan Jackson, Jack Bowden, Areti Angeliki Veroniki, Evangelos Kontopantelis, Wolfgang Viechtbauer, and Mark Simmonds. 2019. <span>“A Comparison of Heterogeneity Variance Estimators in Simulated Random-Effects Meta-Analyses.”</span> <em>Research Synthesis Methods</em> 10 (1): 83–98.
+</div>
+<div id="ref-lipsey2001practical" class="csl-entry">
+Lipsey, Mark W, and David B Wilson. 2001. <em>Practical Meta-Analysis.</em> SAGE.
+</div>
+<div id="ref-lu2009modeling" class="csl-entry">
+Lu, Guobing, and AE Ades. 2009. <span>“Modeling Between-Trial Variance Structure in Mixed Treatment Comparisons.”</span> <em>Biostatistics</em> 10 (4): 792–805.
+</div>
+<div id="ref-esc" class="csl-entry">
+Lüdecke, Daniel. 2019. <span>“Esc: Effect Size Computation for Meta Analysis (Version 0.5.1).”</span> <a href="https://CRAN.R-project.org/package=esc" class="uri">https://CRAN.R-project.org/package=esc</a>. <a href="https://doi.org/10.5281/zenodo.1249218">https://doi.org/10.5281/zenodo.1249218</a>.
+</div>
+<div id="ref-lunn2012bugs" class="csl-entry">
+Lunn, David, Chris Jackson, Nicky Best, Andrew Thomas, and David Spiegelhalter. 2012. <em>The <span>BUGS</span> Book: A Practical Introduction to <span>Bayesian</span> Analysis</em>. Chapman &amp; Hall/CRC Press.
+</div>
+<div id="ref-mahood2014searching" class="csl-entry">
+Mahood, Quenby, Dwayne Van Eerd, and Emma Irvin. 2014. <span>“Searching for Grey Literature for Systematic Reviews: Challenges and Benefits.”</span> <em>Research Synthesis Methods</em> 5 (3): 221–34.
+</div>
+<div id="ref-makambi2004effect" class="csl-entry">
+Makambi, Kepher H. 2004. <span>“The Effect of the Heterogeneity Variance Estimator on Some Tests of Treatment Efficacy.”</span> <em>Journal of Biopharmaceutical Statistics</em> 14 (2): 439–49.
+</div>
+<div id="ref-mansfiled1982detecting" class="csl-entry">
+Mansfield, Edward R, and Billy P Helms. 1982. <span>“Detecting Multicollinearity.”</span> <em>The American Statistician</em> 36 (3a): 158–60.
+</div>
+<div id="ref-mantel1959statistical" class="csl-entry">
+Mantel, Nathan, and William Haenszel. 1959. <span>“Statistical Aspects of the Analysis of Data from Retrospective Studies of Disease.”</span> <em>Journal of the National Cancer Institute</em> 22 (4): 719–48.
+</div>
+<div id="ref-marsman2017bayesian" class="csl-entry">
+Marsman, Maarten, Felix D Schönbrodt, Richard D Morey, Yuling Yao, Andrew Gelman, and Eric-Jan Wagenmakers. 2017. <span>“A <span>Bayesian</span> Bird’s Eye View of <span>‘<span>Replications</span> of Important Results in Social Psychology’</span>.”</span> <em>Royal Society Open Science</em> 4 (1): 160426.
+</div>
+<div id="ref-mattos2015systematic" class="csl-entry">
+Mattos, Claudia Trindade, and Antônio Carlos de Oliveira Ruellas. 2015. <span>“Systematic Review and Meta-Analysis: What Are the Implications in the Clinical Practice?”</span> <em>Dental Press Journal of Orthodontics</em> 20 (1): 17–19.
+</div>
+<div id="ref-mbuagbaw2017approaches" class="csl-entry">
+Mbuagbaw, L, B Rochwerg, R Jaeschke, D Heels-Andsell, W Alhazzani, L Thabane, and Gordon H Guyatt. 2017. <span>“Approaches to Interpreting and Choosing the Best Treatments in Network Meta-Analyses.”</span> <em>Systematic Reviews</em> 6 (1): 1–5.
+</div>
+<div id="ref-mcardle1984some" class="csl-entry">
+McArdle, J Jack, and Roderick P McDonald. 1984. <span>“Some Algebraic Properties of the Reticular Action Model for Moment Structures.”</span> <em>British Journal of Mathematical and Statistical Psychology</em> 37 (2): 234–51.
+</div>
+<div id="ref-mcauley2000does" class="csl-entry">
+McAuley, Laura, Peter Tugwell, David Moher, et al. 2000. <span>“Does the Inclusion of Grey Literature Influence Estimates of Intervention Effectiveness Reported in Meta-Analyses?”</span> <em>The Lancet</em> 356 (9237): 1228–31.
+</div>
+<div id="ref-mcgrayne2011theory" class="csl-entry">
+McGrayne, Sharon Bertsch. 2011. <em>The Theory That Would Not Die: <span>How</span> <span>Bayes</span>’ Rule Cracked the Enigma Code, Hunted down Russian Submarines, and Emerged Triumphant from Two Centuries of Controversy</em>. Yale University Press.
+</div>
+<div id="ref-robvis" class="csl-entry">
+McGuinness, Luke A. 2019. <span>“Robvis: An <span class="sans-serif">r</span> Package and Web Application for Visualising Risk-of-Bias Assessments.”</span> <a href="https://github.com/mcguinlu/robvis" class="uri">https://github.com/mcguinlu/robvis</a>. <a href="https://github.com/mcguinlu/robvis">https://github.com/mcguinlu/robvis</a>.
+</div>
+<div id="ref-mcguinness2020risk" class="csl-entry">
+McGuinness, Luke A, and Julian PT Higgins. 2020. <span>“<span>Risk-Of-Bias VISualization</span> (Robvis): An <span class="sans-serif">r</span> Package and Shiny Web App for Visualizing Risk-of-Bias Assessments.”</span> <em>Research Synthesis Methods</em> 12 (1).
+</div>
+<div id="ref-mcneish2016using" class="csl-entry">
+McNeish, Daniel. 2016. <span>“On Using <span>Bayesian</span> Methods to Address Small Sample Problems.”</span> <em>Structural Equation Modeling: A Multidisciplinary Journal</em> 23 (5): 750–73.
+</div>
+<div id="ref-mcnutt2014reproducibility" class="csl-entry">
+McNutt, Marcia. 2014. <span>“Reproducibility.”</span> <em>Science</em> 343 (6168): 229.
+</div>
+<div id="ref-mcshane2016adjusting" class="csl-entry">
+McShane, Blakeley B, Ulf Böckenholt, and Karsten T Hansen. 2016. <span>“Adjusting for Publication Bias in Meta-Analysis: An Evaluation of Selection Methods and Some Cautionary Notes.”</span> <em>Perspectives on Psychological Science</em> 11 (5): 730–49.
+</div>
+<div id="ref-meehl1978theoretical" class="csl-entry">
+Meehl, Paul E. 1978. <span>“Theoretical Risks and Tabular Asterisks: <span>Sir Karl</span>, <span>Sir Ronald</span>, and the Slow Progress of Soft Psychology.”</span> <em>Journal of Consulting and Clinical Psychology</em> 46 (4): 806.
+</div>
+<div id="ref-mehta2005people" class="csl-entry">
+Mehta, Paras D, and Michael C Neale. 2005. <span>“People Are Variables Too: Multilevel Structural Equations Modeling.”</span> <em>Psychological Methods</em> 10 (3): 259.
+</div>
+<div id="ref-mendes2017number" class="csl-entry">
+Mendes, Diogo, Carlos Alves, and Francisco Batel-Marques. 2017. <span>“<span class="nocase">Number needed to treat</span> (<span>NNT</span>) in Clinical Literature: An Appraisal.”</span> <em>BMC Medicine</em> 15 (1): 112.
+</div>
+<div id="ref-moher2009preferred" class="csl-entry">
+Moher, David, Alessandro Liberati, Jennifer Tetzlaff, Douglas G Altman, Prisma Group, et al. 2009. <span>“Preferred Reporting Items for Systematic Reviews and Meta-Analyses: The <span>PRISMA</span> Statement.”</span> <em>PLoS Medicine</em> 6 (7).
+</div>
+<div id="ref-moher2015preferred" class="csl-entry">
+Moher, David, Larissa Shamseer, Mike Clarke, Davina Ghersi, Alessandro Liberati, Mark Petticrew, Paul Shekelle, Lesley A Stewart, and PRISMA-P Group. 2015. <span>“Preferred Reporting Items for Systematic Review and Meta-Analysis Protocols (<span>PRISMA-P</span>) 2015 Statement.”</span> <em>Systematic Reviews</em> 4 (1): 1.
+</div>
+<div id="ref-moller2015strong" class="csl-entry">
+Møller, Anders Pape, and Timothy A Mousseau. 2015. <span>“Strong Effects of Ionizing Radiation from <span>Chernobyl</span> on Mutation Rates.”</span> <em>Scientific Reports</em> 5: 8363.
+</div>
+<div id="ref-montgomery" class="csl-entry">
+Montgomery, Douglas C. 2013. <em>Design and Analysis of Experiments</em>. 8th ed. Hoboken, NJ: Wiley.
+</div>
+<div id="ref-mosca2013fifteen" class="csl-entry">
+Mosca, Lori, Gmerice Hammond, Heidi Mochari-Greenberger, Amytis Towfighi, and Michelle A Albert. 2013. <span>“Fifteen-Year Trends in Awareness of Heart Disease in Women: Results of a 2012 <span>American Heart Association</span> National Survey.”</span> <em>Circulation</em> 127 (11): 1254–63.
+</div>
+<div id="ref-muthen2012mplus" class="csl-entry">
+Muthén, Linda K, and Bengt O Muthén. 2012. <span>“<span>MPlus</span>: Statistical Analysis with Latent Variables–User’s Guide.”</span> Citeseer.
+</div>
+<div id="ref-ngamaba2017strongly" class="csl-entry">
+Ngamaba, Kayonda Hubert, Maria Panagioti, and Christopher J Armitage. 2017. <span>“How Strongly Related Are Health Status and Subjective Well-Being? <span>Systematic</span> Review and Meta-Analysis.”</span> <em>The European Journal of Public Health</em> 27 (5): 879–85.
+</div>
+<div id="ref-nielsen2017one" class="csl-entry">
+Nielsen, Mathias Wullum, Jens Peter Andersen, Londa Schiebinger, and Jesper W Schneider. 2017. <span>“One and a Half Million Medical Papers Reveal a Link Between Author Gender and Attention to Gender and Sex Analysis.”</span> <em>Nature Human Behaviour</em> 1 (11): 791–96.
+</div>
+<div id="ref-nuzzo2014statistical" class="csl-entry">
+Nuzzo, Rigina. 2014. <span>“Statistical Errors: <span><span class="math inline">\(P\)</span></span> Values, the ’Gold Standard’ of Statistical Validity, Are Not as Reliable as Many Scientists Assume.”</span> <em>Nature</em> 506 (7487): 150–53.
+</div>
+<div id="ref-o2007historical" class="csl-entry">
+O’Rourke, Keith. 2007. <span>“An Historical Perspective on Meta-Analysis: Dealing Quantitatively with Varying Study Results.”</span> <em>Journal of the Royal Society of Medicine</em> 100 (12): 579–82.
+</div>
+<div id="ref-olkin2012gosh" class="csl-entry">
+Olkin, Ingram, Issa J Dahabreh, and Thomas A Trikalinos. 2012. <span>“<span>GOSH</span>–a Graphical Display of Study Heterogeneity.”</span> <em>Research Synthesis Methods</em> 3 (3): 214–23.
+</div>
+<div id="ref-olkin1995correlations" class="csl-entry">
+Olkin, Ingram, and Jeremy D Finn. 1995. <span>“Correlations Redux.”</span> <em>Psychological Bulletin</em> 118 (1): 155.
+</div>
+<div id="ref-open2015estimating" class="csl-entry">
+Open Science Collaboration et al. 2015. <span>“Estimating the Reproducibility of Psychological Science.”</span> <em>Science</em> 349 (6251).
+</div>
+<div id="ref-page2021prisma" class="csl-entry">
+Page, Matthew J, David Moher, Patrick M Bossuyt, Isabelle Boutron, Tammy C Hoffmann, Cynthia D Mulrow, Larissa Shamseer, et al. 2021. <span>“<span>PRISMA</span> 2020 Explanation and Elaboration: Updated Guidance and Exemplars for Reporting Systematic Reviews.”</span> <em>BMJ</em> 372. <a href="https://www.bmj.com/content/372/bmj.n71">https://www.bmj.com/content/372/bmj.n71</a>.
+</div>
+<div id="ref-page2020investigating" class="csl-entry">
+Page, Matthew J, Jonathan AC Sterne, Julian PT Higgins, and Matthias Egger. 2020. <span>“Investigating and Dealing with Publication Bias and Other Reporting Biases in Meta-Analyses of Health Research: A Review.”</span> <em>Research Synthesis Methods</em>.
+</div>
+<div id="ref-panageas2007you" class="csl-entry">
+Panageas, Katherine S, Leah Ben-Porat, Maura N Dickler, Paul B Chapman, and Deborah Schrag. 2007. <span>“When You Look Matters: The Effect of Assessment Schedule on Progression-Free Survival.”</span> <em>Journal of the National Cancer Institute</em> 99 (6): 428–32.
+</div>
+<div id="ref-parmar1998extracting" class="csl-entry">
+Parmar, Mahesh KB, Valter Torri, and Lesley Stewart. 1998. <span>“Extracting Summary Statistics to Perform Meta-Analyses of the Published Literature for Survival Endpoints.”</span> <em>Statistics in Medicine</em> 17 (24): 2815–34.
+</div>
+<div id="ref-pastor2018multilevel" class="csl-entry">
+Pastor, Dena A, and Rory A Lazowski. 2018. <span>“On the Multilevel Nature of Meta-Analysis: A Tutorial, Comparison of Software Programs, and Discussion of Analytic Choices.”</span> <em>Multivariate Behavioral Research</em> 53 (1): 74–89.
+</div>
+<div id="ref-patsopoulos2005relative" class="csl-entry">
+Patsopoulos, Nikolaos A, Apostolos A Analatos, and John PA Ioannidis. 2005. <span>“Relative Citation Impact of Various Study Designs in the Health Sciences.”</span> <em>JAMA</em> 293 (19): 2362–66.
+</div>
+<div id="ref-paule1982consensus" class="csl-entry">
+Paule, Robert C, and John Mandel. 1982. <span>“Consensus Values and Weighting Factors.”</span> <em>Journal of Research of the National Bureau of Standards</em> 87 (5): 377–85.
+</div>
+<div id="ref-peters2006comparison" class="csl-entry">
+Peters, Jaime L, Alex J Sutton, David R Jones, Keith R Abrams, and Lesley Rushton. 2006. <span>“Comparison of Two Methods to Detect Publication Bias in Meta-Analysis.”</span> <em>JAMA</em> 295 (6): 676–80.
+</div>
+<div id="ref-peters2007performance" class="csl-entry">
+———. 2007. <span>“Performance of the Trim and Fill Method in the Presence of Publication Bias and Between-Study Heterogeneity.”</span> <em>Statistics in Medicine</em> 26 (25): 4544–62.
+</div>
+<div id="ref-peters2008contour" class="csl-entry">
+———. 2008. <span>“Contour-Enhanced Meta-Analysis Funnel Plots Help Distinguish Publication Bias from Other Causes of Asymmetry.”</span> <em>Journal of Clinical Epidemiology</em> 61 (10): 991–96.
+</div>
+<div id="ref-perfanalytics" class="csl-entry">
+Peterson, Brian G., and Peter Carl. 2020. <span>“<span>PerformanceAnalytics</span>: Econometric Tools for Performance and Risk Analysis. <span class="sans-serif">R</span> Package Version 2.0.4.”</span> <a href="https://CRAN.R-project.org/package=PerformanceAnalytics" class="uri">https://CRAN.R-project.org/package=PerformanceAnalytics</a>.
+</div>
+<div id="ref-peto1980aspirin" class="csl-entry">
+Peto, R, and S Parish. 1980. <span>“Aspirin After Myocardial Infarction.”</span> <em>The Lancet</em> 1 (8179): 1172–73.
+</div>
+<div id="ref-piantadosi1988ecological" class="csl-entry">
+Piantadosi, Steven, David P Byar, and Sylvan B Green. 1988. <span>“The Ecological Fallacy.”</span> <em>American Journal of Epidemiology</em> 127 (5): 893–904.
+</div>
+<div id="ref-pigott2020methodological" class="csl-entry">
+Pigott, Terri D, and Joshua R Polanin. 2020. <span>“Methodological Guidance Paper: High-Quality Meta-Analysis in a Systematic Review.”</span> <em>Review of Educational Research</em> 90 (1): 24–46.
+</div>
+<div id="ref-rjags" class="csl-entry">
+Plummer, Martyn. 2019. <span>“Rjags: <span>Bayesian</span> Graphical Models Using <span>MCMC</span>. <span class="sans-serif">R</span> Package Version 4-10.”</span> <a href="https://CRAN.R-project.org/package=rjags" class="uri">https://CRAN.R-project.org/package=rjags</a>. <a href="https://CRAN.R-project.org/package=rjags">https://CRAN.R-project.org/package=rjags</a>.
+</div>
+<div id="ref-poole1999random" class="csl-entry">
+Poole, Charles, and Sander Greenland. 1999. <span>“Random-Effects Meta-Analyses Are Not Always Conservative.”</span> <em>American Journal of Epidemiology</em> 150 (5): 469–75.
+</div>
+<div id="ref-clubSandwich" class="csl-entry">
+Pustejovsky, James. 2022. <em>clubSandwich: Cluster-Robust (Sandwich) Variance Estimators with Small-Sample Corrections</em>. <a href="https://CRAN.R-project.org/package=clubSandwich">https://CRAN.R-project.org/package=clubSandwich</a>.
+</div>
+<div id="ref-pustejovsky2019testing" class="csl-entry">
+Pustejovsky, James E, and Melissa A Rodgers. 2019. <span>“Testing for Funnel Plot Asymmetry of Standardized Mean Differences.”</span> <em>Research Synthesis Methods</em> 10 (1): 57–71.
+</div>
+<div id="ref-pustejovsky2021meta" class="csl-entry">
+Pustejovsky, James E, and Elizabeth Tipton. 2021. <span>“Meta-Analysis with <span>R</span>obust <span>V</span>ariance <span>E</span>stimation: Expanding the Range of Working Models.”</span> <em>Prevention Science</em>, 1–14.
+</div>
+<div id="ref-quintana2015pre" class="csl-entry">
+Quintana, Daniel S. 2015. <span>“From Pre-Registration to Publication: A Non-Technical Primer for Conducting a Meta-Analysis to Synthesize Correlational Data.”</span> <em>Frontiers in Psychology</em> 6: 1549.
+</div>
+<div id="ref-raudenbush2009pi" class="csl-entry">
+Raudenbush, SW. 2009. <span>“Analyzing Effect Sizes: Random Effects Models.”</span> In <em>The Handbook of Research Synthesis and Meta-Analysis (2nd Ed.)</em>, edited by H Cooper, LV Hedges, and JC Valentine. Russell Sage Foundation.
+</div>
+<div id="ref-riley2010meta" class="csl-entry">
+Riley, Richard D, Paul C Lambert, and Ghada Abo-Zaid. 2010. <span>“Meta-Analysis of Individual Participant Data: Rationale, Conduct, and Reporting.”</span> <em>BMJ</em> 340: c221.
+</div>
+<div id="ref-riley2007evidence" class="csl-entry">
+Riley, Richard D, Mark C Simmonds, and Maxime P Look. 2007. <span>“Evidence Synthesis Combining Individual Patient Data and Aggregate Data: A Systematic Review Identified Current Practice and Possible Methods.”</span> <em>Journal of Clinical Epidemiology</em> 60 (5): 431.e1–12.
+</div>
+<div id="ref-riley2021individual" class="csl-entry">
+Riley, Richard D., Jayne F. Tierney, and Lesley A. Stewart. 2021. <em>Individual Participant Data Meta-Analysis: A Handbook for Healthcare Research</em>. 1st ed. Hoboken, New Jersey: Wiley.
+</div>
+<div id="ref-robins1986general" class="csl-entry">
+Robins, James, Sander Greenland, and Norman E. Breslow. 1986. <span>“A General Estimator for the Variance of the <span>Mantel-Haenszel</span> Odds Ratio.”</span> <em>American Journal of Epidemiology</em>, 719–23.
+</div>
+<div id="ref-rosnow1996computing" class="csl-entry">
+Rosnow, Ralph L, and Robert Rosenthal. 1996. <span>“Computing Contrasts, Effect Sizes, and Counternulls on Other People’s Published Data: General Procedures for Research Consumers.”</span> <em>Psychological Methods</em> 1 (4): 331.
+</div>
+<div id="ref-rosnow2000contrasts" class="csl-entry">
+Rosnow, Ralph L, Robert Rosenthal, and Donald B Rubin. 2000. <span>“Contrasts and Correlations in Effect-Size Estimation.”</span> <em>Psychological Science</em> 11 (6): 446–53.
+</div>
+<div id="ref-rothman2008modern" class="csl-entry">
+Rothman, Kenneth J, Sander Greenland, and Timothy L Lash. 2008. <em>Modern Epidemiology</em>. Lippincott Williams &amp; Wilkins.
+</div>
+<div id="ref-duval2005publication" class="csl-entry">
+Rothstein, Hannah R, Alexander J Sutton, and Michael Borenstein. 2005. <em>Publication Bias in Meta-Analysis</em>. <em>Publication Bias in Meta-Analysis: Prevention, Assessment and Adjustments</em>. John Wiley &amp; Sons.
+</div>
+<div id="ref-rover2017bayesian" class="csl-entry">
+Röver, Christian. 2017. <span>“<span>Bayesian</span> Random-Effects Meta-Analysis Using the ‘Bayesmeta‘ <span class="sans-serif">r</span> Package.”</span> <em>ArXiv Preprint 1711.08683</em>.
+</div>
+<div id="ref-rucker2012network" class="csl-entry">
+Rücker, Gerta. 2012. <span>“Network Meta-Analysis, Electrical Networks and Graph Theory.”</span> <em>Research Synthesis Methods</em> 3 (4): 312–24.
+</div>
+<div id="ref-nemeta" class="csl-entry">
+Rücker, Gerta, Ulrike Krahn, Jochem König, Orestis Efthimiou, and Guido Schwarzer. 2020. <em>Netmeta: Network Meta-Analysis Using Frequentist Methods</em>. <a href="https://CRAN.R-project.org/package=netmeta" class="uri">https://CRAN.R-project.org/package=netmeta</a>. <a href="https://CRAN.R-project.org/package=netmeta">https://CRAN.R-project.org/package=netmeta</a>.
+</div>
+<div id="ref-rucker2015ranking" class="csl-entry">
+Rücker, Gerta, and Guido Schwarzer. 2015. <span>“Ranking Treatments in Frequentist Network Meta-Analysis Works Without Resampling Methods.”</span> <em>BMC Medical Research Methodology</em> 15 (58).
+</div>
+<div id="ref-rucker2020beyond" class="csl-entry">
+———. 2021. <span>“Beyond the Forest Plot: The Drapery Plot.”</span> <em>Research Synthesis Methods</em> 12 (1): 13–19.
+</div>
+<div id="ref-rucker2011treatment" class="csl-entry">
+Rücker, Gerta, Guido Schwarzer, James R Carpenter, Harald Binder, and Martin Schumacher. 2011. <span>“Treatment-Effect Estimates Adjusted for Small-Study Effects via a Limit Meta-Analysis.”</span> <em>Biostatistics</em> 12 (1): 122–42.
+</div>
+<div id="ref-rucker2008undue" class="csl-entry">
+Rücker, Gerta, Guido Schwarzer, James R Carpenter, and Martin Schumacher. 2008. <span>“Undue Reliance on <span><span class="math inline">\(I^2\)</span></span> in Assessing Heterogeneity May Mislead.”</span> <em>BMC Medical Research Methodology</em> 8 (1): 79.
+</div>
+<div id="ref-salanti2011graphical" class="csl-entry">
+Salanti, Georgia, AE Ades, and John PA Ioannidis. 2011. <span>“Graphical Methods and Numerical Summaries for Presenting Results from Multiple-Treatment Meta-Analysis: An Overview and Tutorial.”</span> <em>Journal of Clinical Epidemiology</em> 64 (2): 163–71.
+</div>
+<div id="ref-salanti2014evaluating" class="csl-entry">
+Salanti, Georgia, Cinzia Del Giovane, Anna Chaimani, Deborah M Caldwell, and Julian PT Higgins. 2014. <span>“Evaluating the Quality of Evidence from a Network Meta-Analysis.”</span> <em>PLOS ONE</em> 9 (7): e99682.
+</div>
+<div id="ref-sanderson2007tools" class="csl-entry">
+Sanderson, Simon, Iain D Tatt, and Julian Higgins. 2007. <span>“Tools for Assessing Quality and Susceptibility to Bias in Observational Studies in Epidemiology: A Systematic Review and Annotated Bibliography.”</span> <em>International Journal of Epidemiology</em> 36 (3): 666–76.
+</div>
+<div id="ref-saruhanjan2020psychological" class="csl-entry">
+Saruhanjan, Karina, Anna-Carlotta Zarski, Tobias Bauer, Harald Baumeister, Pim Cuijpers, Kai Spiegelhalder, Randy P Auerbach, et al. 2020. <span>“Psychological Interventions to Improve Sleep in College Students: A Meta-Analysis of Randomized Controlled Trials.”</span> <em>Journal of Sleep Research</em>, e13097.
+</div>
+<div id="ref-openxlsx" class="csl-entry">
+Schauberger, Philipp, and Alexander Walker. 2020. <span>“Openxlsx: Read, Write and Edit Xlsx Files. <span class="sans-serif">R</span> Package Version 4.1.5.”</span> <a href="https://CRAN.R-project.org/package=openxlsx" class="uri">https://CRAN.R-project.org/package=openxlsx</a>. <a href="https://CRAN.R-project.org/package=openxlsx">https://CRAN.R-project.org/package=openxlsx</a>.
+</div>
+<div id="ref-scherer2018full" class="csl-entry">
+Scherer, Roberta W, Joerg J Meerpohl, Nadine Pfeifer, Christine Schmucker, Guido Schwarzer, and Erik von Elm. 2018. <span>“Full Publication of Results Initially Presented in Abstracts.”</span> <em>Cochrane Database of Systematic Reviews</em> 1 (11).
+</div>
+<div id="ref-schmidt1977development" class="csl-entry">
+Schmidt, Frank L, and John E Hunter. 1977. <span>“Development of a General Solution to the Problem of Validity Generalization.”</span> <em>Journal of Applied Psychology</em> 62 (5): 529.
+</div>
+<div id="ref-schmucker2014extent" class="csl-entry">
+Schmucker, Christine, Lisa K Schell, Susan Portalupi, Patrick Oeller, Laura Cabrera, Dirk Bassler, Guido Schwarzer, et al. 2014. <span>“Extent of Non-Publication in Cohorts of Studies Approved by Research Ethics Committees or Included in Trial Registries.”</span> <em>PLOS ONE</em> 9 (12): e114023.
+</div>
+<div id="ref-schopfel2018electronic" class="csl-entry">
+Schöpfel, Joachim, and Behrooz Rasuli. 2018. <span>“Are Electronic Theses and Dissertations (Still) Grey Literature in the Digital Age? A FAIR Debate.”</span> <em>The Electronic Library</em> 36 (2): 208–19.
+</div>
+<div id="ref-schubert2017dbscan" class="csl-entry">
+Schubert, Erich, Jörg Sander, Martin Ester, Hans Peter Kriegel, and Xiaowei Xu. 2017. <span>“<span>DBSCAN</span> Revisited, Revisited: Why and How You Should (Still) Use <span>DBSCAN</span>.”</span> <em>ACM Transactions on Database Systems (TODS)</em> 42 (3): 1–21.
+</div>
+<div id="ref-metasens" class="csl-entry">
+Schwarzer, Guido, James R. Carpenter, and Gerta Rücker. 2020. <span>“Metasens: Advanced Statistical Methods to Model and Adjust for Bias in Meta-Analysis. <span class="sans-serif">R</span> Package Version 0.5-0.”</span> <a href="https://CRAN.R-project.org/package=metasens" class="uri">https://CRAN.R-project.org/package=metasens</a>. <a href="https://CRAN.R-project.org/package=metasens">https://CRAN.R-project.org/package=metasens</a>.
+</div>
+<div id="ref-schwarzer2015meta" class="csl-entry">
+Schwarzer, Guido, James R Carpenter, and Gerta Rücker. 2015. <em>Meta-Analysis with <span class="sans-serif">r</span></em>. Springer.
+</div>
+<div id="ref-schwarzer2019seriously" class="csl-entry">
+Schwarzer, Guido, Hiam Chemaitelly, Laith J Abu-Raddad, and Gerta Rücker. 2019. <span>“Seriously Misleading Results Using Inverse of <span>Freeman-Tukey</span> Double Arcsine Transformation in Meta-Analysis of Single Proportions.”</span> <em>Research Synthesis Methods</em> 10 (3): 476–83.
+</div>
+<div id="ref-shadish2015meta" class="csl-entry">
+Shadish, William R, and Jesse D Lecy. 2015. <span>“The Meta-Analytic Big Bang.”</span> <em>Research Synthesis Methods</em> 6 (3): 246–64.
+</div>
+<div id="ref-shannon2016statistical" class="csl-entry">
+Shannon, Harry. 2016. <span>“A Statistical Note on <span class="nocase">Karl Pearson’s</span> 1904 Meta-Analysis.”</span> <em>Journal of the Royal Society of Medicine</em> 109 (8): 310–11.
+</div>
+<div id="ref-sharpe1997apples" class="csl-entry">
+Sharpe, Donald. 1997. <span>“Of Apples and Oranges, File Drawers and Garbage: Why Validity Issues in Meta-Analysis Will Not Go Away.”</span> <em>Clinical Psychology Review</em> 17 (8): 881–901.
+</div>
+<div id="ref-shim2019network" class="csl-entry">
+Shim, Sung Ryul, Seong-Jang Kim, Jonghoo Lee, and Gerta Rücker. 2019. <span>“Network Meta-Analysis: Application and Practice Using <span class="sans-serif">r</span> Software.”</span> <em>Epidemiology and Health</em> 41.
+</div>
+<div id="ref-sidik2002simple" class="csl-entry">
+Sidik, Kurex, and Jeffrey N Jonkman. 2002. <span>“A Simple Confidence Interval for Meta-Analysis.”</span> <em>Statistics in Medicine</em> 21 (21): 3153–59.
+</div>
+<div id="ref-sidik2005simple" class="csl-entry">
+———. 2005. <span>“Simple Heterogeneity Variance Estimation for Meta-Analysis.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 54 (2): 367–84.
+</div>
+<div id="ref-sidik2007comparison" class="csl-entry">
+———. 2007. <span>“A Comparison of Heterogeneity Variance Estimators in Combining Results of Studies.”</span> <em>Statistics in Medicine</em> 26 (9): 1964–81.
+</div>
+<div id="ref-sidik2019note" class="csl-entry">
+———. 2019. <span>“A Note on the Empirical <span>Bayes</span> Heterogeneity Variance Estimator in Meta-Analysis.”</span> <em>Statistics in Medicine</em> 38 (20): 3804–16.
+</div>
+<div id="ref-silberzahn2018many" class="csl-entry">
+Silberzahn, Raphael, Eric Luis Uhlmann, Daniel P Martin, Pasquale Anselmi, Frederik Aust, Eli Awtrey, Štěpán Bahnı́k, et al. 2018. <span>“Many Analysts, One Data Set: Making Transparent How Variations in Analytic Choices Affect Results.”</span> <em>Advances in Methods and Practices in Psychological Science</em> 1 (3): 337–56.
+</div>
+<div id="ref-simonsohn2014es" class="csl-entry">
+Simonsohn, Uri, Leif D Nelson, and Joseph P Simmons. 2014a. <span>“P-Curve and Effect Size: Correcting for Publication Bias Using Only Significant Results.”</span> <em>Perspectives on Psychological Science</em> 9 (6): 666–81.
+</div>
+<div id="ref-simonsohn2014p" class="csl-entry">
+———. 2014b. <span>“P-Curve: A Key to the File-Drawer.”</span> <em>Journal of Experimental Psychology: General</em> 143 (2): 534.
+</div>
+<div id="ref-simonsohn2015better" class="csl-entry">
+Simonsohn, Uri, Joseph P Simmons, and Leif D Nelson. 2015. <span>“Better p-Curves: Making p-Curve Analysis More Robust to Errors, Fraud, and Ambitious <span><span class="math inline">\(p\)</span></span>-Hacking, a Reply to <span>Ulrich</span> and <span>Miller</span> (2015).”</span> <em>Journal of Experimental Psychology: General</em> 144 (6): 1146–52.
+</div>
+<div id="ref-simonsohn2020specification" class="csl-entry">
+———. 2020. <span>“Specification Curve Analysis.”</span> <em>Nature Human Behaviour</em> 4 (11): 1208–14.
+</div>
+<div id="ref-smith1977meta" class="csl-entry">
+Smith, Mary L, and Gene V Glass. 1977. <span>“Meta-Analysis of Psychotherapy Outcome Studies.”</span> <em>American Psychologist</em> 32 (9): 752.
+</div>
+<div id="ref-song2009methodological" class="csl-entry">
+Song, Fujian, Yoon K Loke, Tanya Walsh, Anne-Marie Glenny, Alison J Eastwood, and Douglas G Altman. 2009. <span>“Methodological Problems in the Use of Indirect Comparisons for Evaluating Healthcare Interventions: Survey of Published Systematic Reviews.”</span> <em>BMJ</em> 338: b1147.
+</div>
+<div id="ref-spearman1904reprinted" class="csl-entry">
+Spearman, C. 1904. <span>“The Proof and Measurement of Association Between Two Things.”</span> <em>The American Journal of Psychology</em> 15 (1): 72–101.
+</div>
+<div id="ref-stanley2008meta" class="csl-entry">
+Stanley, Tom D. 2008. <span>“Meta-Regression Methods for Detecting and Estimating Empirical Effects in the Presence of Publication Selection.”</span> <em>Oxford Bulletin of Economics and Statistics</em> 70 (1): 103–27.
+</div>
+<div id="ref-stanley2017limitations" class="csl-entry">
+———. 2017. <span>“Limitations of <span>PET-PEESE</span> and Other Meta-Analysis Methods.”</span> <em>Social Psychological and Personality Science</em> 8 (5): 581–91.
+</div>
+<div id="ref-stanley2014meta" class="csl-entry">
+Stanley, Tom D, and Hristos Doucouliagos. 2014. <span>“Meta-Regression Approximations to Reduce Publication Selection Bias.”</span> <em>Research Synthesis Methods</em> 5 (1): 60–78.
+</div>
+<div id="ref-stanley2022beyond" class="csl-entry">
+Stanley, Tom, Hristos Doucouliagos, and John Ioannidis. 2022. <span>“Beyond Random Effects: When Small-Study Findings Are More Heterogeneous.”</span> <em>Advances in Methods and Practices in Psychological Science</em> 5 (4).
+</div>
+<div id="ref-sterne2000publication" class="csl-entry">
+Sterne, Jonathan, David Gavaghan, and Matthias Egger. 2000. <span>“Publication and Related Bias in Meta-Analysis: Power of Statistical Tests and Prevalence in the Literature.”</span> <em>Journal of Clinical Epidemiology</em> 53 (11): 1119–29.
+</div>
+<div id="ref-sterne2016robins" class="csl-entry">
+Sterne, Jonathan, Miguel A Hernán, Barnaby C Reeves, Jelena Savović, Nancy D Berkman, Meera Viswanathan, David Henry, et al. 2016. <span>“<span>ROBINS-I</span>: A Tool for Assessing Risk of Bias in Non-Randomised Studies of Interventions.”</span> <em>BMJ</em> 355: i4919.
+</div>
+<div id="ref-sterni2019rob" class="csl-entry">
+Sterne, Jonathan, Jelena Savović, Matthew J Page, Roy G Elbers, Natalie S Blencowe, Isabelle Boutron, Christopher J Cates, et al. 2019. <span>“<span>RoB 2</span>: A Revised Tool for Assessing Risk of Bias in Randomised Trials.”</span> <em>BMJ</em> 366.
+</div>
+<div id="ref-sterne2011recommendations" class="csl-entry">
+Sterne, Jonathan, Alex J Sutton, John P A Ioannidis, Norma Terrin, David R Jones, Joseph Lau, James Carpenter, et al. 2011. <span>“Recommendations for Examining and Interpreting Funnel Plot Asymmetry in Meta-Analyses of Randomised Controlled Trials.”</span> <em>BMJ</em> 343.
+</div>
+<div id="ref-stijnen2010random" class="csl-entry">
+Stijnen, Theo, Taye H Hamza, and Pinar Özdemir. 2010. <span>“Random Effects Meta-Analysis of Event Outcome in the Framework of the Generalized Linear Mixed Model with Applications in Sparse Data.”</span> <em>Statistics in Medicine</em> 29 (29): 3046–67.
+</div>
+<div id="ref-stinerock2018statistics" class="csl-entry">
+Stinerock, Robert. 2018. <em>Statistics with r: A Beginner’s Guide</em>. 1st ed. London, UK: SAGE.
+</div>
+<div id="ref-j2004add" class="csl-entry">
+Sweeting, Michael J, Alexander J Sutton, and Paul C Lambert. 2004. <span>“What to Add to Nothing? Use and Avoidance of Continuity Corrections in Meta-Analysis of Sparse Data.”</span> <em>Statistics in Medicine</em> 23 (9): 1351–75.
+</div>
+<div id="ref-dissemination2009systematic" class="csl-entry">
+Tacconelli, Evelina. 2009. <span>“Systematic Reviews: <span class="nocase">CRD’s</span> Guidance for Undertaking Reviews in Healthcare.”</span> <em>The Lancet Infectious Diseases</em> 10 (4).
+</div>
+<div id="ref-tamhane2016prevalence" class="csl-entry">
+Tamhane, Ashutosh R, Andrew O Westfall, Greer A Burkholder, and Gary R Cutter. 2016. <span>“Prevalence Odds Ratio Versus Prevalence Ratio: Choice Comes with Consequences.”</span> <em>Statistics in Medicine</em> 35 (30): 5730–35.
+</div>
+<div id="ref-tang2016testing" class="csl-entry">
+Tang, Ryan W, and Mike Cheung. 2016. <span>“Testing <span>IB</span> Theories with Meta-Analytic Structural Equation Modeling.”</span> <em>Review of International Business and Strategy</em> 26 (4): 472–92.
+</div>
+<div id="ref-terrin2003adjusting" class="csl-entry">
+Terrin, Norma, Christopher H Schmid, Joseph Lau, and Ingram Olkin. 2003. <span>“Adjusting for Publication Bias in the Presence of Heterogeneity.”</span> <em>Statistics in Medicine</em> 22 (13): 2113–26.
+</div>
+<div id="ref-thalheimer2002calculate" class="csl-entry">
+Thalheimer, Will, and Samantha Cook. 2002. <em>How to Calculate Effect Sizes from Published Research: A Simplified Methodology</em>. Vol. 1. <a href="http://coshima.davidrjfikis.com/EPRS8530/Effect_Sizes_pdf4.pdf" class="uri">http://coshima.davidrjfikis.com/EPRS8530/Effect_Sizes_pdf4.pdf</a>; Work-Learning Research. <a href="http://coshima.davidrjfikis.com/EPRS8530/Effect%5C_Sizes%5C_pdf4.pdf">http://coshima.davidrjfikis.com/EPRS8530/Effect\_Sizes\_pdf4.pdf</a>.
+</div>
+<div id="ref-thompson2004exploratory" class="csl-entry">
+Thompson, Bruce. 2004. <em>Exploratory and Confirmatory Factor Analysis</em>. American Psychological Association.
+</div>
+<div id="ref-thompson2002should" class="csl-entry">
+Thompson, Simon G, and Julian PT Higgins. 2002. <span>“How Should Meta-Regression Analyses Be Undertaken and Interpreted?”</span> <em>Statistics in Medicine</em> 21 (11): 1559–73.
+</div>
+<div id="ref-thompson2001multilevel" class="csl-entry">
+Thompson, Simon G, Rebecca M Turner, and David E Warn. 2001. <span>“Multilevel Models for Meta-Analysis, and Their Application to Absolute Risk Differences.”</span> <em>Statistical Methods in Medical Research</em> 10 (6): 375–92.
+</div>
+<div id="ref-tipton2015small2" class="csl-entry">
+Tipton, Elizabeth. 2015. <span>“Small Sample Adjustments for Robust Variance Estimation with Meta-Regression.”</span> <em>Psychological Methods</em> 20 (3): 375.
+</div>
+<div id="ref-tipton2015small" class="csl-entry">
+Tipton, Elizabeth, and James E Pustejovsky. 2015. <span>“Small-Sample Adjustments for Tests of Moderators and Model Fit Using Robust Variance Estimation in Meta-Regression.”</span> <em>Journal of Educational and Behavioral Statistics</em> 40 (6): 604–34.
+</div>
+<div id="ref-tipton2019history" class="csl-entry">
+Tipton, Elizabeth, James E Pustejovsky, and Hedyeh Ahmadi. 2019. <span>“A History of Meta-Regression: Technical, Conceptual, and Practical Developments Between 1974 and 2018.”</span> <em>Research Synthesis Methods</em> 10 (2): 161–79.
+</div>
+<div id="ref-van2012automating" class="csl-entry">
+Valkenhoef, Gert van, Guobing Lu, Bert de Brock, Hans Hillege, AE Ades, and Nicky J Welton. 2012. <span>“Automating Network Meta-Analysis.”</span> <em>Research Synthesis Methods</em> 3 (4): 285–99.
+</div>
+<div id="ref-valstad2016relationship" class="csl-entry">
+Valstad, Mathias, Gail A Alvares, Ole A Andreassen, Lars T Westlye, and Daniel S Quintana. 2016. <span>“The Relationship Between Central and Peripheral Oxytocin Concentrations: A Systematic Review and Meta-Analysis Protocol.”</span> <em>Systematic Reviews</em> 5 (1): 1–7.
+</div>
+<div id="ref-vance2009data" class="csl-entry">
+Vance, Ashlee. 2009. <span>“Data Analysts Captivated by <span class="sans-serif">r</span>’s Power.”</span> <em>New York Times</em>. <a href="https://www.nytimes.com/2009/01/07/technology/business-computing/07program.html">https://www.nytimes.com/2009/01/07/technology/business-computing/07program.html</a>.
+</div>
+<div id="ref-veroniki2016methods" class="csl-entry">
+Veroniki, Areti Angeliki, Dan Jackson, Wolfgang Viechtbauer, Ralf Bender, Jack Bowden, Guido Knapp, Oliver Kuss, Julian PT Higgins, Dean Langan, and Georgia Salanti. 2016. <span>“Methods to Estimate the Between-Study Variance and Its Uncertainty in Meta-Analysis.”</span> <em>Research Synthesis Methods</em> 7 (1): 55–79.
+</div>
+<div id="ref-vevea2005publication" class="csl-entry">
+Vevea, Jack L, and Carol M Woods. 2005. <span>“Publication Bias in Research Synthesis: Sensitivity Analysis Using a Priori Weight Functions.”</span> <em>Psychological Methods</em> 10 (4): 428.
+</div>
+<div id="ref-viechtbauer2005bias" class="csl-entry">
+Viechtbauer, Wolfgang. 2005. <span>“Bias and Efficiency of Meta-Analytic Variance Estimators in the Random-Effects Model.”</span> <em>Journal of Educational and Behavioral Statistics</em> 30 (3): 261–93.
+</div>
+<div id="ref-viechtbauer2007approximate" class="csl-entry">
+———. 2007a. <span>“Approximate Confidence Intervals for Standardized Effect Sizes in the Two-Independent and Two-Dependent Samples Design.”</span> <em>Journal of Educational and Behavioral Statistics</em> 32: 39–60.
+</div>
+<div id="ref-viechtbauer2007confidence" class="csl-entry">
+———. 2007b. <span>“Confidence Intervals for the Amount of Heterogeneity in Meta-Analysis.”</span> <em>Statistics in Medicine</em> 26 (1): 37–52.
+</div>
+<div id="ref-urviecht" class="csl-entry">
+———. 2010. <span>“Conducting Meta-Analyses in <span class="sans-serif">r</span> with the <span class="nocase">metafor</span> Package.”</span> <em>Journal of Statistical Software</em> 36 (3): 1–48.
+</div>
+<div id="ref-viechtbauer2010outlier" class="csl-entry">
+Viechtbauer, Wolfgang, and Mike Cheung. 2010. <span>“Outlier and Influence Diagnostics for Meta-Analysis.”</span> <em>Research Synthesis Methods</em> 1 (2): 112–25.
+</div>
+<div id="ref-viechtbauer2015comparison" class="csl-entry">
+Viechtbauer, Wolfgang, José Antonio López-López, Julio Sánchez-Meca, and Fulgencio Marı́n-Martı́nez. 2015. <span>“A Comparison of Procedures to Test for Moderators in Mixed-Effects Meta-Regression Models.”</span> <em>Psychological Methods</em> 20 (3): 360.
+</div>
+<div id="ref-vuorre2016bayesian" class="csl-entry">
+Vuorre, Matti. 2016. <span>“Sometimes i <span>R</span>: <span>Bayesian</span> Meta-Analysis with <span>R</span>, <span>Stan</span> &amp; Brms.”</span> <a href="https://mvuorre.github.io/posts/2016-09-29-bayesian-meta-analysis/">https://mvuorre.github.io/posts/2016-09-29-bayesian-meta-analysis/</a>.
+</div>
+<div id="ref-wampold2013great" class="csl-entry">
+Wampold, Bruce E. 2013. <em>The Great Psychotherapy Debate: Models, Methods, and Findings</em>. Routledge.
+</div>
+<div id="ref-wellek2017critical" class="csl-entry">
+Wellek, Stefan. 2017. <span>“A Critical Evaluation of the Current <span>‘<span><span class="math inline">\(p\)</span></span>-Value Controversy’</span>.”</span> <em>Biometrical Journal</em> 59 (5): 854–72.
+</div>
+<div id="ref-whittingham2006we" class="csl-entry">
+Whittingham, Mark J, Philip A Stephens, Richard B Bradbury, and Robert P Freckleton. 2006. <span>“Why Do We Still Use Stepwise Modelling in Ecology and Behaviour?”</span> <em>Journal of Animal Ecology</em> 75 (5): 1182–89.
+</div>
+<div id="ref-wicherts2016degrees" class="csl-entry">
+Wicherts, Jelte M, Coosje LS Veldkamp, Hilde EM Augusteijn, Marjan Bakker, Robbie Van Aert, and Marcel ALM Van Assen. 2016. <span>“Degrees of Freedom in Planning, Running, Analyzing, and Reporting Psychological Studies: A Checklist to Avoid <span><span class="math inline">\(p\)</span></span>-Hacking.”</span> <em>Frontiers in Psychology</em> 7: 1832.
+</div>
+<div id="ref-tidyverse" class="csl-entry">
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. <span>“Welcome to the <span class="nocase">tidyverse</span>.”</span> <em>Journal of Open Source Software</em> 4 (43): 1686.
+</div>
+<div id="ref-wickham2016r" class="csl-entry">
+Wickham, Hadley, and Garrett Grolemund. 2016. <em><span class="sans-serif">R</span> for Data Science:import, Tidy, Transform, Visualize, and Model Data</em>. O’Reilly.
+</div>
+<div id="ref-wiksten2016hartung" class="csl-entry">
+Wiksten, Anna, Gerta Rücker, and Guido Schwarzer. 2016. <span>“Hartung–<span>Knapp</span> Method Is Not Always Conservative Compared with Fixed-Effect Meta-Analysis.”</span> <em>Statistics in Medicine</em> 35 (15): 2503–15.
+</div>
+<div id="ref-williams2018bayesian" class="csl-entry">
+Williams, Donald R, Philippe Rast, and Paul-Christian Bürkner. 2018. <span>“<span>Bayesian</span> Meta-Analysis with Weakly Informative Prior Distributions.”</span> <a href="https://psyarxiv.com/7tbrm/" class="uri">https://psyarxiv.com/7tbrm/</a>; PsyArXiv.
+</div>
+<div id="ref-osfr" class="csl-entry">
+Wolen, Aaron R., Chris H. J. Hartgerink, Ryan Hafen, Brian G. Richards, Courtney K. Soderberg, and Timothy P. York. 2020. <span>“<span class="nocase">osfr</span>: An <span class="sans-serif">r</span> Interface to the <span>Open Science Framework</span>.”</span> <em>Journal of Open Source Software</em> 5 (46): 2071.
+</div>
+<div id="ref-extradistr" class="csl-entry">
+Wołodźko, Tymoteusz. 2020. <span>“extraDistr: Additional Univariate and Multivariate Distributions. <span class="sans-serif">R</span> Package Version 1.9.1.”</span> <a href="https://CRAN.R-project.org/package=extraDistr" class="uri">https://CRAN.R-project.org/package=extraDistr</a>.
+</div>
+<div id="ref-xie2018r" class="csl-entry">
+Xie, Yihui, Joseph J Allaire, and Garrett Grolemund. 2018. <em><span class="sans-serif">R</span> <span>Markdown</span>: The Definitive Guide</em>. Chapman; Hall/CRC Press.
+</div>
+<div id="ref-yusuf1985beta" class="csl-entry">
+Yusuf, Salim, Richard Peto, John Lewis, Rory Collins, and Peter Sleight. 1985. <span>“Beta Blockade During and After Myocardial Infarction: An Overview of the Randomized Trials.”</span> <em>Progress in Cardiovascular Diseases</em> 27 (5): 335–71.
+</div>
+<div id="ref-zhang1998whats" class="csl-entry">
+Zhang, Jun, and Kai F. Yu. 1998. <span>“What’s the Relative Risk? <span>A</span> Method of Correcting the Odds Ratio in Cohort Studies of Common Outcomes.”</span> <em>JAMA</em> 280 (19): 1690–91.
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#references">References</a></li></ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

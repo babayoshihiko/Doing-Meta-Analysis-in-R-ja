@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>16 報告と再現性 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="こ れまでの章では、 R でメタ分析を行うために使用できる様々なテクニック、アプローチ、戦略について説明してきた。しかし、統計解析の実行は、実際にはメタ分析「プロセス」全体のごく一部の割合を占めるに過ぎない。「現場」では、以下のような「事件」が発生する。 R のコードにエラーが見つかったため、解析の一部を変更してやり直さなければならない。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="16 報告と再現性 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="こ れまでの章では、 R でメタ分析を行うために使用できる様々なテクニック、アプローチ、戦略について説明してきた。しかし、統計解析の実行は、実際にはメタ分析「プロセス」全体のごく一部の割合を占めるに過ぎない。「現場」では、以下のような「事件」が発生する。 R のコードにエラーが見つかったため、解析の一部を変更してやり直さなければならない。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="16 報告と再現性 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="こ れまでの章では、 R でメタ分析を行うために使用できる様々なテクニック、アプローチ、戦略について説明してきた。しかし、統計解析の実行は、実際にはメタ分析「プロセス」全体のごく一部の割合を占めるに過ぎない。「現場」では、以下のような「事件」が発生する。 R のコードにエラーが見つかったため、解析の一部を変更してやり直さなければならない。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="active" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="reporting-reproducibility" class="section level1" number="16">
+<h1>
+<span class="header-section-number">16</span> 報告と再現性<a class="anchor" aria-label="anchor" href="#reporting-reproducibility"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/reporting.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">こ</span>
+れまでの章では、 <em>R</em> でメタ分析を行うために使用できる様々なテクニック、アプローチ、戦略について説明してきた。しかし、統計解析の実行は、実際にはメタ分析「プロセス」全体のごく一部の割合を占めるに過ぎない。「現場」では、以下のような「事件」が発生する。</p>
+<ul>
+<li><p><em>R</em> のコードにエラーが見つかったため、解析の一部を変更してやり直さなければならない。</p></li>
+<li><p>共同研究者や査読者は、別のアプローチやモデルの使用、あるいは追加の感度分析を行うことを提案している。</p></li>
+<li><p>分析作業の一部を共同研究者の一人に委任する必要があり、現在の作業状況を送らなければならない。</p></li>
+<li><p>プロジェクトをしばらく中断していたため、再開するころにはいろいろなことを忘れてしまっている。</p></li>
+<li><p>解析結果をプロジェクトの共同研究者と共有したいが、共同研究者は <em>R</em> を知らず、R Studio はインストールすらされていない。</p></li>
+</ul>
+<p>これらはほんの一部のシナリオであるが、 <em>R</em> でメタ分析を行う際の<strong>再現可能なワークフロー</strong>が、あなたや一緒に働く人々にとって有益であることを説明している。また、再現性を目指すことは、<strong>オープンサイエンス</strong>の実践の基礎でもある。完全に再現可能なメタ分析は、私たちがどのように結果に至ったかを他の人に可能な限り明らかにするものである。</p>
+<p>
+</p>
+<p>R Studio は、再現性のあるワークフローを作成し、協力を得るために最適なツールである。本章では、分析の再現、報告、普及のための3つのツールを紹介する <em>R</em> Projects、<strong>R Markdown</strong> および <strong>Open Science Framework</strong> である。</p>
+<p><br></p>
+<div id="r-project-の利用" class="section level2" number="16.1">
+<h2>
+<span class="header-section-number">16.1</span> <em>R</em> Project の利用<a class="anchor" aria-label="anchor" href="#r-project-%E3%81%AE%E5%88%A9%E7%94%A8"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>解析を始めるには、まずR Studioで <em>R</em> <strong>Project</strong> を立ち上げるのがよいだろう <em>R</em> Projectは、コンピュータ上のフォルダーに新しい環境を作成する。このフォルダには、分析に必要なすべてのデータと <em>R</em> コードが保存される <em>R</em> Project で分析を行うということは、作成したすべてのオブジェクトが Project 環境に一時的に保存され、次に開いたときにアクセスできるようになることを意味する。新しい <em>R</em> Project を作成するには、R Studio ウィンドウの右上にある <strong>R Project</strong> フィールドをクリックし、ドロップダウンメニューから <strong>New Project…</strong> を選択する。</p>
+<div class="inline-figure"><img src="images/rproj1_col.png" width="60%" style="display: block; margin: auto;"></div>
+<p>次に、コンピュータ上に新しいフォルダである <strong>New Directory</strong> を作成する。これがプロジェクトの作業ディレクトリとなる。</p>
+<div class="inline-figure"><img src="images/rproj2_col.png" width="45%" style="display: block; margin: auto;"></div>
+<p>そして、<strong>New Project</strong> をクリックする。</p>
+<div class="inline-figure"><img src="images/rproj3_col.png" width="45%" style="display: block; margin: auto;"></div>
+<p>新しいプロジェクトに「Meta-Anallysis Project」という名前をつける。プロジェクトフォルダは、<strong>~Documents/R</strong> に格納される。</p>
+<div class="inline-figure"><img src="images/rproj4_col.png" width="45%" style="display: block; margin: auto;"></div>
+<p><strong>プロジェクトの作成</strong>をクリックすると、 <em>R</em> Project が設定される。 <em>R</em> Project の大きな特徴は、参照したいファイルへの<strong>絶対パス</strong>を使用する必要がないことである。ファイル名、またはファイルが (サブ) フォルダーにある場合は、フォルダー名とファイル名だけを使用する。例えば、データセット <strong>data.xlsx</strong> をサブフォルダー “data” に格納する。<strong>{openxlsx}</strong> パッケージ (Chapter <a href="discovering-R.html#data-prep-R">2.4</a>) を使用すると、相対パスでデータセットをインポートすることができる。</p>
+<div class="sourceCode" id="cb505"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">read_excel</span><span class="op">(</span><span class="st">"data/data.xlsx"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="r-markdown-で再現性のあるレポートを作成" class="section level2" number="16.2">
+<h2>
+<span class="header-section-number">16.2</span> R Markdown で再現性のあるレポートを作成<a class="anchor" aria-label="anchor" href="#r-markdown-%E3%81%A7%E5%86%8D%E7%8F%BE%E6%80%A7%E3%81%AE%E3%81%82%E3%82%8B%E3%83%AC%E3%83%9D%E3%83%BC%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p><strong>Markdown</strong> はテキストフォーマットのためのシンプルなマークアップ言語である。<strong>R Markdown</strong> <span class="citation">(<a href="references.html#ref-xie2018r">Xie, Allaire, and Grolemund 2018</a>)</span>は Markdown の拡張機能で、プレーンテキスト、 <em>R</em> コード、 <em>R</em> 出力を1つのドキュメントに簡単にまとめることができるようになっている。このため、R Markdown は非常に便利なレポート作成ツールとなっている。R Markdown を使用すると、分析で使用したすべてのコード、コードによって生成された出力を含む HTML または PDF ファイルを作成でき、各分析ステップで行ったことに関する詳細な情報を追加することが可能にある。</p>
+<p>R Markdown ファイルを R Studio で構築するのはとても簡単である。R Studio ウィンドウの左上隅にある、緑色の「プラス」記号のついた白いシンボルをクリックすればよいのである。そして、ドロップダウンメニューから、<strong>R Markdown…</strong> をクリックする。</p>
+<div class="inline-figure"><img src="images/rmd1_col.png" width="35%" style="display: block; margin: auto;"></div>
+<p>新しい R Markdown ドキュメントの名前を定義すると、R Studio ウィンドウの左上隅にポップアップ表示されるはずである。</p>
+<div class="inline-figure"><img src="images/rmd2_col.png" width="55%" style="display: block; margin: auto;"></div>
+<p>このファイルには、すでにいくつかの例示的な内容が含まれているが、最初の6行を除いて削除することが可能である。</p>
+<pre><code>---
+title: "Analysis"
+author: "Author Name"
+date: "10/16/2020"
+output: html_document
+---</code></pre>
+<p>この部分はいわゆる <strong>YAML</strong> ヘッダーである。これは、ドキュメントのタイトル、著者、日付、エクスポート形式を記述する。出力形式は <code>html_document</code> を選択した。これはドキュメントがレンダリングされると HTML ページとしてエクスポートされることを意味している。</p>
+<p><em>R Markdown　ドキュメント</em> はすべて、2つの部分から構成されている。 普通の Markdown テキスト、そして、グレーで示されたいわゆる <strong>R チャンク</strong>である。R Markdown ドキュメントのテキスト部分がどのようにフォーマットされるかについては詳しく説明しない。オンラインの <a href="https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">cheat sheet</a> は、Markdown 構文を学び始める素晴らしいリソースである (20分程度で読むことができる)。一方、 <em>R</em> コードのチャンクは、通常コンソールに入力するコードを含んでいるだけである。ドキュメントの右上にある <strong>Insert</strong> フィールドをクリックすることで、新しいコードチャンクを追加することができる。各チャンクの上にある小さな緑の三角形をクリックし、コードを実行することができる。</p>
+<div class="inline-figure"><img src="images/rmd3_col.png" width="25%" style="display: block; margin: auto;"></div>
+<p>文書を書き終えたら、左上の<strong>編み目</strong>のマークをクリックして、HTML、PDF、MS Word 文書として書き出すことができる。これにより、すべてのテキスト、コード、出力を含む文書がレンダリングされ、定義されたフォーマットでエクスポートされる。最終的な文書は、自動的にプロジェクトフォルダに保存される。</p>
+<p><img src="images/rmd4_col.png" width="40%" style="display: block; margin: auto;"><br></p>
+</div>
+<div id="osf" class="section level2" number="16.3">
+<h2>
+<span class="header-section-number">16.3</span> OSF レポジトリ<a class="anchor" aria-label="anchor" href="#osf"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p><strong>オープンサイエンス・フレームワーク</strong> (Open Science Framework, <a href="https://www.osf.io">OSF</a>) は、研究におけるコラボレーションと再現性を促進するためのオープンソースのオンラインプラットフォームである。OSF にはオンライン<strong>リポジトリ</strong>があり、研究者が研究資料を預けて共同研究を行い、研究プロセスのすべてのステップを (より) 透明化することが可能である。OSF は、過去10年間に大きな勢いを得たオープンサイエンス運動の急先鋒である。</p>
+<p>すべてのメタ分析者は、収集したデータと分析に使用した <em>R</em> コードにオープンアクセスすることで、研究と分析プロセスを一般に公開することが推奨される。OSFはこれを行うための素晴らしいツールである。自分で作成したすべてのリポジトリは、デフォルトで非公開になっており、いつ、何を公開するかは、あなた次第なのである。以下では、 <em>R</em> で OSF リポジトリを設定する方法、ファイルのアップロードとダウンロード、共同研究者を追加する方法を紹介する。</p>
+<p><br></p>
+<div id="アクセストークン" class="section level3" number="16.3.1">
+<h3>
+<span class="header-section-number">16.3.1</span> アクセス・トークン<a class="anchor" aria-label="anchor" href="#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>OSF を使い始めるには、まず<a href="https://osf.io/register">ウェブサイト</a>で個人アカウントを作成する必要がある。アカウントが作成されたら、 <em>R</em> を使って直接リポジトリを操作できるように、<strong>アクセストークン</strong>を生成する必要がある。アクセストークンを取得するには、<strong>Profile</strong> &gt; <strong>Settings</strong> &gt; <strong>Personal access tokens</strong> に移動する必要がある。そこで、<strong>Create token</strong> をクリックする。</p>
+<div class="inline-figure"><img src="images/osf1_col.png" width="60%" style="display: block; margin: auto;"></div>
+<p>次に、<strong>Scopes</strong> の下にあるすべてのボックスにチェックを入れ、<strong>Create token</strong> を再度クリックする。すると、個人用のアクセストークンが表示されるはずである。このトークンをコピーして保存しておく。</p>
+<p><img src="images/osf2_col.png" width="60%" style="display: block; margin: auto;"><br></p>
+</div>
+<div id="パッケージと認証について" class="section level3" number="16.3.2">
+<h3>
+<span class="header-section-number">16.3.2</span> パッケージと認証について<a class="anchor" aria-label="anchor" href="#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%81%A8%E8%AA%8D%E8%A8%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><strong>{OSF}</strong> リポジトリに <em>R</em> 経由で直接アクセスするには、<strong>{osfr}</strong> パッケージ <span class="citation">(<a href="references.html#ref-osfr">Wolen et al. 2020</a>)</span> を使用する。このパッケージの機能を使う前に、まずアクセストークンを使って認証する必要がある。これを行うには、<code>osf_auth</code> 関数を使用して、受け取ったばかりのアクセストークンを渡す (以下に表示されるトークンはデタラメ)。</p>
+<div class="sourceCode" id="cb507"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/osfr/">osfr</a></span><span class="op">)</span></span>
+<span><span class="fu">osf_auth</span><span class="op">(</span><span class="st">"AtmuMZ3pSuS7tceSMz2NNSAmVDNTzpm2Ud87"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="レポジトリの設定" class="section level3" number="16.3.3">
+<h3>
+<span class="header-section-number">16.3.3</span> レポジトリの設定<a class="anchor" aria-label="anchor" href="#%E3%83%AC%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%81%AE%E8%A8%AD%E5%AE%9A"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><strong>{osfr}</strong> を使うと、 <em>R</em> を使った OSF リポジトリを初期化することが可能である。新しいメタ分析プロジェクトに取り組んでいて、データとR Markdown スクリプトを OSF リポジトリにアップロードしたいと想像してみよう。リポジトリの名前は “Meta-Analysis Project” とする。</p>
+<p>新しいリポジトリを作成するには、<code>osf_create_project</code> 関数を使用する。新しい OSF リポジトリを <em>R</em> に <code>meta_analysis_project</code> という名前で保存する。</p>
+<div class="sourceCode" id="cb508"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">meta_analysis_project</span> <span class="op">&lt;-</span> <span class="fu">osf_create_project</span><span class="op">(</span><span class="st">"Meta-Analysis Project"</span><span class="op">)</span></span></code></pre></div>
+<p><code>osf_open</code> 関数を使用すると、新しく作成したリポジトリにオンラインでアクセスできるようになる。</p>
+<div class="sourceCode" id="cb509"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">osf_open</span><span class="op">(</span><span class="va">meta_analysis_project</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/osf3_col.png" width="60%" style="display: block; margin: auto;"></div>
+<p>リポジトリが作成されたので、次に <strong>コンポーネント</strong>を追加していく。OSF では、コンポーネントはコンピュータのフォルダのように動作した。例えば、データセット用のコンポーネントと R Markdown スクリプト用のコンポーネントの2つを作成したいとする。これを行うには、 <code>osf_create_component</code> 関数を使用することが可能である。この関数に <em>R</em> のリポジトリオブジェクト ( <code>meta_analysis_project</code> ) を渡し、新しいコンポーネントのタイトルを設定しなければならない。</p>
+<div class="sourceCode" id="cb510"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scripts</span> <span class="op">&lt;-</span> <span class="fu">osf_create_component</span><span class="op">(</span><span class="va">meta_analysis_project</span>, </span>
+<span>                                title <span class="op">=</span> <span class="st">"Analysis Scripts"</span><span class="op">)</span></span>
+<span><span class="va">datasets</span> <span class="op">&lt;-</span> <span class="fu">osf_create_component</span><span class="op">(</span><span class="va">meta_analysis_project</span>, </span>
+<span>                                 title <span class="op">=</span> <span class="st">"Datasets"</span><span class="op">)</span></span></code></pre></div>
+<p>リポジトリのオンラインページに行くと、2つのコンポーネントが追加されていることがわかる。</p>
+<p><br></p>
+</div>
+<div id="アップロードとダウンロード" class="section level3" number="16.3.4">
+<h3>
+<span class="header-section-number">16.3.4</span> アップロードとダウンロード<a class="anchor" aria-label="anchor" href="#%E3%82%A2%E3%83%83%E3%83%97%E3%83%AD%E3%83%BC%E3%83%89%E3%81%A8%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>OSF リポジトリにデータをアップロードするには、 <code>osf_upload</code> 関数を使用する。この関数では、ファイルを追加するコンポーネントと、アップロードするファイルのパスを指定する必要がある。例えば、“Analysis.rmd” というR Markdownスクリプトをアップロードしたい場合、現在 <em>R</em> プロジェクトのサブフォルダ “scripts” に保存されているものとする。アップロードするには、次のコードを使用する。</p>
+<div class="sourceCode" id="cb511"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">osf_upload</span><span class="op">(</span><span class="va">scripts</span>, <span class="st">"scripts/Analysis.rmd"</span><span class="op">)</span></span></code></pre></div>
+<p>ファイルが正常にアップロードされたかどうかを確認するには、 <code>osf_ls_files</code> 関数を使用してコンポーネントのコンテンツにアクセスする。</p>
+<div class="sourceCode" id="cb512"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">osf_ls_files</span><span class="op">(</span><span class="va">scripts</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##   name            id                       meta            
+##   &lt;chr&gt;           &lt;chr&gt;                    &lt;list&gt;          
+## 1 Analysis.rmd    1db74s7bfcf91f0012567572l &lt;named list [3]&gt;</code></pre>
+<p>アップロードが成功したことが出力で確認可能である。ファイルをダウンロードするには、 <code>osf_ls_files</code> 関数の出力から行を選択し、<code>osf_download</code> 関数でそれを使用して、ファイルをコンピュータのプロジェクトフォルダにダウンロードしなおせばよい。</p>
+<div class="sourceCode" id="cb514"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">osf_download</span><span class="op">(</span><span class="fu">osf_ls_files</span><span class="op">(</span><span class="va">scripts</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="pre-registration" class="section level3" number="16.3.5">
+<h3>
+<span class="header-section-number">16.3.5</span> コラボレーション、オープンアクセス、事前登録<a class="anchor" aria-label="anchor" href="#pre-registration"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>OSF のリポジトリサイトでは、<strong>Contributors</strong>という項目で共同研究者を追加することも可能である。</p>
+<div class="inline-figure"><img src="images/osf4_col.png" width="65%" style="display: block; margin: auto;"></div>
+<p>ウェブサイト右上の <strong>Make Public</strong> ボタンをクリックすることで、いつでもリポジトリを <strong>public</strong> にすることが可能である。</p>
+<div class="inline-figure"><img src="images/osf5.png" width="40%" style="display: block; margin: auto;"></div>
+<p>Chapter <a href="intro.html#analysis-plan">1.4.2</a> で、解析計画と事前登録が高品質なメタ分析に不可欠な部分であることを説明してきた。OSFでは、私たちのプロジェクトのために、オープンにアクセスできる事前登録を作成することができ、とても便利である。上部にある<strong>登録</strong>ボタンをクリックし、<strong>新規登録</strong>を作成するだけでよいのである。これにより、<strong>OSF Registries</strong> のウェブサイトが表示され、分析計画など、計画中の研究についての詳細情報を提供することが可能である。</p>
+<div class="inline-figure"><img src="images/osf6_col.png" width="57%" style="display: block; margin: auto;"></div>
+<p>必要な情報をすべて指定した後、試験を登録することが可能である。これにより、一意のID (例: <strong>osf.io/q2jp7</strong>) でアクセス可能な登録項目が作成される。登録が完了した後は、検索計画、仮説、分析戦略を変更することはできない。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></div>
+<div class="next"><a href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#reporting-reproducibility"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="nav-link" href="#r-project-%E3%81%AE%E5%88%A9%E7%94%A8"><span class="header-section-number">16.1</span> R Project の利用</a></li>
+<li><a class="nav-link" href="#r-markdown-%E3%81%A7%E5%86%8D%E7%8F%BE%E6%80%A7%E3%81%AE%E3%81%82%E3%82%8B%E3%83%AC%E3%83%9D%E3%83%BC%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90"><span class="header-section-number">16.2</span> R Markdown で再現性のあるレポートを作成</a></li>
+<li>
+<a class="nav-link" href="#osf"><span class="header-section-number">16.3</span> OSF レポジトリ</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3"><span class="header-section-number">16.3.1</span> アクセス・トークン</a></li>
+<li><a class="nav-link" href="#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%81%A8%E8%AA%8D%E8%A8%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6"><span class="header-section-number">16.3.2</span> パッケージと認証について</a></li>
+<li><a class="nav-link" href="#%E3%83%AC%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%81%AE%E8%A8%AD%E5%AE%9A"><span class="header-section-number">16.3.3</span> レポジトリの設定</a></li>
+<li><a class="nav-link" href="#%E3%82%A2%E3%83%83%E3%83%97%E3%83%AD%E3%83%BC%E3%83%89%E3%81%A8%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89"><span class="header-section-number">16.3.4</span> アップロードとダウンロード</a></li>
+<li><a class="nav-link" href="#pre-registration"><span class="header-section-number">16.3.5</span> コラボレーション、オープンアクセス、事前登録</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

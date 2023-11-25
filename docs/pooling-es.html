@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>4 効果量のプール | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="険 しい道はもう過ぎ去った。幸いなことに、私たちは今、すべてのメタ分析の核となる部分、すなわち効果量のプールに到達している。この章から直接始めるという誘惑には勝つことができたと思われる。本書では、研究課題の定義、研究データの検索・選択・抽出のガイドライン、効果量の作成方法など、様々なトピックを既に取り上げている。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="4 効果量のプール | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="険 しい道はもう過ぎ去った。幸いなことに、私たちは今、すべてのメタ分析の核となる部分、すなわち効果量のプールに到達している。この章から直接始めるという誘惑には勝つことができたと思われる。本書では、研究課題の定義、研究データの検索・選択・抽出のガイドライン、効果量の作成方法など、様々なトピックを既に取り上げている。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4 効果量のプール | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="険 しい道はもう過ぎ去った。幸いなことに、私たちは今、すべてのメタ分析の核となる部分、すなわち効果量のプールに到達している。この章から直接始めるという誘惑には勝つことができたと思われる。本書では、研究課題の定義、研究データの検索・選択・抽出のガイドライン、効果量の作成方法など、様々なトピックを既に取り上げている。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="active" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="pooling-es" class="section level1" number="4">
+<h1>
+<span class="header-section-number">4</span> 効果量のプール<a class="anchor" aria-label="anchor" href="#pooling-es"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="_figs/pooling_es.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">険</span> しい道はもう過ぎ去った。幸いなことに、私たちは今、すべてのメタ分析の核となる部分、すなわち効果量のプールに到達している。この章から直接始めるという誘惑には勝つことができたと思われる。本書では、研究課題の定義、研究データの検索・選択・抽出のガイドライン、効果量の作成方法など、様々なトピックを既に取り上げている。</p>
+<p>徹底的な準備は優れたメタ分析の重要な要素であり、これから続くステップで大いに役立つことだろう。これまでの章に費やした時間は、十分に投資されたと断言できる。</p>
+<p></p>
+<p><em>R</em> で効果量をプールすることができるパッケージは数多く存在する。ここでは、Chapter <a href="discovering-R.html#packages">2.2</a> で既にインストールした <strong>{meta}</strong> パッケージの機能を中心に説明する。このパッケージは非常に使い勝手が良く、数行のコードでほぼ全ての重要なメタ分析結果を得ることが可能である。前章では、効果の大きさはアウトカムによって異なる「フレーバー」があることを取り上げた。 <strong>{meta}</strong> パッケージには、これらの効果量のそれぞれのメトリクス (訳注: 標準化平均差やオッズ比など) について特化したメタ分析関数が含まれている。また、全ての関数はほぼ同じ構造をしている。</p>
+<p>このように、 <strong>{meta}</strong> の動作の基本を理解すれば、どの効果量に注目しても、メタ分析のコーディングは簡単にできるようになる。この章では、 <strong>{meta}</strong> パッケージの一般的な構造について説明する。もちろん、パッケージのメタ分析機能についても、実例を用いてより詳しく解説する。</p>
+<p><strong>{meta}</strong> パッケージでは、効果量がプールされる方法について、多くの詳細を微調整することが可能である。以前述べたように、メタ分析には多くの 「研究者の自由度」が伴う。適用できる統計手法やアプローチに関する選択肢は無数にあり、ある手法が他の手法より優れているかどうかは、しばしば文脈に依存する。</p>
+<p>
+</p>
+<p>したがって、 <em>R</em> で分析を始める前に、メタ分析の統計的な前提条件と、その背後にある数学について基本的な理解を深める必要があるのである。メタ分析の背後にある「考え方」についても触れておくことも重要である。統計学では、この「考え方」は<strong>モデル</strong>と訳されるが、メタ分析のモデルがどのようなものかを見ていきる。</p>
+<p>これから見ていくように、メタ分析の性質上、すぐに基本的な判断をしなければならない。<strong>固定効果モデル</strong>か<strong>ランダム効果モデル</strong>のどちらかを仮定しなければならないのである。他の分析仕様と合わせて、この2つのモデルのうちどの文脈でどちらがより適切なのか、情報に基づいて決定を下すためには、メタ分析プールの背後にある概念についての知識が必要である。</p>
+<p><br></p>
+<div id="fem-rem" class="section level2" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> 固定効果モデルとランダム効果モデルの比較<a class="anchor" aria-label="anchor" href="#fem-rem"><i class="fas fa-link"></i></a>
+</h2>
+<p>メタ分析モデルを規定する前に、まず統計モデルとは実際にどのようなものかを明らかにする必要がある。統計学には「モデル」がたくさんあり、「モデル」と言う言葉は聞いたことがあるだろう。「線形モデル」「一般化線形モデル」「混合モデル」「ガウス加法モデル」「構造方程式モデル」などがある。</p>
+<p>統計学においてモデルが遍在していることは、この概念がいかに重要であるかを示している。統計ツールボックスはすべて、何らかの形でモデルが基礎となっている。<span class="math inline">\(t\)</span> 検定、ANOVA、回帰の背後にはモデルがある。すべての仮説検定には、それに対応する統計モデルがある。</p>
+<p>統計モデルを定義するとき、すでに与えられている情報から始める。これは文字通り、<strong>データ</strong><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;“data” はラテン語の &lt;strong&gt;datum&lt;/strong&gt; に由来し、「与えられたもの」を意味する&lt;/p&gt;"><sup>17</sup></a> である。メタ分析では、データは、含まれる研究で観察された効果量である。私たちのモデルは、これらの観察されたデータが生成されたプロセスを記述するために使用される。</p>
+<p>データは<strong>ブラックボックス</strong>の産物であり、私たちのモデルはそのブラックボックスの中で何が起こっているかを明らかにすることを目的としている。</p>
+<div class="inline-figure"><img src="images/model_concept_sep.png" width="50%" style="display: block; margin: auto;"></div>
+<p>一般に、統計モデルとは特殊な「理論」のようなものである。モデルは、観測されたデータを生成したメカニズムを説明しようとするもので、特にそのメカニズム自体が直接観測できない場合に有効である。特に、そのメカニズム自体が直接観測できない場合、そのメカニズムを説明しようとするものである。</p>
+<p>モデルが説明的であるという性格は、現代の統計学に深く根付いており、メタ分析も例外ではない。説明のための手段としてのモデルの概念化は、統計「文化」の特徴である。Breiman <span class="citation">(<a href="references.html#ref-breiman2001statistical">2001</a>)</span> の有名に推定によると、全統計学者の98％が信奉しているようである。</p>
+<p>統計モデルを指定することで、データの背後にある「現実」の近似的な表現を見つけようとしている。観測された結果に基づいて、すべての研究の根底にある<strong>真の</strong>効果量を見つける方法を説明する数式が欲しいのである。Chapter <a href="intro.html#what-are-mas">1.1</a> で学んだ通り、メタ分析の最終的な目的は、効果量が研究ごとに異なる場合でも、研究<strong>全体</strong>を特徴づける1つの数値を見つけることである。したがって、メタ分析モデルは、全体的な効果は1つであるにもかかわらず、観察された研究結果がなぜ、どの程度異なるのかを説明する必要がある。</p>
+<p>まさにこの問いに答えようとするモデルとして、<strong>固定効果モデル</strong>と<strong>ランダム効果モデル</strong>の2つがある。両者は異なる仮定に基づいているが、すぐにわかるように、両者の間には強い結びつきがある。</p>
+<p><br></p>
+<div id="fem" class="section level3" number="4.1.1">
+<h3>
+<span class="header-section-number">4.1.1</span> 固定効果モデルの場合<a class="anchor" aria-label="anchor" href="#fem"><i class="fas fa-link"></i></a>
+</h3>
+<p>
+</p>
+<p>固定効果モデルは、すべての効果量が単一の均質な集団に由来すると仮定している。これは、すべての研究が、同じ<strong>真の</strong>効果量を共有していることを述べている。この真の効果は、メタ分析で計算したい全体的な効果量で、<span class="math inline">\(\theta\)</span> と表記される。</p>
+<p>固定効果モデルによると、ある研究 <span class="math inline">\(k\)</span> の観測された効果量 <span class="math inline">\(\hat\theta_k\)</span> (「シータ・ハットk」と読む) が <span class="math inline">\(\theta\)</span> から逸脱する唯一の理由は、そのサンプル誤差 <span class="math inline">\(\epsilon_k\)</span> (「イプシロン・k」と読む) のためである。固定効果モデルは、ブラックボックスの中身である研究の効果量の違いを生み出す過程が単純で、すべての研究が同じ真の効果量の推定者であることを教えてくれる。しかし、すべての研究は、無限に大きな研究集団から多少なりとも大きなサンプルを抽出することしかできないため、結果はサンプリングエラーに悩まされることになる。このサンプル誤差は、観察された効果が全体的な真の効果から乖離する原因となる。</p>
+<p>このような関係を表現することが可能である <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 11</a>)</span>。</p>
+<p><span class="math display" id="eq:pes1">\[\begin{equation}
+\hat\theta_k = \theta + \epsilon_k
+\tag{4.1}
+\end{equation}\]</span></p>
+<p>注意深く見ると、この数式が不思議なことに Chapter <a href="effects.html#what-is-es">3.1</a> の数式と似ていると思われるだろう。それは間違いではない。先ほどの式では、ある研究 <span class="math inline">\(k\)</span> の観測された効果量 <span class="math inline">\(\hat\theta_k\)</span> は、その研究の真の効果量 <span class="math inline">\(\theta_k\)</span> の推定値であり、研究のサンプル誤差 <span class="math inline">\(\epsilon_k\)</span> が負担している、と定義する。</p>
+<p>先ほどの式と固定効果モデルの式では、ほんのわずかだが重要な違いがある。固定効果モデルの式では、真の効果量を <span class="math inline">\(\theta_k\)</span> ではなく、<span class="math inline">\(\theta\)</span> で表し、添え字 <span class="math inline">\(k\)</span> を削除している。</p>
+<p>これまでは、個々の研究 <span class="math inline">\(k\)</span> の真の効果量についてのみ記述してきた。固定効果モデルでは、さらに一歩踏み込む。研究 <span class="math inline">\(k\)</span> の真の効果量を見つけると、この効果量は <span class="math inline">\(k\)</span> だけでなく、メタ分析における<strong>すべての</strong>研究についても真であることを教えてくれる。<strong>ある研究</strong>の真の効果量 <span class="math inline">\(\theta_k\)</span> と、<strong>全体</strong>のプール効果量 <span class="math inline">\(\theta\)</span> は、<strong>同一</strong>である。</p>
+
+<div class="boxinfo">
+<strong>固定効果モデル</strong>の背景にある考え方は、観察された効果量は研究ごとに異なるかもしれないが、それはサンプリング誤差のためだけである、というものである。実際には、真の効果量はすべて同じであり、固定されている。この理由により、固定効果モデルは等効果 (<strong>“equal effects”</strong>) や共通効果 (<strong>“common effect”</strong>) モデルと言われることもある。<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;“equal effects model” という用語は &lt;strong&gt;{metafor}&lt;/strong&gt; パッケージで使われ、また &lt;strong&gt;{meta}&lt;/strong&gt; は “common effect model” という用語を用いている。&lt;/p&gt;"><sup>18</sup></a>
+</div>
+<p>固定効果モデルの式から、観測された効果量 <span class="math inline">\(\theta_k\)</span> が真の全体効果から乖離する理由はただ一つ、サンプル誤差 <span class="math inline">\(\epsilon_k\)</span> によることがわかる。サンプルエラーとサンプルサイズには関連性があることは、Chapter <a href="effects.html#what-is-es">3.1</a> で既に述べた。すべての条件が同じであれば、サンプルサイズが大きくなれば、サンプリングエラーは小さくなる。また、サンプリングエラーは<strong>標準誤差</strong>で数値で表すことができ、これもサンプルサイズが大きくなると小さくなることを学ぶ。</p>
+<p>研究の真の全体効果量は不明であるが、この関係を利用して真の全体効果 <span class="math inline">\(\hat\theta\)</span> の最良の推定値に到達することが可能である。したがって、標準誤差が小さい研究は、標準誤差が大きい研究よりも、真の全体効果のより良い推定値になるはずである。</p>
+<p>これをシミュレーションで説明することが可能である。前に使った <code>rnorm</code> 関数を用いて、真の全体効果が <span class="math inline">\(\theta = 0\)</span> である研究の選択をシミュレートしよう。複数のサンプルを取るが、サンプルサイズを変えて、標準誤差が「観察された」効果間で異なるようにする。シミュレーションの結果は、Figure <a href="pooling-es.html#fig:funnel1">4.1</a> で見ることが可能である。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:funnel1"></span>
+<img src="Doing_Meta_Analysis_in_R_files/figure-html/funnel1-1.png" alt="効果量と標準誤差の関係" width="50%"><p class="caption">
+Figure 4.1: 効果量と標準誤差の関係
+</p>
+</div>
+<p>シミュレーションの結果、興味深いパターンが示された。サンプリング誤差が小さい効果量は、真の効果量 <span class="math inline">\(\theta = 0\)</span> の周りに凝集していることがわかる。y軸の標準誤差<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;パターンがわかりやすいように標準誤差を対数変換してからプロットしている&lt;/p&gt;"><sup>19</sup></a>が大きくなると、効果量の<strong>分散</strong>が大きくなり、観測された効果が真の効果からどんどんずれていくことがわかる。</p>
+<p>この挙動は、固定効果モデルの式で予測することが可能である。標準誤差が小さい研究は、サンプル誤差が小さく、全体的な効果量の推定値が真実に近い可能性が高いことが分かっている。</p>
+<p></p>
+<p>観測された効果量はすべて真の効果の推定量であるが、あるものは他のものよりも優れていることを見てきた。したがって、メタ分析で効果をプールする場合、より高い<strong>精度</strong> (すなわち、より小さい標準誤差) を持つ効果量に、より大きな<strong>重み</strong>を与える必要がある。固定効果モデルでプール効果量を計算する場合は、全研究の<strong>加重平均</strong>を使用する。</p>
+<p>各研究 <span class="math inline">\(k\)</span> の重み <span class="math inline">\(w_k\)</span> を計算するには、標準誤差を用い、それを二乗して各効果量の<strong>分散</strong> <span class="math inline">\(s^2_k\)</span> を求めることができる。分散が<strong>小さい</strong>ほど精度が高いことを示すので、分散の<strong>逆数</strong>を用いて各研究の重みを決定する。</p>
+<p><span class="math display" id="eq:pes2">\[\begin{equation}
+w_k = \frac{1}{s^2_k}
+\tag{4.2}
+\end{equation}\]</span></p>
+<p>重みがわかれば、加重平均を計算し、真のプール効果 <span class="math inline">\(\hat\theta\)</span> を推定することが可能である。各研究の効果量 <span class="math inline">\(\hat\theta_k\)</span> に対応する重み <span class="math inline">\(w_k\)</span> を掛け、メタ分析の全研究 <span class="math inline">\(K\)</span> で結果を合計し、すべての個々の重みの合計で割ればよい。</p>
+<p><span class="math display" id="eq:pes3">\[\begin{equation}
+\hat\theta = \frac{\sum^{K}_{k=1} \hat\theta_kw_k}{\sum^{K}_{k=1} w_k}
+\tag{4.3}
+\end{equation}\]</span>
+</p>
+<p>この方法は、メタ分析で平均効果を計算する最も一般的な方法である。分散の逆数を使用するので、しばしば <strong>逆分散重み付け</strong> (Inverse-Variance Weighting) または単に<strong>逆分散メタ分析</strong>と呼ばれる。</p>
+<p>二値効果量データの場合、加重平均を計算する方法として、<strong>Mantel-Haenszel</strong> 法、<strong>Peto</strong> 法、あるいは Bakbergenuly によるサンプルサイズ加重法 <span class="citation">(<a href="references.html#ref-bakbergenuly2020methods">2020</a>)</span> などがある。これらの方法については、Chapter <a href="pooling-es.html#pooling-or-rr">4.2.3.1</a> で説明する。</p>
+<p><strong>{meta}</strong> パッケージを使うと、固定効果メタ分析がとても簡単に可能である。しかし、その前に <em>R</em> で 「手動で」逆分散プーリングを試してみよう。この例では、Chapter <a href="discovering-R.html#data-prep-R">2.4</a> でインポートした <code>SuicidePrevention</code> データセットを使用する。</p>
+
+<div class="boxdmetar">
+<p><strong>“SuicidePrevention” データセット</strong></p>
+<code>SuicidePrevention</code> のデータセットも <strong>{dmetar}</strong> パッケージに直接含まれている。<strong>{dmetar}</strong> をインストールし、ライブラリからロードした後、 <code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em> 環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong> がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/suicideprevention.rda">インターネット</a>から <em>.rda</em> ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R Studio ウィンドウでクリックするとインポートすることができる。
+</div>
+<p>
+</p>
+<p><code>SuicidePrevention</code> のデータセットには、生の効果量が含まれているので、まず効果量を計算する必要がある。この例では、小サンプル調整済み標準化平均差 (Hedges’ <span class="math inline">\(g\)</span>) を計算する。これを行うには、 <strong>{esc}</strong> パッケージの <code>esc_mean_sd</code> 関数を使用する (Chapter <a href="effects.html#b-group-smd">3.3.1.2</a>)。</p>
+<p>この関数には <code>es.type</code> という追加の引数があり、これを用いてスモールサンプル補正を行うかどうかを指定することが可能である (<code>es.type = "g"</code> と指定; Chapter <a href="effects.html#hedges-g">3.4.1</a>)。</p>
+<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># dmetar, esc and tidyverse をロード</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># dmetar からデータセットをロード</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Hedges' g と標準誤差を計算</span></span>
+<span><span class="co"># - 研究名を "study" に保存</span></span>
+<span><span class="co"># - その後、パイプを使って</span></span>
+<span><span class="co">#   結果をデータフレームに変換</span></span>
+<span><span class="va">SP_calc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_mean_sd.html">esc_mean_sd</a></span><span class="op">(</span>grp1m <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.e</span>,</span>
+<span>                       grp1sd <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">sd.e</span>,</span>
+<span>                       grp1n <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.e</span>,</span>
+<span>                       grp2m <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">mean.c</span>,</span>
+<span>                       grp2sd <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">sd.c</span>,</span>
+<span>                       grp2n <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">n.c</span>,</span>
+<span>                       study <span class="op">=</span> <span class="va">SuicidePrevention</span><span class="op">$</span><span class="va">author</span>,</span>
+<span>                       es.type <span class="op">=</span> <span class="st">"g"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>                     <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># データの glimpse を見よう</span></span>
+<span><span class="co"># データは Hedges' g ("es") と標準誤差 ("se") を含む</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">SP_calc</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 9
+## Columns: 9
+## $ study       &lt;chr&gt; "Berry et al.", "DeVries et al.", "Fleming et al." …
+## $ es          &lt;dbl&gt; -0.14279447, -0.60770928, -0.11117965, -0.12698011 …
+## $ weight      &lt;dbl&gt; 46.09784, 34.77314, 14.97625, 32.18243, 24.52054 …
+## $ sample.size &lt;dbl&gt; 185, 146, 60, 129, 100, 220, 120, 80, 107data
+## $ se          &lt;dbl&gt; 0.1472854, 0.1695813, 0.2584036, 0.1762749 …
+## $ var         &lt;dbl&gt; 0.02169299, 0.02875783, 0.06677240, 0.03107286 …
+## $ ci.lo       &lt;dbl&gt; -0.4314686, -0.9400826, -0.6176413, -0.4724727 …
+## $ ci.hi       &lt;dbl&gt; 0.145879624, -0.275335960, 0.395282029 …
+## $ measure     &lt;chr&gt; "g", "g", "g", "g", "g", "g", "g", "g", "g"
+</code></pre>
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 各研究の 逆分散重みを計算</span></span>
+<span><span class="va">SP_calc</span><span class="op">$</span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">/</span><span class="va">SP_calc</span><span class="op">$</span><span class="va">se</span><span class="op">^</span><span class="fl">2</span></span>
+<span></span>
+<span><span class="co"># 重みを使って効果量をプール</span></span>
+<span><span class="va">pooled_effect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">SP_calc</span><span class="op">$</span><span class="va">w</span><span class="op">*</span><span class="va">SP_calc</span><span class="op">$</span><span class="va">es</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">SP_calc</span><span class="op">$</span><span class="va">w</span><span class="op">)</span></span>
+<span><span class="va">pooled_effect</span></span></code></pre></div>
+<pre><code>## [1] -0.2311121</code></pre>
+<p>計算の結果、固定効果モデルを仮定したプール効果量は <span class="math inline">\(g \approx\)</span> -0.23 であった。</p>
+<p><br></p>
+</div>
+<div id="rem" class="section level3" number="4.1.2">
+<h3>
+<span class="header-section-number">4.1.2</span> ランダム効果モデル<a class="anchor" aria-label="anchor" href="#rem"><i class="fas fa-link"></i></a>
+</h3>
+<p></p>
+<p>これまで見てきたように、固定効果モデルは、メタ分析データの成り立ちや、効果をプールする方法を概念化する一つの方法である。しかし、重要なのは、この方法が現実を適切に反映しているかということである。</p>
+<p>固定効果モデルは、すべての研究が均質な母集団の一部であり、観察された効果の差の唯一の原因は研究のサンプリング・エラーであると仮定している。もし、サンプリング・エラーなしに各研究の効果量を計算するとしたら、すべての真の効果量は完全に同じになる。</p>
+<p></p>
+<p>この考え方を現実的に確認すると、固定効果モデルの仮定は、多くの実世界のアプリケーションにおいて単純すぎる可能性があることがわかる。メタ分析における研究が常に完全に均質であることは、単純に非現実的である。たとえ微妙な違いであっても、研究内容が異なることはよくある。興味のあるアウトカムは、異なる方法で測定されただろう。治療の種類や強さ、長さが全く同じでないこともある。研究の対象者が全く同じでなかっただろうし、使用した対照群に違いがあっただろう。</p>
+<p>メタ分析に含まれる研究は、これらの側面のうちの1つだけでなく、同時に複数の側面で異なる可能性がある。もしそうであれば、真の効果におけるかなりの研究間の<strong>異質性</strong>が予想される。</p>
+<p>これらのことは、固定効果モデルの有効性を疑わせるものである。例えば、ある研究が異なるタイプの治療法を用いていた場合、一方の治療法が他方の治療法よりも効果的であることは、ごく普通のことと思われる。このような違いが、研究のサンプル誤差によるノイズに過ぎないと考えるのは、あまりに不自然なことだろう。</p>
+<p>その逆で、研究の効果量に本当の差がある理由は無数にあるのである。ランダム効果モデルは、このような懸念に対応するものである。このモデルは、私たちのデータの背後にある現実をよりよく反映するモデルを提供してくれる。</p>
+<p></p>
+<p>ランダム効果モデルでは、効果量が単一の均質な母集団から抽出された場合よりも分散を示すという事実を考慮したいと思われる <span class="citation">(<a href="references.html#ref-hedges1998fixed">L. V. Hedges and Vevea 1998</a>)</span>。したがって、個々の研究の効果は、サンプル誤差だけによる偏差ではなく、<strong>別の</strong>分散の原因があると仮定する。</p>
+<p>この追加的な分散成分は、研究が1つの集団から生じているわけではないという事実によってもたらされる。その代わり、各研究は、母集団の「宇宙」から独立に抽出されたものとみなされる。</p>
+
+<div class="boxinfo">
+ランダム効果モデルは、真の効果量が1つだけでなく、真の効果量の<strong>分布</strong>があることを仮定している。したがって、ランダム効果モデルの目的は、すべての研究の1つの真の効果量を推定することではなく、真の効果量の<strong>分布</strong>の<strong>平均値</strong>を推定することである。
+</div>
+<p>ランダム効果モデルがどのように数式で表現されるかを見てみよう。ランダム効果モデルは、固定効果モデルと同様に、観測された効果量 <span class="math inline">\(\hat\theta_k\)</span> が、サンプリングエラー <span class="math inline">\(\epsilon_k\)</span> を含む研究の真の効果量 <span class="math inline">\(\theta_k\)</span> の推定値であると仮定することから始まる。</p>
+<p><span class="math display" id="eq:pes4">\[\begin{equation}
+\hat\theta_k = \theta_k + \epsilon_k
+\tag{4.4}
+\end{equation}\]</span></p>
+<p>このように、<span class="math inline">\(\theta\)</span> の代わりに <span class="math inline">\(\theta_k\)</span> を使っていることが、すでに重要な違いを示している。ランダム効果モデルは、<span class="math inline">\(\theta_k\)</span> が<strong>1</strong>個の単一研究 <span class="math inline">\(k\)</span> の真の効果量であると仮定しているだけである。このモデルでは、<span class="math inline">\(\theta_k\)</span> の他に、<span class="math inline">\(\zeta_k\)</span> (訳注: <span class="math inline">\(\zeta\)</span> は「ゼータ」と読む) で示される第二の誤差要因が存在することを仮定している。この第二の誤差の原因は、研究 <span class="math inline">\(k\)</span> の真の効果量 <span class="math inline">\(\theta_k\)</span> でさえ、平均 <span class="math inline">\(\mu\)</span> を持つ真の効果量の包括的な分布の一部に過ぎないという事実によってもたらされる。</p>
+<p><span class="math display" id="eq:pes5">\[\begin{equation}
+\theta_k  = \mu + \zeta_k
+\tag{4.5}
+\end{equation}\]</span></p>
+<p>ランダム効果モデルは、ブラックボックス <span class="citation">(<a href="references.html#ref-thompson2001multilevel">S. G. Thompson, Turner, and Warn 2001</a>)</span> の内部で、2つのプロセスの階層が起こっていることを教えてくれる: 研究の観察された効果量は、サンプル誤差のためにその真の値から逸脱している。しかし、真の効果量でさえも、真の効果の宇宙からの引き出しに過ぎず、その平均 <span class="math inline">\(\mu\)</span> を、メタ分析のプール効果として推定したい。</p>
+<p>2番目の式を1番目の式にあてじはめる (つまり、<span class="math inline">\(\theta_k\)</span> を2番目の式の定義に置き換える) ことで、ランダム効果モデルを1行で表現可能である <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 12</a>)</span>。</p>
+<p><span class="math display" id="eq:pes6">\[\begin{equation}
+\hat\theta_k = \mu + \zeta_k + \epsilon_k
+\tag{4.6}
+\end{equation}\]</span></p>
+<p>この式から、観測された効果量がプール効果 <span class="math inline">\(\mu\)</span> から乖離するのは、<span class="math inline">\(\zeta_k\)</span> と <span class="math inline">\(\epsilon_k\)</span> の二つの誤差項のためであることが明らかになった。この関係を可視化したものが Figure <a href="pooling-es.html#fig:random">4.2</a> である。</p>
+<p></p>
+<p>ランダム効果モデルの重要な前提は、<span class="math inline">\(\zeta_k\)</span> の大きさは、<span class="math inline">\(k\)</span> から<strong>独立</strong>していることことである。つまり、ある研究の <span class="math inline">\(\zeta_k\)</span> が他の研究の <span class="math inline">\(\zeta_k\)</span> よりも高いことを<strong>事前</strong>に示すものは何もないと仮定する。また、<span class="math inline">\(\zeta_k\)</span> のサイズは偶然の産物だけであると仮定する。</p>
+<p>これはランダム効果モデルの<strong>交換可能性</strong>の仮定として知られている <span class="citation">(<a href="references.html#ref-higgins2009re">Julian Higgins, Thompson, and Spiegelhalter 2009</a>; <a href="references.html#ref-lunn2012bugs">Lunn et al. 2012, chap. 10.1</a>)</span>。データを見る前に、ある研究 <span class="math inline">\(k\)</span> で <span class="math inline">\(\zeta_k\)</span> がどの程度大きいかを知ることができるものがない限り、すべての真の効果量は交換可能であると仮定される。</p>
+<p></p>
+
+<div class="boxinfo">
+<p><strong>どちらのモデルを使うべきか？</strong></p>
+<p>実際には、完全に均質な研究のセレクションを見つけることは非常に稀である。これは、ベストプラクティスに従って、PICO (Chapter <a href="intro.html#research-question">1.4.1</a>) で分析範囲をできるだけ正確にしようと思っても同じである。</p>
+<p>医学や社会科学など多くの分野では、ある程度の研究間異質性が予測されるため、<strong>常に</strong>ランダム効果モデルを用いるのが通例である。固定効果モデルは、研究間異質性を検出できなかった場合 (異質性の検出方法については、Chapter <a href="heterogeneity.html#heterogeneity">5</a> で説明する)、<strong>および</strong>真の効果が固定であると仮定する十分な理由がある場合にのみ使用することができる。これは、例えば、ある研究の正確な複製だけを検討する場合や、1つの大きな研究の部分集合をメタ分析する場合などである。言うまでもなく、このようなことはめったにないため、固定効果モデルを「実際に」適用することはむしろ稀である。</p>
+<p>a priori にランダム効果モデルを用いるのが通例であるとしても、このアプローチに議論されないわけでもない。ランダム効果モデルは、メタ分析の全体効果を計算する際に、小規模な研究にたいしてより注意を払う <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 2.3</a>)</span>。しかし、特に小規模研究はバイアスがかかっていることが多い (Chapter <a href="pub-bias.html#small-study-effects">9.2.1</a> 参照)。そのため、固定効果モデルが望ましいとする意見もある (場合もある) <span class="citation">(<a href="references.html#ref-poole1999random">Poole and Greenland 1999</a>; <a href="references.html#ref-furukawa2003low">Furukawa, McGuire, and Barbui 2003</a>)</span>。Stanley, Doucouliagos, and Ioannidis <span class="citation">(<a href="references.html#ref-stanley2022beyond">2022</a>)</span> は同様の指摘をし、いくつかの分野においてはランダム効果モデルよりも、いわゆる “unrestricted weighted least squares” (UWLS) モデルを使うべきだと議論している。</p>
+</div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:random"></span>
+<img src="images/rem_sep2.png" alt="ランダム効果モデルのパラメータを示す図。" width="60%"><p class="caption">
+Figure 4.2: ランダム効果モデルのパラメータを示す図。
+</p>
+</div>
+<p><br></p>
+<div id="tau-estimators" class="section level4" number="4.1.2.1">
+<h4>
+<span class="header-section-number">4.1.2.1</span> 研究間異質性の推定値<a class="anchor" aria-label="anchor" href="#tau-estimators"><i class="fas fa-link"></i></a>
+</h4>
+<p></p>
+<p>ランダム効果モデルに関連する課題は、誤差 <span class="math inline">\(\zeta_k\)</span> を考慮に入れなければならないことである。これを行うには、真の効果量の分布の<strong>分散</strong> を推定する必要がある。この分散は、<span class="math inline">\(\tau^2\)</span> (タウ２乗) として知られている。いったん <span class="math inline">\(\tau^2\)</span> の値がわかれば、各効果量の逆分散の重みを決定するときに、研究間の異質性を含めることが可能になる。</p>
+<p>したがって、ランダム効果モデルでは、各観測の調整済み<strong>ランダム効果重み</strong> <span class="math inline">\(w^*_k\)</span> を計算する。その式は次のようになる。</p>
+<p><span class="math display" id="eq:pes7">\[\begin{equation}
+w^*_k = \frac{1}{s^2_k+\tau^2}
+\tag{4.7}
+\end{equation}\]</span>
+</p>
+<p>調整済みランダム効果重みを用いて、固定効果モデルを用いた場合と同様に、逆分散法を用いてプール効果量を算出する。</p>
+<p><span class="math display" id="eq:pes8">\[\begin{equation}
+\hat\theta = \frac{\sum^{K}_{k=1} \hat\theta_kw^*_k}{\sum^{K}_{k=1} w^*_k}
+\tag{4.8}
+\end{equation}\]</span></p>
+<p>この <span class="math inline">\(\tau^2\)</span> を推定する方法はいくつかあるが、そのほとんどは手作業で行うには複雑すぎる。しかし、幸運なことに、これらの推定量は <strong>{meta}</strong> パッケージの関数に実装されており、私たちのために自動的に計算をしてくれるのである。以下は、最も一般的な推定量と、それらが <strong>{meta}</strong> で参照されるコードのリストである。</p>
+<p>
+</p>
+<ul>
+<li>
+<strong>DerSimonian-Laird</strong> (<code>"DL"</code>) 推定法 <span class="citation">(<a href="references.html#ref-dersimonian1986meta">DerSimonian and Laird 1986</a>)</span>。</li>
+<li>
+<strong>制限付き最尤推定</strong> (Restricted Maximum Likelihood, <code>"REML"</code>) または<strong>最尤推定</strong> (Maximum Likelihood, <code>"ML"</code>) 法 <span class="citation">(<a href="references.html#ref-viechtbauer2005bias">Viechtbauer 2005</a>)</span>。</li>
+<li>
+<strong>Paule-Mandel</strong> (<code>"PM"</code>) 法 <span class="citation">(<a href="references.html#ref-paule1982consensus">Paule and Mandel 1982</a>)</span>。</li>
+<li>Paule-Mandel 法と実質的に同じである <strong>Empirical Bayes</strong> (<code>"EB"</code>) 法 <span class="citation">(<a href="references.html#ref-sidik2019note">Sidik and Jonkman 2019</a>)</span>。</li>
+<li>
+<strong>Sidik-Jonkman</strong> (<code>"SJ"</code>) 推定量 <span class="citation">(<a href="references.html#ref-sidik2005simple">Sidik and Jonkman 2005</a>)</span>。</li>
+</ul>
+<p>これらの推定量のうち、どの推定量が異なる種類のデータに対して最も有効であるかは、現在進行中の研究課題である。研究数 <span class="math inline">\(k\)</span>、各研究の参加者数 <span class="math inline">\(n\)</span>、研究ごとに <span class="math inline">\(n\)</span> がどの程度異なるか、<span class="math inline">\(\tau^2\)</span> がどの程度大きいかなどのパラメータに依存することが多い。このような様々なシナリオの下での <span class="math inline">\(\tau^2\)</span> 推定量のバイアスを分析した研究がいくつかある <span class="citation">(<a href="references.html#ref-veroniki2016methods">Veroniki et al. 2016</a>; <a href="references.html#ref-viechtbauer2005bias">Viechtbauer 2005</a>; <a href="references.html#ref-sidik2007comparison">Sidik and Jonkman 2007</a>; <a href="references.html#ref-langan2019comparison">Langan et al. 2019</a>)</span>。</p>
+<p>
+</p>
+<p>おそらく、最もよく使われている推定量は、DerSimonian and Laird によるものであろう。この推定量は、<strong>RevMan</strong> (Cochraneが開発したプログラム) や <strong>Comprehensive Meta-Analysis</strong> など、過去にメタ分析者がよく使用したソフトウェアに実装されている。また、<strong>{meta}</strong> でもデフォルトの推定量として使用されている。この歴史的な遺産により、「ランダム効果モデルの使用」が DerSimonian-Laird 推定量の使用と同義で使用されている研究論文をよく見かける。</p>
+<p>しかし、特に研究数が少なく異質性が高い場合、この推定量に偏りが生じることが分かっている <span class="citation">(<a href="references.html#ref-hartung1999alternative">Hartung 1999</a>; <a href="references.html#ref-hartung2001refined">Hartung and Knapp 2001a</a>, <a href="references.html#ref-hartung2001tests">2001b</a>; <a href="references.html#ref-follmann1999valid">Follmann and Proschan 1999</a>; <a href="references.html#ref-makambi2004effect">Makambi 2004</a>)</span>。研究数が少なく異質性の高いメタ分析はよくあることなので、これはかなり問題である。</p>
+<p>
+</p>
+<p>Veroniki ら <span class="citation">(<a href="references.html#ref-veroniki2016methods">2016</a>)</span> は、概要論文において、様々な<span class="math inline">\(\tau^2\)</span>推定量の頑健性に関するエビデンスをレビューしている。彼らは、二値・連続効果量のデータには Paule-Mandel 法を、連続アウトカムには制限付き最尤推定量を推奨している。制限付き最尤推定量は、 <strong>{metafor}</strong> パッケージで使用されるデフォルトの方法でもある。</p>
+<p>Langan ら <span class="citation">(<a href="references.html#ref-langan2019comparison">2019</a>)</span> による最近のシミュレーション研究でも同様の結果が得られているが、研究のサンプルサイズが大きく異なる場合、Paule-Mandel 推定量は最適でない可能性があることが分かっている。また、Bakbergenuly ら <span class="citation">(<a href="references.html#ref-bakbergenuly2020methods">2020</a>)</span> の研究では、特に研究数が少ない場合には Paule-Mandel 推定量がよく適していることが分かっている。Sidik-Jonkman 推定量は、<strong>モデル誤差分散法</strong>としても知られているが、<span class="math inline">\(\tau^2\)</span>が非常に大きい場合のみ適している <span class="citation">(<a href="references.html#ref-sidik2007comparison">Sidik and Jonkman 2007</a>)</span>。</p>
+
+<div class="boxinfo">
+<p><strong>どの推定法を使うべきか？</strong></p>
+<p>どの推定法を使うべきかという鉄則はない。多くの場合，様々な推定量によって得られる結果にはわずかな違いしかないので，この問題はあまり気にする必要はないだろう．</p>
+<p>疑いがあれば、いつでも異なる <span class="math inline">\(\tau^2\)</span> 推定量を使って分析を再実行し、結果の解釈が変わるかどうかを確認することができる。以下は、メタ分析における暫定的なガイドライン。</p>
+<ol style="list-style-type: decimal">
+<li><p>連続的なアウトカムデータに基づく効果量については、まず制限付き最尤推定量を使用することができる。</p></li>
+<li><p>バイナリ効果量のデータでは、サンプルサイズに極端なばらつきがなければ、最初に Paule-Mandel 推定量を選択すると良い。</p></li>
+<li><p>サンプル内の効果の不均一性が非常に大きいと信じる十分な理由があり、偽陽性を避けることが非常に高い優先度を持つ場合、Sidik-Jonkman推定量を使用することができる。</p></li>
+<li><p>他の人があなたの結果を <em>R</em> 外でできるだけ正確に再現できるようにしたい場合は、DerSimonian-Laird 推定量が選択される方法である。</p></li>
+</ol>
+</div>
+<p>全体として、<span class="math inline">\(\tau^2\)</span> の推定量は2つのカテゴリに分類される。DerSimonian-Laird や Sidik-Jonkman の推定量のように、<strong>閉形式</strong>に基づくものもある。つまり、数式を使って直接計算することが可能である。</p>
+<p>(制限付き) 最尤推定量、Paule-Mandel推定量、経験的ベイズ推定量は、<strong>繰り返しアルゴリズム</strong>によって <span class="math inline">\(\tau^2\)</span> の最適値を見つける。そのため、後者の推定量では、計算結果が少し長くなることがある。しかし、ほとんどの場合、このような時間の差はせいぜいわずかなものである。</p>
+<p><br></p>
+</div>
+<div id="knapp-hartung" class="section level4" number="4.1.2.2">
+<h4>
+<span class="header-section-number">4.1.2.2</span> Knapp-Hartung 調整法<a class="anchor" aria-label="anchor" href="#knapp-hartung"><i class="fas fa-link"></i></a>
+</h4>
+<p>
+</p>
+<p>また、<span class="math inline">\(\tau^2\)</span> 推定量の選択に加えて、いわゆる Knapp-Hartung 調整法<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;この手法は、「Hartung-Knapp 調整法」または「Hartung-Knapp-Sidik-Jonkman (HKSJ) 法」としても知られている&lt;/p&gt;"><sup>20</sup></a>を適用するかどうかを決定しなければならない <span class="citation">(<a href="references.html#ref-knapp2003improved">Knapp and Hartung 2003</a>; <a href="references.html#ref-sidik2002simple">Sidik and Jonkman 2002</a>)</span>。この調整は、プール効果量 <span class="math inline">\(\hat\theta\)</span> の標準誤差 (したがって信頼区間) の計算方法に影響する。</p>
+<p>Knapp-Hartung 調整法は、研究間異質性の推定値の不確実性を対照しようとするものである。プール効果の有意性検定が通常、正規分布を仮定するのに対して (いわゆる <strong>Wald 型</strong> 検定)、Knapp-Hartung 法は <span class="math inline">\(t\)</span> 分布に基づいている。Knapp-Hartung の調整はランダム効果モデルでのみ使用でき、通常、プール効果の信頼区間がわずかに大きくなる。</p>
+<p></p>
+<div class="boxreport">
+<p>
+<strong>メタ分析においてモデルの種類を報告</strong>
+</p>
+<p>
+メタ分析を報告する場合、Methods
+セクションに、使用したモデルの種類を明記することを強く勧める。以下はその例である。(訳注:
+英文論文を書くことを想定しているため、以下は訳さずそのままとしている。)
+</p>
+<blockquote>
+<p>
+<em>“As we anticipated considerable between-study heterogeneity, a
+random-effects model was used to pool effect sizes. The restricted
+maximum likelihood estimator (Viechtbauer, 2005) was used to calculate
+the heterogeneity variance <span class="math inline"><span class="math inline">\(\tau^2\)</span></span>.
+We used Knapp-Hartung adjustments (Knapp &amp; Hartung, 2003) to
+calculate the confidence interval around the pooled effect.”</em>
+</p>
+</blockquote>
+</div>
+<p>Knapp-Hartung調整を適用することは通常賢明である。いくつかの研究 <span class="citation">(<a href="references.html#ref-inthout2014hartung">IntHout, Ioannidis, and Borm 2014</a>; <a href="references.html#ref-langan2019comparison">Langan et al. 2019</a>)</span> は、特に研究数が少ない場合に、これらの調整によって偽陽性の可能性を減らすことができることを示す。</p>
+<p>しかし、Knapp-Hartung調整の使用は議論の余地がないわけではない。例えば、Wiksten ら <span class="citation">(<a href="references.html#ref-wiksten2016hartung">2016</a>)</span> は、効果が非常に均質な場合、この方法は (滅多にない) 反保守的な結果を引き起こすことがあると論じている。</p>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="pooling-es-r" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> <em>R</em> で効果量をプール<a class="anchor" aria-label="anchor" href="#pooling-es-r"><i class="fas fa-link"></i></a>
+</h2>
+<p></p>
+<p>学んだことを実践する時が来た。この章の残りの部分では、 <em>R</em> で直接、異なる効果量のメタ分析を実行する方法を探る。このために使用する <strong>{meta}</strong> パッケージは特別な構造を持っている。メタ分析関数がいくつか含まれており、それぞれが効果量のデータの1つのタイプに焦点を当てている。例えば、固定効果モデルかランダム効果モデルか、どの <span class="math inline">\(\tau^2\)</span> 推定量を使うか、などである。それとは別に、特定の種類のデータにのみ関連するメタ分析の詳細を調整することができる<strong>関数固有の</strong>引数がある。</p>
+<p>Figure <a href="pooling-es.html#fig:metaflow">4.3</a> は、 <strong>{meta}</strong> の構造を概観したものである。どの関数を使うかを決めるには、まず、どのような効果量データを合成したいのかを明確にする必要がある。最も基本的な区別は、<strong>生</strong> (raw) と <strong>事前計算済み</strong> (pre-calculated) 効果量データの間のものである。「生」のデータとは、目的の効果量を計算するために必要なすべての情報がデータフレームに格納されているが、実際の効果量はまだ計算されていない場合を指す。先ほど使用した <code>SuicidePrevention</code> データセットには、標準化平均差を計算するために必要な2つのグループの平均、標準偏差、サンプルサイズという生データが含まれている。</p>
+<p>一方、効果量データには、各研究の最終的な効果量と標準誤差がすでに含まれており、これを「事前計算済み」と呼んでいる。効果指標の補正版 (例えば、Hedges’ <span class="math inline">\(g\)</span>、Chapter <a href="effects.html#hedges-g">3.4.1</a>) を使用したい場合、プールを始める前に、既に計算済みの効果量データにこの補正が適用されていることが必要である。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:metaflow"></span>
+<img src="images/meta_flow_sep.png" alt="メタ分析に関する関数の概略図" width="100%"><p class="caption">
+Figure 4.3: メタ分析に関する関数の概略図
+</p>
+</div>
+<p>可能であれば、メタ分析には生データを使用することが望ましい。そうすれば、他の人が効果量の計算方法を理解し、結果を再現することが容易になる。しかし、研究結果は異なる方法で報告されることが多いため、実際には生データを使用できないことが多い (Chapter <a href="effects.html#es-formats-different">3.5.1</a>)。</p>
+<p>このため、各研究の望ましい効果量をすぐに事前計算して、すべての形式が同じになるようにする以外に方法がない。本書の「各種ツール」の Chapter <a href="es-calc.html#es-calc">17</a> では、報告された効果量を目的のメトリックに変換するのに役立つ公式を紹介している。</p>
+<p>あらかじめ計算された効果量に対応する関数として、 <code>metagen</code> がある。この名前は、 <strong>gen</strong>eric inverse variance meta-analysis の略である。もし、二値データ (割合、リスク比、オッズ比など) で <code>metagen</code> を使用する場合は、 Chapter <a href="effects.html#ratios">3.3.2</a> で説明したように、この関数を使用する前に効果量を対数変換しておくことが重要である。</p>
+<p>生の効果量データに頼ることができる場合、 <strong>{meta}</strong> はそれぞれの効果量タイプに特化した関数を提供する。平均、(標準化) 平均差、相関には、それぞれ <code>metamean</code> , <code>metacont</code> , <code>metacor</code> 関数を使用可能である。 <code>metarate</code> , <code>metaprop</code> , <code>metainc</code> 関数を用いて、(発生) 率、割合、発生率比をプールすることが可能である。 <code>metabin</code> 関数は、リスク比やオッズ比を扱うときに使用する。</p>
+<p><strong>{meta}</strong> のメタ分析関数はすべて同じ構造を持っている。効果量のデータ (生データまたは計算済みデータ) と、解析の詳細を制御するための引数を関数に与えなければならない。各関数で指定可能なコア引数は6つである。</p>
+<ul>
+<li>
+<strong><code>studlab</code></strong>. この引数は、各効果量に <strong>研究ラベル</strong> を関連付ける。もし、データセットに研究名や著者が保存されている場合は、それぞれの列の名前を指定するだけである (例: <code>studlab =  author</code>)。</li>
+<li>
+<strong><code>sm</code></strong>. この引数は、メタ分析で使用する効果量の指標である<strong>要約手法</strong>を制御する。このオプションは、生の効果量データを使用する関数で特に重要である。 <strong>{meta}</strong> パッケージは、例えば <code>"SMD"</code> や <code>"OR"</code> など、異なる効果量のフォーマットに対するコードを使用する。利用できる要約尺度は各関数で同じではないので、以下のセクションでそれぞれのケースで最も一般的な選択肢を説明する。</li>
+<li>
+<strong><code>fixed</code></strong>. この引数に論理値 (<code>TRUE</code> または <code>FALSE</code>) を与える必要があり、固定効果モデルのメタ分析を計算するかどうかを示す<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;古いバージョンの &lt;strong&gt;{meta}&lt;/strong&gt; (バージョン 5.0-0 以前) では、この引数は &lt;code&gt;comb.fixed&lt;/code&gt; と呼ばれていた&lt;/p&gt;"><sup>21</sup></a>。</li>
+<li>
+<strong><code>random</code></strong>. 同様の方法で、この引数はランダム効果モデルを使用するかどうかを制御する。もし <code>comb.fixed</code> と<code>comb. random</code> の両方が <code>TRUE</code> に設定されていると、両方のモデルが計算されて表示される<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;古いバージョンの &lt;strong&gt;{meta}&lt;/strong&gt; (version 5.0-0) では、この引数は &lt;code&gt;comb.random&lt;/code&gt; と呼ばれていた&lt;/p&gt;"><sup>22</sup></a>。</li>
+<li>
+<strong><code>method.tau</code></strong>. この引数は <span class="math inline">\(\tau^2\)</span> 推定量を定義する。全ての関数は、前の章で既に紹介した異なる推定量のコードを使用する (例えば、DerSimonian-Laird 法の場合: <code>method.tau = "DL"</code>)。</li>
+<li>
+<strong><code>hakn</code></strong>. これはまた別の論理的な引数で、ランダム効果モデルを使用する際に、Knapp-Hartung 調整を適用するかどうかを制御する。</li>
+<li>
+<strong><code>data</code></strong>. この引数では、メタ分析データセットの名前を <strong>{meta}</strong> で指定する。</li>
+<li>
+<strong><code>title</code></strong> (<strong>必須ではない</strong>). この引数には、解析の名前を文字列で指定する。この引数への入力は必須ではないが、後で分析結果を特定するのに役立つ。</li>
+</ul>
+<p>また、いくつかの追加の引数もあるが、それは後の章で知ることになる。このガイドでは、 <strong>{meta}</strong> 関数の引数は100以上あるので、<strong>すべての</strong>引数を説明することはできない。</p>
+<p>ありがたいことに、これらの引数のほとんどはほとんど必要なく、また賢明なデフォルト値が設定されている。疑問がある場合は、 <em>R</em> コンソールで関数名の前にクエスチョンマーク (例: <code><a href="https://rdrr.io/pkg/meta/man/metagen.html">?metagen</a></code>) を付けて実行すると、関数のドキュメントを開くことが可能である。</p>
+<p>
+</p>
+<div class="boxinfo">
+<p>
+<strong>デフォルトの引数とポジションマッチング</strong>
+</p>
+<p>
+<em>R</em>
+の初心者にとって、関数における<strong>デフォルト引数</strong>と<strong>位置ベースのマッチング</strong>について学んでおくと良い。
+</p>
+<p>
+デフォルトの引数は、関数を書いた人が指定したものである。関数では引数をあらかじめ定義された値に設定し、別の値を明示的に指定しない限り自動的に使用される。<strong>{meta}</strong>
+では、すべての引数ではないが、多くの引数がデフォルト値を持っている。
+</p>
+<p>
+デフォルト値は、関数ドキュメントの「使用法」のセクションに表示される。関数が引数のデフォルト値を定義している場合、デフォルトの動作に満足できない場合を除き、関数呼び出しに含める必要はない。
+</p>
+<p>
+デフォルト値が<strong>ない</strong>引数は、常に関数呼び出しの中で指定する必要がある。<strong>{meta}</strong>
+パッケージには <code>gs</code>
+という便利な関数があり、これを使うことで特定の引数に使われるデフォルト値を確認することができる。例えば、
+<code>gs(“method.tau”)</code>
+を実行してみよう。もし、デフォルト値がなければ、 <code>gs</code> は
+<code>NULL</code> を返す。
+</p>
+<p>
+<em>R</em>
+関数のもう一つの興味深い点は、ポジション・マッチングである。通常、関数を呼び出す際には、引数の名前とその値を書かなければならない。しかし、ポジション・マッチングを使えば、引数の名前を書かずに、引数の値だけを入力すればよい。これは、引数をドキュメントに登場するのと同じ
+<strong>位置</strong> で指定すれば可能である。
+</p>
+<p>
+例えば、<code>sqrt</code>
+関数を考えてみよう。この関数を書き出すと、<code>sqrt(x = 4)</code>
+となる。しかし、数値である <code>x</code>
+が最初の引数であることが分かっているので、単に <code>sqrt(4)</code>
+とタイプしても同じ結果になる。
+</p>
+</div>
+<p><br></p>
+<div id="pre-calculated-es" class="section level3" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> 事前算出された効果量のデータ<a class="anchor" aria-label="anchor" href="#pre-calculated-es"><i class="fas fa-link"></i></a>
+</h3>
+<p>それでは、メタ分析関数のツアーを <code>metagen</code> から始めよう。これまで学んだように、この関数は事前に計算された効果量のデータに使用することが可能である。最初の例では、この関数を使用して <code>ThirdWave</code> データセットのメタ分析を実行する。</p>
+<p>
+</p>
+<p>このデータセットには、いわゆる “Third Wave” の心理療法が大学生の知覚ストレスに及ぼす影響を調べた研究が含まれている。各研究について、試験後における治療群と対照群の標準化平均差を計算し、小サンプル補正を適用する。したがって、このメタ分析で使用される効果量の指標は、Hedges’ <span class="math inline">\(g\)</span>である。それでは、データを見てみよう。</p>
+
+<div class="boxdmetar">
+<p>
+<strong>“ThirdWave” データセット</strong>
+</p>
+<p>
+<code>ThirdWave</code> のデータセットも <strong>{dmetar}</strong>
+パッケージに直接含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong>
+がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/thirdwave.rda">インターネット</a>から
+<em>.rda</em>
+ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R
+Studio ウィンドウでクリックするとインポートすることができる。
+</p>
+</div>
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span> <span class="co"># 'glimpse' に必要</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">ThirdWave</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">ThirdWave</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 18
+## Columns: 8
+## $ Author               &lt;chr&gt; "Call et al.", "Cavanagh et al.", "DanitzOrsillo"…
+## $ TE                   &lt;dbl&gt; 0.7091362, 0.3548641, 1.7911700, 0.1824552, 0.421…
+## $ seTE                 &lt;dbl&gt; 0.2608202, 0.1963624, 0.3455692, 0.1177874, 0.144…
+## $ RiskOfBias           &lt;chr&gt; "high", "low", "high", "low", "low", "low", "high…
+## $ TypeControlGroup     &lt;chr&gt; "WLC", "WLC", "WLC", "no intervention", "informat…
+## $ InterventionDuration &lt;chr&gt; "short", "short", "short", "short", "short", "sho…
+## $ InterventionType     &lt;chr&gt; "mindfulness", "mindfulness", "ACT", "mindfulness…
+## $ ModeOfDelivery       &lt;chr&gt; "group", "online", "group", "group", "online", "g…</code></pre>
+<p>このデータセットには8つの列があり、そのうち最も重要なのは <code>Author</code>、<code>TE</code> 、<code>seTE</code> であることがわかる。<code>TE</code> 列は各研究の <span class="math inline">\(g\)</span> 値、 <code>seTE</code> は <span class="math inline">\(g\)</span> の標準誤差を表している。その他の列は、各研究が該当するサブグループカテゴリを記述する変数を表す。これらの変数は今のところ関係ない。</p>
+<p>これで、どのようなメタ分析を行いたいかを考え始めることが可能である。サブグループの列を見ると、少なくともバイアスリスク、対照群、介入期間、介入タイプ、実施形態に関して研究が異なっていることがわかる。</p>
+<p>このことから、研究間の異質性が予想され、すべての研究の真の効果が一定であると仮定することは意味がないことがよくわかる。したがって、私たちはプールのためにランダム効果モデルを使用することができる。連続アウトカムデータでのロバストなパフォーマンスから、この例では制限付き最尤推定量(<code>"REML"</code>) を選択する。また、偽陽性結果のリスクを減らすために Knapp-Hartung 調整を使用する。</p>
+<p>基本的な疑問が解決されたので、<code>metagen</code> の呼び出し方法もかなり簡単になる。この関数を使用する際には、必ず指定しなければならない関数固有の引数が2つある。</p>
+<ul>
+<li><p><strong><code>TE</code></strong>. 計算された効果量が含まれるデータセットの列の名前である。</p></li>
+<li><p><strong><code>seTE</code></strong>. 効果量の標準誤差が格納される列の名前。</p></li>
+</ul>
+<p>残りは、前章ですでに取り上げた一般的な <strong>{meta}</strong> 引数である。この解析では標準化平均差を扱うので、<code>sm = "SMD"</code> も指定している。しかし、この例では、効果量がすでに各研究で計算されているので、これは結果に対して実際の効果はない。出力で効果量を SMD としてラベル付けするように関数に指示すだけである。</p>
+<p>これで <code>metagen</code> の最初の呼び出しを設定するのに必要なすべての情報が得られた。この関数の結果を <code>m.gen</code> というオブジェクトに格納する。</p>
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.gen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metagen.html">metagen</a></span><span class="op">(</span>TE <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>                 seTE <span class="op">=</span> <span class="va">seTE</span>,</span>
+<span>                 studlab <span class="op">=</span> <span class="va">Author</span>,</span>
+<span>                 data <span class="op">=</span> <span class="va">ThirdWave</span>,</span>
+<span>                 sm <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                 fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                 random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 method.tau <span class="op">=</span> <span class="st">"REML"</span>,</span>
+<span>                 hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Third Wave Psychotherapies"</span><span class="op">)</span></span></code></pre></div>
+<p>これで <code>m.gen</code> オブジェクトにすべてのメタ分析結果が格納された。概要を知る簡単な方法は <code>summary</code> 関数を使うことである<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;古いバージョンの &lt;strong&gt;{meta}&lt;/strong&gt; (バージョン 5.0-0 以前) では、この概要は &lt;code&gt;summary&lt;/code&gt; を使わずに表示すことが可能である。新しく作成したメタ分析オブジェクトを &lt;em&gt;R&lt;/em&gt; コンソールで直接呼び出すだけである。&lt;/p&gt;"><sup>23</sup></a>。</p>
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.gen</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Third Wave Psychotherapies
+##                       SMD            95%-CI %W(random)
+## Call et al.        0.7091 [ 0.1979; 1.2203]        5.0
+## Cavanagh et al.    0.3549 [-0.0300; 0.7397]        6.3
+## DanitzOrsillo      1.7912 [ 1.1139; 2.4685]        3.8
+## de Vibe et al.     0.1825 [-0.0484; 0.4133]        7.9
+## Frazier et al.     0.4219 [ 0.1380; 0.7057]        7.3
+## Frogeli et al.     0.6300 [ 0.2458; 1.0142]        6.3
+## Gallego et al.     0.7249 [ 0.2846; 1.1652]        5.7
+## Hazlett-Steve…     0.5287 [ 0.1162; 0.9412]        6.0
+## Hintz et al.       0.2840 [-0.0453; 0.6133]        6.9
+## Kang et al.        1.2751 [ 0.6142; 1.9360]        3.9
+## Kuhlmann et al.    0.1036 [-0.2781; 0.4853]        6.3
+## Lever Taylor…      0.3884 [-0.0639; 0.8407]        5.6
+## Phang et al.       0.5407 [ 0.0619; 1.0196]        5.3
+## Rasanen et al.     0.4262 [-0.0794; 0.9317]        5.1
+## Ratanasiripong     0.5154 [-0.1731; 1.2039]        3.7
+## Shapiro et al.     1.4797 [ 0.8618; 2.0977]        4.2
+## Song &amp; Lindquist   0.6126 [ 0.1683; 1.0569]        5.7
+## Warnecke et al.    0.6000 [ 0.1120; 1.0880]        5.2
+## 
+## Number of studies combined: k = 18
+## 
+##                         SMD           95%-CI    t  p-value
+## Random effects model 0.5771 [0.3782; 0.7760] 6.12 &lt; 0.0001
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.0820 [0.0295; 0.3533]; tau = 0.2863 [0.1717; 0.5944];
+##  I^2 = 62.6% [37.9%; 77.5%]; H = 1.64 [1.27; 2.11]
+## 
+## Test of heterogeneity:
+##      Q d.f. p-value
+##  45.50   17  0.0002
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Restricted maximum-likelihood estimator for tau^2
+## - Q-profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model
+</code></pre>
+<p>さあ、<em>R</em> を使った最初のメタ分析の結果である。解き明かすことがたくさんあるので、順を追って出力を見ていきよう。</p>
+<p></p>
+<ul>
+<li><p>出力の最初の部分には、個々の研究、その効果量と信頼区間が含まれている。効果は事前に計算されているので、ここで見るべき新しいものはあまりない。<code>%W(random)</code> 列は、ランダム効果モデルが各研究に帰着させた重み (パーセント) を示している。メタ分析では、de Vibe の研究が 7.9% と最も大きな重みを占めていることがわかる。最小の重みは Ratanasiripong による研究に与えられている。この研究の信頼区間を見ると、なぜこのような結果になったのかがわかる。プールされた効果の信頼区間は非常に広く、標準誤差が非常に大きく、したがってこの研究の効果量の推定はあまり正確ではないことを意味している。</p></li>
+<li><p>さらに、メタ分析に含まれる研究の総数も出力される。<span class="math inline">\(K=\)</span> 18件の研究が組み合わされたことがわかる。</p></li>
+<li><p>次節では、その中核となるプール効果量を示す。推定値は約 0.58 であり、95%信頼区間は約 0.38～0.78 であることがわかる。また、効果量が有意であるかどうかの検定結果も示されている。その結果、<span class="math inline">\(p&lt;\)</span> 0.001 となった。重要なのは、関連する検定統計量も表示されることで、これは <code>t</code> で表示される。これは、<span class="math inline">\(t\)</span> 分布に基づく Knapp-Hartung 調整を適用する。</p></li>
+<li><p>その下に、研究間異質性に関する結果が表示されている。ここで表示される結果のいくつかについては、後の章で詳しく説明するので、ここでは <span class="math inline">\(\tau^2\)</span> にのみ注目しよう。<span class="math inline">\(\tau^2\)</span> の横には、真の効果の分散の推定値 <span class="math inline">\(\tau^2\)</span> = 0.08 が表示されている。<span class="math inline">\(\tau^2\)</span> の信頼区間は0を含まないので (0.03–0.35)、<span class="math inline">\(\tau^2\)</span> は0より有意に大きいことがわかる。これらのことから、私たちのデータには研究間の異質性が存在し、ランダム効果モデルが良い選択であったことがわかる。</p></li>
+<li><p>最後のセクションは、メタ分析についての詳細である。逆分散法を用いて効果をプールしたこと、制限付き最尤推定量を用いたこと、Knapp-Hartung 調整を適用したことなどがわかる。</p></li>
+</ul>
+<p>また、 <code>m.gen</code> に格納されている情報にも直接アクセス可能である。メタ分析の結果である <strong>{meta}</strong> には、たくさんのオブジェクトがデフォルトで格納されており、ドキュメントの “value” セクションを見れば、これが何を意味しているかが分かる。また、 <code>$</code> 演算子を使って、特定の分析結果を表示すことが可能である。例えば、プール効果は <code>TE.random</code> として格納される。</p>
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.gen</span><span class="op">$</span><span class="va">TE.random</span></span></code></pre></div>
+<pre><code>## [1] 0.5771158</code></pre>
+<p></p>
+<p><code>fixed =  FALSE</code> を指定した場合でも、 <strong>{meta}</strong> の関数は常に内部で固定効果モデルの結果も計算している。そのため、固定効果モデルを仮定したプール効果にもアクセスすることが可能である。</p>
+<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.gen</span><span class="op">$</span><span class="va">TE.fixed</span></span></code></pre></div>
+<pre><code>## [1] 0.4805045</code></pre>
+<p>この推定値はランダム効果モデルの結果とはかなり乖離していることがわかる。</p>
+<p>分析の詳細を変更したい場合、 <code>update.meta</code> 関数が役に立つ。この関数は、入力として <strong>{meta}</strong> オブジェクトと、変更したい引数を必要とする。例えば、制限付き最尤推定量の代わりに Paule-Mandel を使用した場合に結果が大きく異なるかどうかをチェックしたいとする。このコードを使ってそれを行うことが可能である。</p>
+<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.gen_update</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/update.meta.html">update.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>                            method.tau <span class="op">=</span> <span class="st">"PM"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get pooled effect</span></span>
+<span><span class="va">m.gen_update</span><span class="op">$</span><span class="va">TE.random</span></span></code></pre></div>
+<pre><code>## [1] 0.5873544</code></pre>
+<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get tau^2 estimate</span></span>
+<span><span class="va">m.gen_update</span><span class="op">$</span><span class="va">tau2</span></span></code></pre></div>
+<pre><code>## [1] 0.1104957</code></pre>
+<p>プール効果はあまり変わらないが、Paule-Mandel 推定量では、<span class="math inline">\(\tau^2\)</span>の近似値がやや大きくなることがわかる。</p>
+<p>最後に、結果を保存しておくと後々便利である。 <strong>{meta}</strong> で生成されたオブジェクトは、<code>save</code> 関数を使って簡単に <em>.rda</em> ( <em>R</em> data) ファイルとして保存することが可能である。</p>
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">m.gen</span>, file <span class="op">=</span> <span class="st">"path/to/my/meta-analysis.rda"</span><span class="op">)</span> <span class="co"># example path</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="pooling-smd" class="section level3" number="4.2.2">
+<h3>
+<span class="header-section-number">4.2.2</span> (標準化) 平均差<a class="anchor" aria-label="anchor" href="#pooling-smd"><i class="fas fa-link"></i></a>
+</h3>
+<p>
+</p>
+<p>2つの群の平均と標準偏差の形式で表される生の効果量データは、 <code>metacont</code> を使ってプールすることが可能である。この関数は、標準化された群間平均差と標準化されていない群間平均差の両方に使用することが可能である。これらは <code>sm = "SMD"</code> または <code>sm = "MD"</code> を指定することで得ることが可能である。それ以外では、7つの関数固有の引数を指定する必要がある。</p>
+<ul>
+<li><p><strong><code>n.e</code></strong>. 治療・実験群の観測数。</p></li>
+<li><p><strong><code>mean.e</code></strong>. 治療・実験群における平均値。</p></li>
+<li><p><strong><code>sd.e</code></strong>. 治療・実験群における標準偏差。</p></li>
+<li><p><strong><code>n.c</code></strong>. 対照群の観測数。</p></li>
+<li><p><strong><code>mean.c</code></strong>. 対照群の平均値。</p></li>
+<li><p><strong><code>sd.c</code></strong>. 対照群の標準偏差。</p></li>
+<li><p><strong><code>method.smd</code></strong>. これは <code>sm = "SMD"</code> のときのみ関係する。 <code>metacont</code> 関数では、3種類の標準化平均差を計算することが可能である。 <code>metacont</code> 関数では、3種類の標準化平均差を計算することが可能である。 <code>method.smd = "Cohen"</code> と設定すると、補正されていない標準化平均差 (Cohen’s <span class="math inline">\(d\)</span>) が効果量指標として使用される。他の2つのオプションは、Hedges’ <span class="math inline">\(g\)</span> を計算する <code>"Hedges"</code> (デフォルトと推奨) と、Glass’ <span class="math inline">\(\Delta\)</span> (「デルタ」と読む) を計算する <code>"Glass"</code> である。Glass’ <span class="math inline">\(\Delta\)</span>は、平均差を標準化するために、プールされた標準偏差の代わりに対照群の標準偏差を使用する。この効果量は、一次研究で複数の治療群がある場合に使われることがあるが、通常、メタ分析では好まれない指標である。</p></li>
+</ul>
+<p></p>
+<p>今回の分析例では、Chapter <a href="discovering-R.html#data-prep-R">2.4</a> と Chapter <a href="pooling-es.html#fem">4.1.1</a> で扱った “SuicidePrevention” データセットを再利用している。サンプルに含まれるすべての研究が完全に同一ではないので、ランダム効果モデルを使用することが保証される。また、Knapp-Hartung 調整と<span class="math inline">\(\tau^2\)</span>の制限付き最尤推定量も再び使用する予定である。 <code>metacont</code> にスモールサンプルバイアスを補正するように指示し、効果量のメトリックとしてHedges’ <span class="math inline">\(g\)</span> を生成する。結果はオブジェクトに保存され、 <code>m.cont</code> と名付ける。</p>
+<p>全体としては、このようなコードになる。</p>
+<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># meta と dmetar がロードされていることを確認</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># dmetar からデータセットをロード (またはネットからダウンロードし自分で開く)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">SuicidePrevention</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># metcont を使って結果をプール。</span></span>
+<span><span class="va">m.cont</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metacont.html">metacont</a></span><span class="op">(</span>n.e <span class="op">=</span> <span class="va">n.e</span>,</span>
+<span>                   mean.e <span class="op">=</span> <span class="va">mean.e</span>,</span>
+<span>                   sd.e <span class="op">=</span> <span class="va">sd.e</span>,</span>
+<span>                   n.c <span class="op">=</span> <span class="va">n.c</span>,</span>
+<span>                   mean.c <span class="op">=</span> <span class="va">mean.c</span>,</span>
+<span>                   sd.c <span class="op">=</span> <span class="va">sd.c</span>,</span>
+<span>                   studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                   data <span class="op">=</span> <span class="va">SuicidePrevention</span>,</span>
+<span>                   sm <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                   method.smd <span class="op">=</span> <span class="st">"Hedges"</span>,</span>
+<span>                   fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                   random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   method.tau <span class="op">=</span> <span class="st">"REML"</span>,</span>
+<span>                   hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   title <span class="op">=</span> <span class="st">"Suicide Prevention"</span><span class="op">)</span></span></code></pre></div>
+<p>その結果を見てみよう。</p>
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.cont</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Suicide Prevention
+## 
+##                     SMD             95%-CI %W(random)
+## Berry et al.    -0.1428 [-0.4315;  0.1459]       15.6
+## DeVries et al.  -0.6077 [-0.9402; -0.2752]       12.3
+## Fleming et al.  -0.1112 [-0.6177;  0.3953]        5.7
+## Hunt &amp; Burke    -0.1270 [-0.4725;  0.2185]       11.5
+## McCarthy et al. -0.3925 [-0.7884;  0.0034]        9.0
+## Meijer et al.   -0.2676 [-0.5331; -0.0021]       17.9
+## Rivera et al.    0.0124 [-0.3454;  0.3703]       10.8
+## Watkins et al.  -0.2448 [-0.6848;  0.1952]        7.4
+## Zaytsev et al.  -0.1265 [-0.5062;  0.2533]        9.7
+## 
+## Number of studies: k = 9
+## Number of observations: o = 1147
+## 
+##                          SMD             95%-CI     t p-value
+## Random effects model -0.2304 [-0.3734; -0.0874] -3.71  0.0059
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.0044 [0.0000; 0.0924]; tau = 0.0661 [0.0000; 0.3040]
+##  I^2 = 7.4% [0.0%; 67.4%]; H = 1.04 [1.00; 1.75]
+## 
+## Test of heterogeneity:
+##     Q d.f. p-value
+##  8.64    8  0.3738
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Restricted maximum-likelihood estimator for tau^2
+## - Q-Profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model (df = 8)
+## - Hedges' g (bias corrected standardised mean difference; using exact formulae)</code></pre>
+<p>この出力を見て、Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a> で受け取った出力と比較すると、すでに <strong>{meta}</strong> の最大の資産の1つが見えている。すなわち、<code>metagen</code> や <code>metacont</code> とは異なるデータ型を必要とする異なる関数であるが、出力の構造はほぼ同じように読むことができる。このため、結果の解釈は非常に容易である。ランダム効果モデルによるプール効果は <span class="math inline">\(g=\)</span> -0.23 であり、95%信頼区間は -0.09 から -0.37 の範囲であることがわかる。この効果は有意である (<span class="math inline">\(p=\)</span> 0.006)。</p>
+<p>効果量が負の符号を持つことがわかる。このメタ分析の文脈では、好ましいアウトカムであることを表し、対照群と比較して治療群で自殺念慮がより低かったことを意味する。これを他の人にわかりやすくするために、効果量の符号を一貫して逆にし (たとえば、代わりに <span class="math inline">\(g=\)</span> 0.23 と書く)、正の効果量が常に「正の」結果を表すようにしてもよいだろう。</p>
+<p>制限付き最尤法では、研究間の異質性分散は <span class="math inline">\(\tau^2\)</span> = 0.004と推定される。<span class="math inline">\(\tau^2\)</span> 値を見ると、信頼区間は0を含んでおり、真の効果量の分散は0より有意に大きくないことがわかる。</p>
+<p>詳細では、効果量の指標としてHedges’ <span class="math inline">\(g\)</span> が使われたことが示されている。</p>
+<p><br></p>
+</div>
+<div id="二値アウトカム" class="section level3" number="4.2.3">
+<h3>
+<span class="header-section-number">4.2.3</span> 二値アウトカム<a class="anchor" aria-label="anchor" href="#%E4%BA%8C%E5%80%A4%E3%82%A2%E3%82%A6%E3%83%88%E3%82%AB%E3%83%A0"><i class="fas fa-link"></i></a>
+</h3>
+<div id="pooling-or-rr" class="section level4" number="4.2.3.1">
+<h4>
+<span class="header-section-number">4.2.3.1</span> リスク比とオッズ比<a class="anchor" aria-label="anchor" href="#pooling-or-rr"><i class="fas fa-link"></i></a>
+</h4>
+<p>
+</p>
+<p><code>metabin</code> 関数は、二値データ、特にリスク比 (Risk Ratio, RR) とオッズ比 (Odds Ratio, OR) に基づく効果量をプールするために使用することが可能である。この関数を使い始める前に、まず、これらの効果量に基づくメタ分析について、いくつかの特殊性を議論する必要がある。</p>
+<p>Chapter <a href="pooling-es.html#fem">4.1.1</a> と Chapter <a href="pooling-es.html#tau-estimators">4.1.2.1</a> で取り上げた一般的な逆分散 (generic inverse variance) 法を用いて、二値の効果量をプールすることが可能である。各効果の対数オッズ比または対数リスク比、および標準誤差を計算する必要があり、その後、効果量の分散の逆数を使用してプーリング重みを決定することが可能である。</p>
+<p>しかし、この方法は二値アウトカムのデータには最適ではない <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 10.4.1</a>)</span>。<strong>薄い</strong>データを扱っているとき、すなわちイベント数または総サンプルサイズが小さいとき、標準誤差は二値効果量の推定値としては精度が高くない可能性がある。</p>
+<p><br></p>
+<div id="mantel-haenszel" class="section level5" number="4.2.3.1.1">
+<h5>
+<span class="header-section-number">4.2.3.1.1</span> Mantel-Haenszel法<a class="anchor" aria-label="anchor" href="#mantel-haenszel"><i class="fas fa-link"></i></a>
+</h5>
+<p></p>
+<p>このため、<strong>Mantel-Haenszel</strong> 法 <span class="citation">(<a href="references.html#ref-mantel1959statistical">Mantel and Haenszel 1959</a>; <a href="references.html#ref-robins1986general">Robins, Greenland, and Breslow 1986</a>)</span> は、二値アウトカム・データを持つ研究の重みを計算する代替手段としてよく使用されている。また、<code>metabin</code> で使用されるデフォルトのアプローチでもある。この方法は、研究の重みを決定するために、治療と対照群におけるイベントと非イベントの数を使用する。リスク比とオッズ比の計算は、それぞれ以下の式で求められる。</p>
+<p><strong>リスク比:</strong></p>
+<p><span class="math display" id="eq:pes9">\[\begin{equation}
+w_k = \frac{(a_k+b_k) c_k}{n_k}
+\tag{4.9}
+\end{equation}\]</span></p>
+<p><strong>オッズ比:</strong></p>
+<p><span class="math display" id="eq:pes10">\[\begin{equation}
+w_k = \frac{b_kc_k}{n_k}
+\tag{4.10}
+\end{equation}\]</span></p>
+<p>式中、Chapter <a href="effects.html#rr">3.3.2.1</a> と同じく、<span class="math inline">\(a_k\)</span> は治療群のイベント数、<span class="math inline">\(c_k\)</span> は対照群のイベント数、<span class="math inline">\(b_k\)</span> は治療群の非イベント数、<span class="math inline">\(d_k\)</span> は対照群の非イベント数、<span class="math inline">\(n_k\)</span> は全体のサンプルサイズとしている。</p>
+<p>
+<br></p>
+</div>
+<div id="peto-法" class="section level5" number="4.2.3.1.2">
+<h5>
+<span class="header-section-number">4.2.3.1.2</span> Peto 法<a class="anchor" aria-label="anchor" href="#peto-%E6%B3%95"><i class="fas fa-link"></i></a>
+</h5>
+<p>第二のアプローチは、<strong>Peto</strong> 法 <span class="citation">(<a href="references.html#ref-yusuf1985beta">Yusuf et al. 1985</a>)</span>である。このアプローチの本質は、私たちがすでに知っている逆分散の原則に基づくものである。ただし、特殊な効果量である<strong>Peto オッズ比</strong>を使用し、ここでは <span class="math inline">\(\hat\psi_k\)</span> (訳注: <span class="math inline">\(\psi\)</span> は「プサイ」と読む) と表記する。</p>
+<p>この <span class="math inline">\(\hat\psi_k\)</span> を計算するためには、治療群で観測された事象である <span class="math inline">\(O_k\)</span> を知り、治療群の<strong>予想</strong>例数である <span class="math inline">\(E_k\)</span> を計算する必要がある。<span class="math inline">\(O_k-E_k\)</span>の差を <span class="math inline">\(O_k\)</span> と <span class="math inline">\(E_k\)</span> の差の分散 <span class="math inline">\(V_k\)</span> で割ると、対数変換された <span class="math inline">\(\hat\psi_k\)</span> になる。先ほどと同じセル表記で、<span class="math inline">\(E_k\)</span>、<span class="math inline">\(O_k\)</span>、<span class="math inline">\(V_k\)</span>を計算する式は以下の通りである。</p>
+<p><span class="math display" id="eq:pes11">\[\begin{equation}
+O_k = a_k
+\tag{4.11}
+\end{equation}\]</span>
+<span class="math display" id="eq:pes12">\[\begin{equation}
+E_k = \frac{(a_k+b_k)(a_k+c_k)}{a_k+b_k+c_k+d_k}
+\tag{4.12}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:pes13">\[\begin{equation}
+V_k = \frac{(a_k+b_k)(c_k+d_k)(a_k+c_k)(b_k+d_k)}{{(a_k+b_k+c_k+d_k)}^2(a_k+b_k+c_k+d_k-1)}
+\tag{4.13}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:pes14">\[\begin{equation}
+\log\hat\psi_k = \frac{O_k-E_k}{V_k}
+\tag{4.14}
+\end{equation}\]</span></p>
+<p>そして、効果量のプール時には、<span class="math inline">\(\log\hat\psi_k\)</span>の分散の逆数を重みとして用いる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;log Petoオッズ比&lt;span class="math inline"&gt;\(\log\hat\psi_k\)&lt;/span&gt;の分散は、&lt;span class="math inline"&gt;\(\text{SE}_{\log\hat\psi_k}^2 = \widehat{\text{Var}}(\log\hat\psi_k)=V_k^{-1}\)&lt;/span&gt; として定義されている。Peto法によるプール重みは &lt;span class="math inline"&gt;\(w^{\text{(Peto)}}_k=\widehat{\text{Var}}(\log\hat\psi_k)^{-1}\)&lt;/span&gt; と定義される。&lt;/p&gt;'><sup>24</sup></a>。</p>
+<p><br></p>
+</div>
+<div id="bakbergenuly-サンプルサイズ法" class="section level5" number="4.2.3.1.3">
+<h5>
+<span class="header-section-number">4.2.3.1.3</span> Bakbergenuly-サンプルサイズ法<a class="anchor" aria-label="anchor" href="#bakbergenuly-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%82%B5%E3%82%A4%E3%82%BA%E6%B3%95"><i class="fas fa-link"></i></a>
+</h5>
+<p>最近、Bakbergenuly ら <span class="citation">(<a href="references.html#ref-bakbergenuly2020methods">2020</a>)</span> は、効果の重みが研究のサンプルサイズだけで決まる別の方法を提案し、この方法が Mantel and Haenszel による方法より望ましい可能性があることを示している。これを<strong>サンプルサイズ法</strong>と呼ぶことにする。この方法の計算式はとても簡単である。治療群と対照群のサンプルサイズ <span class="math inline">\(n_{\text{treat}_k}\)</span> と <span class="math inline">\(n_{\text{control}_k}\)</span> だけ分かれば良い。</p>
+<p><span class="math display" id="eq:pes15">\[\begin{equation}
+w_k = \frac{n_{\text{treat}_k}n_{\text{control}_k}}{n_{\text{treat}_k} + n_{\text{control}_k} }
+\tag{4.15}
+\end{equation}\]</span></p>
+<p>このプール法を <code>metabin</code> に実装すると、固定効果モデルとランダム効果モデルによる重みと全体効果は同じになる。プールされた効果の <span class="math inline">\(p\)</span> 値と信頼区間だけが異なる。</p>
+<p>
+</p>
+
+<div class="boxinfo">
+<p><strong>プール方法はどれを使うべきか？</strong></p>
+<p>Chapter <a href="effects.html#rr">3.3.2.1</a> では、<strong>ゼロセル</strong>と<strong>連続性補正</strong>の問題について、すでに詳しく述べた。ゼロセルがある場合、Peto法、サンプルサイズ法ともにそのまま使用できるが、Mantel-Haenszel 法を使用する場合はゼロセルに0.5を加算するのが一般的である。これは <code>metabin</code> のデフォルトの動作でもある。</p>
+<p>しかし、連続性補正の使用は、バイアスのある結果につながる可能性があるため、推奨されていない <span class="citation">(<a href="references.html#ref-efthimiou2018practical">Efthimiou 2018</a>)</span>。Mantel-Haenszel 法は、ある特定のセルが含まれる研究で<strong>すべて</strong>ゼロである場合にのみ<strong>本当に</strong>連続性補正を必要とするが、そのようなケースはほとんどない。そのため、通常は <code>metabin</code> で <code>MH.exact = TRUE</code> と設定し、連続性補正を行わない <strong>exact</strong> Mantel-Haenszel 法を使用することが推奨される。</p>
+<p>Peto 法にも限界がある。まず、オッズ比にしか使用できない。また、シミュレーション研究では、(1) 治療群と対照群の観察数が同程度のとき、(2) 観察された事象が稀なとき (&lt;1%)、
+(3) 治療効果が過度に大きくないときにのみ,
+この方法がうまく機能することが示された <span class="citation">(<a href="references.html#ref-bradburn2007much">Bradburn et al. 2007</a>; <a href="references.html#ref-j2004add">Sweeting, Sutton, and Lambert 2004</a>)</span>。</p>
+<p>最後に、Bakbergenuly-サンプルサイズ法は、かなり新しい手法であり、他の2つの手法に比べて研究が進んでいない。</p>
+<p>全体として，ほとんどの場合，コクランの一般的な評価 <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 10.4</a>)</span> に従い、Mantel-Haenszel 法 (連続性補正なし) を使用することが望ましいと思われる。オッズ比が望ましい効果量の指標であり、関心のある事象が稀であると予想される場合は、Peto 法を用いることができる。</p>
+</div>
+<p><br></p>
+</div>
+<div id="ppoolbin" class="section level5" number="4.2.3.1.4">
+<h5>
+<span class="header-section-number">4.2.3.1.4</span> <em>R</em> における二値効果量のプール<a class="anchor" aria-label="anchor" href="#ppoolbin"><i class="fas fa-link"></i></a>
+</h5>
+<p><code>metabin</code> には、8つの重要な関数固有の引数がある。</p>
+<ul>
+<li><p><strong><code>event.e</code></strong>. 治療・実験群におけるイベント数。</p></li>
+<li><p><strong><code>n.e</code></strong>. 治療/実験群の観測数。</p></li>
+<li><p><strong><code>event.c</code></strong>. 対照群におけるイベント数。</p></li>
+<li><p><strong><code>n.c</code></strong>. 対照群の観測数。</p></li>
+<li><p><strong><code>method</code></strong>. 使用するプール法。これは、 <code>"Inverse"</code> (一般的な逆分散プール)、 <code>"MH"</code> (Mantel-Haenszel; デフォルトおよび推奨)、 <code>"Peto"</code> (Peto method)、または <code>"SSW"</code> (Bakbergenuly-サンプルサイズ法; <code>sm = "OR"</code> 時のみ) のいずれかになる。</p></li>
+<li><p><strong><code>sm</code></strong>. 計算する要約指標 (＝効果量の指標)。リスク比には <code>"RR"</code> を、オッズ比には <code>"OR"</code> を使用することができる。</p></li>
+<li><p><strong><code>incr</code></strong>. ゼロセルの連続性補正のために追加する増分を指定する。<code>incr = 0.5</code> とすれば、0.5 の増分値が加算される。<code>incr = "TACC"</code> とすると、治療群連続性補正法が用いられる (Chapter <a href="effects.html#rr">3.3.2.1</a>参照)。前述したように、通常はこの引数を省略し、連続性補正を適用しないことが推奨される。</p></li>
+<li><p><strong><code>MH.exact</code></strong>. もし <code>method = "MH"</code> ならば、この引数を <code>TRUE</code> に設定し、 Mantel-Haenszel 法の連続性補正を使用しないようにすることが可能である。</p></li>
+</ul>
+<p>この実践的な例では、 <code>DepressionMortality</code> データセットを使用する。このデータセットは、Cuijpers and Smit <span class="citation">(<a href="references.html#ref-cuijpers2002excess">2002</a>)</span> によるメタ分析に基づいており、全死因死亡率に対するうつ病の影響を調査している。このデータセットには、うつ病のある人とない人の数、そして両群の何人が数年後に死亡したかが含まれている。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“DepressionMortality” データセット</strong>
+</p>
+<p>
+<code>DepressionMortality</code> のデータセットも
+<strong>{dmetar}</strong>
+パッケージに直接含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong>
+がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/depressionmortality.rda">インターネット</a>から
+<em>.rda</em>
+ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R
+Studio ウィンドウでクリックするとインポートすることができる。
+</p>
+</div>
+<p>まず、データセットを見てみよう。</p>
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">DepressionMortality</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">DepressionMortality</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 18
+## Columns: 6
+## $ author  &lt;chr&gt; "Aaroma et al., 1994", "Black et al., 1998", "Bruce et al., 19…
+## $ event.e &lt;dbl&gt; 25, 65, 5, 26, 32, 1, 24, 15, 15, 173, 37, 41, 29, 61, 15, 21,…
+## $ n.e     &lt;dbl&gt; 215, 588, 46, 67, 407, 44, 60, 61, 29, 1015, 105, 120, 258, 38…
+## $ event.c &lt;dbl&gt; 171, 120, 107, 1168, 269, 87, 200, 437, 227, 250, 66, 9, 24, 3…
+## $ n.c     &lt;dbl&gt; 3088, 1901, 2479, 3493, 6256, 1520, 882, 2603, 853, 3375, 409,…
+## $ country &lt;chr&gt; "Finland", "USA", "USA", "USA", "Sweden", "USA", "Canada", "Ne…</code></pre>
+<p>
+</p>
+<p>この例では、Cuijpers and Smit が行ったように、効果量の指標としてリスク比を計算する。ランダム効果プールモデルを使用し、二値アウトカムデータを扱うので、<span class="math inline">\(\tau^2\)</span>の Paule-Mandel 推定量を使用する。</p>
+<p>データを見ると、サンプルサイズが研究によってかなり異なっており、Paule-Mandel 法がややバイアスされる可能性がある (Chapter <a href="pooling-es.html#tau-estimators">4.1.2.1</a> 参照)。これを踏まえて、感度分析として他の <span class="math inline">\(\tau^2\)</span> 推定量も試してみて、結果が大きく異なるかどうかを確認することも可能である。</p>
+<p>このデータセットにはゼロセルが含まれていないので、連続性補正の心配はなく、すぐに正確な Mantel-Haenszel 法を使うことができる。メタ分析の結果は <code>m.bin</code> というオブジェクトに保存する。</p>
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metabin.html">metabin</a></span><span class="op">(</span>event.e <span class="op">=</span> <span class="va">event.e</span>, </span>
+<span>                 n.e <span class="op">=</span> <span class="va">n.e</span>,</span>
+<span>                 event.c <span class="op">=</span> <span class="va">event.c</span>,</span>
+<span>                 n.c <span class="op">=</span> <span class="va">n.c</span>,</span>
+<span>                 studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                 data <span class="op">=</span> <span class="va">DepressionMortality</span>,</span>
+<span>                 sm <span class="op">=</span> <span class="st">"RR"</span>,</span>
+<span>                 method <span class="op">=</span> <span class="st">"MH"</span>,</span>
+<span>                 MH.exact <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                 random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 method.tau <span class="op">=</span> <span class="st">"PM"</span>,</span>
+<span>                 hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Depression and Mortality"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.bin</span><span class="op">)</span></span></code></pre></div>
+<pre><code>
+## Review:     Depression and Mortality
+##                           RR        95%-CI %W(random)
+## Aaroma et al., 1994     2.09 [1.41;  3.12]        6.0
+## Black et al., 1998      1.75 [1.31;  2.33]        6.6
+## Bruce et al., 1989      2.51 [1.07;  5.88]        3.7
+## Bruce et al., 1994      1.16 [0.85;  1.57]        6.5
+## Enzell et al., 1984     1.82 [1.28;  2.60]        6.3
+## Fredman et al., 1989    0.39 [0.05;  2.78]        1.2
+## Murphy et al., 1987     1.76 [1.26;  2.46]        6.4
+## Penninx et al., 1999    1.46 [0.93;  2.29]        5.8
+## Pulska et al., 1998     1.94 [1.34;  2.81]        6.2
+## Roberts et al., 1990    2.30 [1.92;  2.75]        7.0
+## Saz et al., 1999        2.18 [1.55;  3.07]        6.3
+## Sharma et al., 1998     2.05 [1.07;  3.91]        4.7
+## Takeida et al., 1997    6.97 [4.13; 11.79]        5.3
+## Takeida et al., 1999    5.81 [3.88;  8.70]        6.0
+## Thomas et al., 1992     1.33 [0.77;  2.27]        5.3
+## Thomas et al., 1992     1.77 [1.10;  2.83]        5.6
+## Weissman et al., 1986   1.25 [0.66;  2.33]        4.8
+## Zheng et al., 1997      1.98 [1.40;  2.80]        6.3
+## 
+## Number of studies combined: k = 18
+## 
+##                          RR           95%-CI    t  p-value
+## Random effects model 2.0217 [1.5786; 2.5892] 6.00 &lt; 0.0001
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.1865 [0.0739; 0.5568]; tau = 0.4319 [0.2718; 0.7462];
+##  I^2 = 77.2% [64.3%; 85.4%]; H = 2.09 [1.67; 2.62]
+## 
+## Test of heterogeneity:
+##      Q d.f.  p-value
+##  74.49   17 &lt; 0.0001
+## 
+## Details on meta-analytical method:
+## - Mantel-Haenszel method
+## - Paule-Mandel estimator for tau^2
+## - Q-profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model</code></pre>
+<p>プール効果量はRR <span class="math inline">\(=\)</span> 2.02であることがわかる。このプール効果は有意であり (<span class="math inline">\(p&lt;\)</span> 0.001)、うつ病にかかると死亡リスクが2倍になることを示している。研究間の異質性分散の推定値は、<span class="math inline">\(\tau^2 \approx\)</span> 0.19である。</p>
+<p>また、<span class="math inline">\(\tau^2\)</span> の信頼区間はゼロを含まず、研究間の実質的な異質性を示している。最後に、出力の詳細セクションを見ると、 <code>metabin</code> 関数は、意図したようにプールに Mantel-Haenszel 法を使用したことがわかる。</p>
+<p>上記で発表したように、<span class="math inline">\(\tau^2\)</span> の推定方法が結果に影響を与えるかどうか見てみよう。<code>update.meta</code> 関数を使って、分析を再実行するが、今回は制限付き最尤推定量を使用する。</p>
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.bin_update</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/update.meta.html">update.meta</a></span><span class="op">(</span><span class="va">m.bin</span>, </span>
+<span>                            method.tau <span class="op">=</span> <span class="st">"REML"</span><span class="op">)</span></span></code></pre></div>
+<p></p>
+<p>ここで、<code>TE.random</code> を調べて、プールされた効果をもう一度見てみよう。ここで忘れてはならないのは、二値アウトカムのメタ分析は、実際には効果量を対数変換したものを使用して行われるということである。結果を表示す際に、<code>metabin</code> は便宜上、効果量のメトリクスを元の形式に再変換しているだけである。このステップは、メタ分析オブジェクトの要素を検査する場合には実行されていない。</p>
+<p>対数変換された効果量を再変換するには、その値を<strong>指数化</strong>する必要がある。指数化は対数変換の「逆関数」であり、 <em>R</em> で <code>exp</code> 関数を使って実行可能である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;一般に、指数化は2つの変数 &lt;span class="math inline"&gt;\(b\)&lt;/span&gt; と &lt;span class="math inline"&gt;\(x\)&lt;/span&gt; を含む操作と言われている。&lt;span class="math inline"&gt;\(x\)&lt;/span&gt; を指数にするときは、&lt;span class="math inline"&gt;\(b\)&lt;/span&gt; (底)を &lt;span class="math inline"&gt;\(x\)&lt;/span&gt; (指数)のべき乗 &lt;span class="math inline"&gt;\(b^x\)&lt;/span&gt; となる。&lt;span class="math inline"&gt;\(b\)&lt;/span&gt; はオイラー数 &lt;span class="math inline"&gt;\(e \approx\)&lt;/span&gt; 2.718 とするのが一般的である。) &lt;span class="math inline"&gt;\(e^x\)&lt;/span&gt; を使うと、&lt;strong&gt;指数関数&lt;/strong&gt; &lt;span class="math inline"&gt;\(exp(x)\)&lt;/span&gt; ができ、これを使うと、対数変換した値 &lt;span class="math inline"&gt;\(x\)&lt;/span&gt; を元の尺度に戻すことができる。この操作は、&lt;strong&gt;真数をとる&lt;/strong&gt;という。&lt;/p&gt;'><sup>25</sup></a>。これを実際に使ってみよう。</p>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">m.bin_update</span><span class="op">$</span><span class="va">TE.random</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 2.02365</code></pre>
+<p>制限付き最尤推定量によるプール効果もほぼ同じであることがわかる。次に、<span class="math inline">\(\tau^2\)</span> の推定値を見てみよう。</p>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.bin_update</span><span class="op">$</span><span class="va">tau2</span></span></code></pre></div>
+<pre><code>## [1] 0.1647315</code></pre>
+<p>この値は多少乖離しているが、最初の結果の妥当性を心配するほどではない。</p>
+<p><code>metabin</code> の呼び出しは、オッズ比をプールすることにしても、全く同じになる。変更する必要があるのは <code>sm</code> 引数だけで、これは <code>"OR"</code> に設定する必要がある。もう一度関数呼び出し全体を書き出す代わりに、<code>update.meta</code> 関数を再度使用して、プールされた OR を計算することが可能である。</p>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.bin_or</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/update.meta.html">update.meta</a></span><span class="op">(</span><span class="va">m.bin</span>, sm <span class="op">=</span> <span class="st">"OR"</span><span class="op">)</span></span>
+<span><span class="va">m.bin_or</span></span></code></pre></div>
+<pre><code>## Review:     Depression and Mortality
+##
+## [...]
+## 
+## Number of studies combined: k = 18
+## 
+##                          OR           95%-CI    t  p-value
+## Random effects model 2.2901 [1.7512; 2.9949] 6.52 &lt; 0.0001
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.2032 [0.0744; 0.6314]; tau = 0.4508 [0.2728; 0.7946];
+##  I^2 = 72.9% [56.7%; 83.0%]; H = 1.92 [1.52; 2.43]
+## 
+## Test of heterogeneity:
+##      Q d.f.  p-value
+##  62.73   17 &lt; 0.0001
+## 
+## Details on meta-analytical method:
+## - Mantel-Haenszel method
+## - Paule-Mandel estimator for tau^2
+## - Q-profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model</code></pre>
+<p>出力では、オッズ比を用いたプール効果はOR = 2.29であることがわかる。</p>
+<p><br></p>
+</div>
+<div id="m-gen-bin" class="section level5" number="4.2.3.1.5">
+<h5>
+<span class="header-section-number">4.2.3.1.5</span> 事前に計算された二値効果量のプール<a class="anchor" aria-label="anchor" href="#m-gen-bin"><i class="fas fa-link"></i></a>
+</h5>
+<p>各研究のリスク比やオッズ比を計算するために必要な生の効果量のデータを抽出できないことがある。例えば、主要な研究でオッズ比が報告されていても、この効果量の根拠となるデータがない場合がある。著者が元のデータを提供してくれない場合、事前に計算された効果量のデータに基づいてメタ分析を行う必要が出てくるだろう。学習したように、これを行うために使用できる関数は <code>metagen</code> である。</p>
+<p>二値アウトカムデータを扱うとき、事前に計算された効果量データを使う以外に選択肢がない場合は、本当に注意しなければならない。 <code>metagen</code> 関数は逆分散法を用いて効果量をプールし、Mantel-Haenszel 法のようなより良いオプションは使用できない。しかし、他のすべてがうまくいかない場合には、まだ有効な選択肢である。</p>
+<p><code>DepressionMortality</code> のデータセットを使って、事前に計算された効果量のメタ分析を行うシミュレーションをしてみよう。<code>m.bin</code> の <code>TE</code> と <code>seTE</code> オブジェクトを抽出し、各研究の効果量と標準誤差を取得することが可能である。この情報を <code>DepressionMortality</code> データセットに保存する。</p>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">DepressionMortality</span><span class="op">$</span><span class="va">TE</span> <span class="op">&lt;-</span> <span class="va">m.bin</span><span class="op">$</span><span class="va">TE</span></span>
+<span><span class="va">DepressionMortality</span><span class="op">$</span><span class="va">seTE</span> <span class="op">&lt;-</span> <span class="va">m.bin</span><span class="op">$</span><span class="va">seTE</span></span></code></pre></div>
+<p></p>
+<p>ここで、信頼区間の下限と上限はわかっているが、標準誤差がわからない効果が1つあると想像してみよう。このようなシナリオをシミュレートするために、(1) 研究7 (Murphy et al., 1987) の標準誤差を欠損と定義し (つまり、その値を <code>NA</code> に設定)、(2) データセットに新しい空の2列、 <code>lower</code> と <code>upper</code> を定義し、(3) <code>lower</code> と <code>upper</code> に研究7で対数変換した「報告」信頼区間を記入することにする。</p>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 研究 7 の seTE を NA に設定</span></span>
+<span><span class="va">DepressionMortality</span><span class="op">$</span><span class="va">seTE</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span></span>
+<span><span class="co"># 空の列 'lower' と 'upper' を作成</span></span>
+<span><span class="va">DepressionMortality</span><span class="op">[</span>,<span class="st">"lower"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">DepressionMortality</span><span class="op">[</span>,<span class="st">"upper"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span></span>
+<span><span class="co"># 研究 7 の 'lower' と 'upper' に値を入れる</span></span>
+<span><span class="co"># いつものごとく、二値効果量は対数変換が必要</span></span>
+<span><span class="va">DepressionMortality</span><span class="op">$</span><span class="va">lower</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fl">1.26</span><span class="op">)</span></span>
+<span><span class="va">DepressionMortality</span><span class="op">$</span><span class="va">upper</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fl">2.46</span><span class="op">)</span></span></code></pre></div>
+<p>では、先ほど作成したデータを見てみよう。</p>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">DepressionMortality</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"author"</span>, <span class="st">"TE"</span>, <span class="st">"seTE"</span>, <span class="st">"lower"</span>, <span class="st">"upper"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code>##                   author      TE    seTE  lower  upper
+## 1    Aaroma et al., 1994  0.7418 0.20217     NA     NA
+## 2     Black et al., 1998  0.5603 0.14659     NA     NA
+## 3     Bruce et al., 1989  0.9235 0.43266     NA     NA
+## 4     Bruce et al., 1994  0.1488 0.15526     NA     NA
+## 5    Enzell et al., 1984  0.6035 0.17986     NA     NA
+## 6   Fredman et al., 1989 -0.9236 0.99403     NA     NA
+## 7    Murphy et al., 1987  0.5675      NA 0.2311 0.9001
+## 8   Penninx et al., 1999  0.3816 0.22842     NA     NA
+## [...]</code></pre>
+<p>このようなデータセットを見つけることは、実際には珍しいことではない。ほとんどの研究では対数リスク比を計算することができるだろうが、その他のいくつかの研究では、(対数変換した) リスク比とその信頼区間しか情報がないことが多いのである。</p>
+<p>幸いなことに、 <code>metagen</code> を使用すると、そのようなデータであってもプールすることが可能である。引数 <code>lower</code> と <code>upper</code> には、信頼区間の下限と上限を含む列の名前を指定するだけでよいのである。標準誤差が利用できない場合、 <code>metagen</code> 関数はこの情報を使って効果に重み付けをする。関数の呼び出しは次のようになる。</p>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.gen_bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metagen.html">metagen</a></span><span class="op">(</span>TE <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>                     seTE <span class="op">=</span> <span class="va">seTE</span>,</span>
+<span>                     lower <span class="op">=</span> <span class="va">lower</span>,</span>
+<span>                     upper <span class="op">=</span> <span class="va">upper</span>,</span>
+<span>                     studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                     data <span class="op">=</span> <span class="va">DepressionMortality</span>,</span>
+<span>                     sm <span class="op">=</span> <span class="st">"RR"</span>,</span>
+<span>                     method.tau <span class="op">=</span> <span class="st">"PM"</span>,</span>
+<span>                     fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                     random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     title <span class="op">=</span> <span class="st">"Depression Mortality (Pre-calculated)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.gen_bin</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Depression Mortality (Pre-calculated)
+##
+## [...]
+## 
+## Number of studies combined: k = 18
+## 
+##                          RR           95%-CI    z  p-value
+## Random effects model 2.0218 [1.6066; 2.5442] 6.00 &lt; 0.0001
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.1865 [0.0739; 0.5568]; tau = 0.4319 [0.2718; 0.7462];
+##  I^2 = 77.2% [64.3%; 85.4%]; H = 2.09 [1.67; 2.62]
+## 
+## [...]</code></pre>
+<p>出力では、<span class="math inline">\(K=\)</span> 18 すべての研究がメタ分析で結合できたことがわかる。これは、 <code>metagen</code> が研究7について提供された <code>lower</code> と <code>upper</code> の情報を使用したことを意味する。また、逆分散法を用いた結果は、先ほどの Mantel-Haenszel 法の結果とほぼ同じであることが出力されている。</p>
+<p><br></p>
+</div>
+</div>
+<div id="pooling-irr" class="section level4" number="4.2.3.2">
+<h4>
+<span class="header-section-number">4.2.3.2</span> 発生率比<a class="anchor" aria-label="anchor" href="#pooling-irr"><i class="fas fa-link"></i></a>
+</h4>
+<p>
+</p>
+<p>発生率 (incidence rate) に基づく効果量 (すなわち、発生率比、Chapter <a href="effects.html#irr">3.3.3</a>) は、 <code>metainc</code> 関数を使用してプールすることが可能である。この関数の引数は <code>metabin</code> と非常によく似ている。</p>
+<ul>
+<li><p><strong><code>event.e</code></strong>: 治療・実験群におけるイベント数。</p></li>
+<li><p><strong><code>time.e</code></strong>: 治療・実験群におけるリスクパーソン時間。</p></li>
+<li><p><strong><code>event.c</code></strong>: 対照群におけるイベント数。</p></li>
+<li><p><strong><code>time.c</code></strong>: 対照群におけるリスクパーソン時間。</p></li>
+<li><p><strong><code>method</code></strong>: <code>metabin</code> と同様に、デフォルトのプール法は Mantel and Haenszel によるもの (<code>"MH"</code>) である。また、一般的な逆分散プーリング (<code>"Inverse"</code>) を利用することも可能である。</p></li>
+<li><p><strong><code>sm</code></strong>: 要約尺度を指定する。発生率比 (<code>"IRR"</code>) と発生率差 (<code>"IRD"</code>) のどちらかを選ぶことができる。</p></li>
+<li><p><strong><code>incr</code></strong>: ゼロセルの連続性補正のために追加したいインクリメント。</p></li>
+</ul>
+<p></p>
+<p><code>metabin</code> とは対照的に、 <code>metainc</code> はデフォルトでは連続性補正を使用しない。そのため、 <code>MH.exact</code> を <code>TRUE</code> として指定する必要はない。連続性補正は、一般的な逆分散プール法 (<code>method = "Inverse"</code>) を選択したときのみ行われる。</p>
+<p>今回の実践例では、 <code>EatingDisorderPrevention</code> データセットを使用する。このデータは、摂食障害の発生率に対する大学ベースの予防的介入の効果を検討したメタ分析に基づいている <span class="citation">(<a href="references.html#ref-harrer2020prevention">Harrer et al. 2020</a>)</span>。このデータセットでは、リスクのある人の時間は人-年として表現されている。</p>
+<div class="boxdmetar">
+<p>
+<strong>“EatingDisorderPrevention” データセット</strong>
+</p>
+<p>
+<code>EatingDisorderPrevention</code> のデータセットも
+<strong>{dmetar}</strong>
+パッケージに直接含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong>
+がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/eatingdisorderprevention.rda">インターネット</a>から
+<em>.rda</em>
+ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R
+Studio ウィンドウでクリックするとインポートすることができる。
+</p>
+</div>
+<p>いつものように、まずはデータを見てみよう。</p>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">EatingDisorderPrevention</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">EatingDisorderPrevention</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 5
+## Columns: 5
+## $ Author  &lt;chr&gt; "Stice et al., 2013", "Stice et al., 2017a", "Stice et al., 20…
+## $ event.e &lt;dbl&gt; 6, 22, 6, 8, 22
+## $ time.e  &lt;dbl&gt; 362, 235, 394, 224, 160
+## $ event.c &lt;dbl&gt; 16, 8, 9, 13, 29
+## $ time.c  &lt;dbl&gt; 356, 74, 215, 221, 159</code></pre>
+<p>
+</p>
+<p>効果量のデータのプールには <code>metainc</code> を用い、効果量の指標は発生率比とする。プールには Mantel-Haenszel 法を用い、研究間異質性分散の計算には Paule-Mandel 推定量を用いている。</p>
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.inc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metainc.html">metainc</a></span><span class="op">(</span>event.e <span class="op">=</span> <span class="va">event.e</span>, </span>
+<span>                 time.e <span class="op">=</span> <span class="va">time.e</span>,</span>
+<span>                 event.c <span class="op">=</span> <span class="va">event.c</span>,</span>
+<span>                 time.c <span class="op">=</span> <span class="va">time.c</span>,</span>
+<span>                 studlab <span class="op">=</span> <span class="va">Author</span>,</span>
+<span>                 data <span class="op">=</span> <span class="va">EatingDisorderPrevention</span>,</span>
+<span>                 sm <span class="op">=</span> <span class="st">"IRR"</span>,</span>
+<span>                 method <span class="op">=</span> <span class="st">"MH"</span>,</span>
+<span>                 fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                 random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 method.tau <span class="op">=</span> <span class="st">"PM"</span>,</span>
+<span>                 hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Eating Disorder Prevention"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.inc</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Eating Disorder Prevention
+## 
+##                        IRR           95%-CI %W(random)
+## Stice et al., 2013  0.3688 [0.1443; 0.9424]       13.9
+## Stice et al., 2017a 0.8660 [0.3855; 1.9450]       18.7
+## Stice et al., 2017b 0.3638 [0.1295; 1.0221]       11.5
+## Taylor et al., 2006 0.6071 [0.2516; 1.4648]       15.8
+## Taylor et al., 2016 0.7539 [0.4332; 1.3121]       40.0
+## 
+## Number of studies: k = 5
+## Number of events: e = 139
+## 
+##                         IRR           95%-CI     t p-value
+## Random effects model 0.6223 [0.3955; 0.9791] -2.91  0.0439
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0 [0.0000; 1.1300]; tau = 0 [0.0000; 1.0630]
+##  I^2 = 0.0% [0.0%; 79.2%]; H = 1.00 [1.00; 2.19]
+## 
+## Test of heterogeneity:
+##     Q d.f. p-value
+##  3.34    4  0.5033
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Paule-Mandel estimator for tau^2
+## - Q-Profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model (df = 4)</code></pre>
+<p>プールされた効果は IRR = 0.62 であることがわかる。この効果は、前の例よりも従来の有意水準にやや近いとはいえ、有意である (<span class="math inline">\(p=\)</span> 0.04)。プール効果に基づき、予防的介入は1年以内の摂食障害の発生を38%減少させたと言うことが可能である。最後に、異質性分散 <span class="math inline">\(\tau^2\)</span> の推定値が0であることがわかる。</p>
+<p><br></p>
+</div>
+</div>
+<div id="pooling-cor" class="section level3" number="4.2.4">
+<h3>
+<span class="header-section-number">4.2.4</span> 相関関係<a class="anchor" aria-label="anchor" href="#pooling-cor"><i class="fas fa-link"></i></a>
+</h3>
+<p>
+</p>
+<p>相関は <code>metacor</code> 関数を用いてプールすることができ、これは一般的な逆分散プーリング法を用いる。Chapter <a href="effects.html#pearson-cors">3.2.3.1</a> では、相関をプールする前に Fisher’s <span class="math inline">\(z\)</span> 変形が必要であることを説明した。デフォルトでは、 <code>metacor</code> がこの変換を自動的に行ってくれる。したがって、この関数には、研究で報告されたオリジナルの未変換の相関を与えれば十分である。 <code>metacor</code> 関数には、関数固有の引数が2つだけある。</p>
+<ul>
+<li>
+<strong><code>cor</code></strong>. (変換前の) 相関係数。</li>
+<li>
+<strong><code>n</code></strong>. 調査における観測数。</li>
+</ul>
+<p><code>metacor</code> の機能を説明するために、 <code>HealthWellbeing</code> のデータセットを使用する。このデータセットは、健康と幸福の関連性を調べた大規模なメタ分析に基づいている <span class="citation">(<a href="references.html#ref-ngamaba2017strongly">Ngamaba, Panagioti, and Armitage 2017</a>)</span>。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“HealthWellbeing” データセット</strong>
+</p>
+<p>
+<code>HealthWellbeing</code> のデータセットも
+<strong>{dmetar}</strong>
+パッケージに直接含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが利用できる。
+</p>
+<p>
+もし、<strong>{dmetar}</strong> がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/healthwellbeing.rda">インターネット</a>から
+<em>.rda</em>
+ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R
+Studio ウィンドウでクリックするとインポートすることができる。
+</p>
+</div>
+<p>それでは、データを見てみよう。</p>
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">HealthWellbeing</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">HealthWellbeing</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 29
+## Columns: 5
+## $ author     &lt;chr&gt; "An, 2008", "Angner, 2013", "Barger, 2009", "Doherty, 2013"…
+## $ cor        &lt;dbl&gt; 0.620, 0.372, 0.290, 0.333, 0.730, 0.405, 0.292, 0.388, 0.3…
+## $ n          &lt;dbl&gt; 121, 383, 350000, 1764, 42331, 112, 899, 870, 70, 67, 246, …
+## $ population &lt;chr&gt; "general population", "chronic condition", "general populat…
+## $ country    &lt;chr&gt; "South Korea", "USA", "USA", "Ireland", "Poland", "Australi…</code></pre>
+<p></p>
+<p>このメタ分析では、研究間の異質性がかなり高いと予想されるため、ランダム効果モデルを採用する。また、<span class="math inline">\(\tau^2\)</span>は制限付き最尤推定量を用いている。</p>
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.cor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metacor.html">metacor</a></span><span class="op">(</span>cor <span class="op">=</span> <span class="va">cor</span>, </span>
+<span>                 n <span class="op">=</span> <span class="va">n</span>,</span>
+<span>                 studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                 data <span class="op">=</span> <span class="va">HealthWellbeing</span>,</span>
+<span>                 fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                 random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 method.tau <span class="op">=</span> <span class="st">"REML"</span>,</span>
+<span>                 hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Health and Wellbeing"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.cor</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Health and Wellbeing
+##                        COR           95%-CI %W(random)
+## An, 2008            0.6200 [0.4964; 0.7189]        2.8
+## Angner, 2013        0.3720 [0.2823; 0.4552]        3.4
+## Barger, 2009        0.2900 [0.2870; 0.2930]        3.8
+## Doherty, 2013       0.3330 [0.2908; 0.3739]        3.7
+## Dubrovina, 2012     0.7300 [0.7255; 0.7344]        3.8
+## Fisher, 2010        0.4050 [0.2373; 0.5493]        2.8
+## [...]
+## 
+## Number of studies combined: k = 29
+## Number of observations: o = 853794
+## 
+##                         COR           95%-CI     t  p-value
+## Random effects model 0.3632 [0.3092; 0.4148] 12.81 &lt; 0.0001
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.0241 [0.0141; 0.0436]; tau = 0.1554 [0.1186; 0.2088];
+##  I^2 = 99.8% [99.8%; 99.8%]; H = 24.14 [23.29; 25.03]
+## 
+## Test of heterogeneity:
+##         Q d.f. p-value
+##  16320.87   28       0
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Restricted maximum-likelihood estimator for tau^2
+## - Q-profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model
+## - Fisher's z transformation of correlations</code></pre>
+<p>プールされた健康と幸福の関連は <span class="math inline">\(r=\)</span> 0.36 であり、この効果は有意であることがわかる (<span class="math inline">\(p&lt;\)</span> 0.001)。Cohen の法則に従えば、これは中程度のサイズの相関とみなすことができる。</p>
+<p>出力では、 <code>metacor</code> がすでに Fisher’s <span class="math inline">\(z\)</span> 変換された相関を元の形式に再変換している。しかし、詳細セクションの最後の行を見ると、確かに <span class="math inline">\(z\)</span> 値が効果をプールするために使用されていることがわかる。最後に、このメタ分析で推定された異質性分散は、0より有意に大きいことがわかる。</p>
+<p><br></p>
+</div>
+<div id="pooling-mean" class="section level3" number="4.2.5">
+<h3>
+<span class="header-section-number">4.2.5</span> プール平均<a class="anchor" aria-label="anchor" href="#pooling-mean"><i class="fas fa-link"></i></a>
+</h3>
+<p></p>
+<p>平均のメタ分析は、 <code>metamean</code> 関数を用いて行うことが可能である。この関数は、データをプールするために一般的な逆分散法を使用する。 <code>metamean</code> を使用する場合、まず、生の平均値と対数変換された平均値のどちらでメタ分析を行うかを決定する必要がある。</p>
+<p>オッズ比やリスク比とは対照的に、平均の対数変換は通常必要ない。しかし、非負の量 (例えば、身長) の平均を扱うときや、いくつかの平均がゼロに近いときには、変換を使用することが推奨される。これは <code>sm</code> 引数で制御される。<code>sm = "MRAW"</code> と設定すると、生の平均がプールされる。<code>sm = "MLN"</code> とすると、対数変換が行われる。関数固有の引数は以下の通りである。</p>
+<ul>
+<li>
+<strong><code>n</code></strong>: 観測数。</li>
+<li>
+<strong><code>mean</code></strong>: 平均値。</li>
+<li>
+<strong><code>sd</code></strong>: 平均の標準偏差。</li>
+<li>
+<strong><code>sm</code></strong>: プーリングに使用する要約尺度の種類 (上記参照)。</li>
+</ul>
+<p>今回の実践例では、 <code>BdiScores</code> データセットを使用する。このデータセットには、心理療法や抗うつ剤の治験に参加しているうつ病患者のサンプルで測定された Beck Depression Inventory II <span class="citation">(<a href="references.html#ref-beck1996beck">Beck, Steer, and Brown 1996</a>)</span> の平均スコアが含まれている <span class="citation">(<a href="references.html#ref-furukawa2020translating">Furukawa et al. 2020</a>)</span>。</p>
+<p></p>
+<div class="boxinfo">
+<p>
+<strong>“BdiScores” データセット</strong>
+</p>
+<p>
+<code>BdiScores</code> のデータセットも <strong>{dmetar}</strong>
+パッケージに直接含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong>
+がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/bdiscores.rda">インターネット</a>から
+<em>.rda</em>
+ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R
+Studio ウィンドウでクリックするとインポートすることができる。
+</p>
+</div>
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">BdiScores</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 最初の４列だけ必要</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">BdiScores</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 6
+## Columns: 4
+## $ author &lt;chr&gt; "DeRubeis, 2005", "Dimidjian, 2006", "Dozois, 2009", "Lesperanc…
+## $ n      &lt;dbl&gt; 180, 145, 48, 142, 301, 104
+## $ mean   &lt;dbl&gt; 32.6, 31.9, 28.6, 30.3, 31.9, 29.8
+## $ sd     &lt;dbl&gt; 9.4, 7.4, 9.9, 9.1, 9.2, 8.6</code></pre>
+<p>ここでの目標は、この研究のコレクションに基づいて、全体の平均的なうつ病スコアを計算することである。ランダム効果モデルと制限付き最尤推定量を使って、データセット内の生の平均をプールする。その結果を <code>m.mean</code> というオブジェクトに保存する。</p>
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metamean.html">metamean</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>,</span>
+<span>                   mean <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>                   sd <span class="op">=</span> <span class="va">sd</span>,</span>
+<span>                   studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                   data <span class="op">=</span> <span class="va">BdiScores</span>,</span>
+<span>                   sm <span class="op">=</span> <span class="st">"MRAW"</span>,</span>
+<span>                   fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                   random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   method.tau <span class="op">=</span> <span class="st">"REML"</span>,</span>
+<span>                   hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   title <span class="op">=</span> <span class="st">"BDI-II Scores"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.mean</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     BDI-II Scores
+## 
+##                     mean             95%-CI %W(random)
+## DeRubeis, 2005   32.6000 [31.2268; 33.9732]       18.0
+## Dimidjian, 2006  31.9000 [30.6955; 33.1045]       19.4
+## Dozois, 2009     28.6000 [25.7993; 31.4007]        9.1
+## Lesperance, 2007 30.3000 [28.8033; 31.7967]       17.0
+## McBride, 2007    31.9000 [30.8607; 32.9393]       20.7
+## Quilty, 2014     29.8000 [28.1472; 31.4528]       15.8
+## 
+## Number of studies: k = 6
+## Number of observations: o = 920
+## 
+##                         mean             95%-CI
+## Random effects model 31.1221 [29.6656; 32.5786]
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 1.0937 [0.0603; 12.9913]; tau = 1.0458 [0.2456; 3.6043]
+##  I^2 = 64.3% [13.8%; 85.2%]; H = 1.67 [1.08; 2.60]
+## 
+## Test of heterogeneity:
+##      Q d.f. p-value
+##  14.00    5  0.0156
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Restricted maximum-likelihood estimator for tau^2
+## - Q-Profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp adjustment for random effects model (df = 5)
+## - Untransformed (raw) means</code></pre>
+<p>ランダム効果モデルを仮定したプール平均は <span class="math inline">\(m\)</span> = 31.12である。また、このメタ分析における研究間異質性分散 <span class="math inline">\(\tau^2\)</span> は、0より有意に大きいことがわかる。</p>
+<p><br></p>
+</div>
+<div id="pooling-props" class="section level3" number="4.2.6">
+<h3>
+<span class="header-section-number">4.2.6</span> 割合<a class="anchor" aria-label="anchor" href="#pooling-props"><i class="fas fa-link"></i></a>
+</h3>
+<p>
+</p>
+<p><code>metaprop</code> 関数は、割合のプールに使用することが可能である。Chapter <a href="effects.html#props">3.2.2</a>で、メタ分析を行う前に割合を logit 変換しておくとよいことを既に説明した。<code>sm = "PLOGIT"</code> を指定すると、 <code>metaprop</code> 関数が自動的にこれを行う。もし、生の比率をプールしたい場合は、 <code>sm = "PRAW"</code> を使用することができるが、これは推奨されていないことを覚えていただきたい。</p>
+<p></p>
+<p><code>metaprop</code> が割合のプールを行うデフォルトの方法は、少々特殊である。logit 変換された値を使用する場合、この関数はプールのために逆分散法を使用せず、<strong>一般化線形混合効果モデル</strong> (generalized linear mixed-effects model, GLMM) を構築する。基本的には、この関数はロジスティック回帰モデルをデータに当てはめ、真の効果量が研究間で異なるという事実を説明するために、ランダム効果を含んでいる。</p>
+<p>「混合効果モデル」という言葉を聞いたことがあるだろう。このようなモデルは、多くの研究分野の一次研究でよく使用されている。この章では、混合効果モデルの特殊な応用例であるサブグループ解析やメタ回帰について説明し、このテーマをもう少し深く掘り下げていきる。しかし、今のところ、混合効果モデルとは何かという一般的な考え方を理解しておけば十分である。</p>
+<p>混合効果モデルは、「固定」成分と「ランダム」成分の両方を含む回帰モデルである。固定要素は、<span class="math inline">\(\beta\)</span> <strong>重み</strong>である。非常に単純な回帰モデルでは、切片 <span class="math inline">\({\beta_0}\)</span> と回帰項 <span class="math inline">\({\beta_1}x\)</span> の2つの <span class="math inline">\(\beta\)</span> 項が含まれる。これらを組み合わせて、他の量 <span class="math inline">\(x\)</span> を通じて観測データ <span class="math inline">\(y\)</span> を予測する。この予測は完全とは言い難く、ランダムな誤差 <span class="math inline">\(\epsilon_i\)</span> が残る。これを合わせると、次のような式になる。</p>
+<p><span class="math display" id="eq:pes16">\[\begin{equation}
+{y}_i = {\beta_0} + {\beta_1}x_i +  \epsilon_i
+\tag{4.16}
+\end{equation}\]</span></p>
+<p>重要なのは、この式の<span class="math inline">\(\beta\)</span> 重みの値は各観測 <span class="math inline">\(i\)</span> で同じままであることである。<span class="math inline">\(x\)</span> の値は観測ごとに変わるだろうが、<span class="math inline">\(\beta_0\)</span> と <span class="math inline">\(\beta_1\)</span> は固定なので変わることはない。</p>
+<p>この回帰式は、ランダム効果を加えると<strong>混合</strong>効果モデルになる。このランダム効果項を <span class="math inline">\(u_i\)</span> と表記する。添え字 <span class="math inline">\(i\)</span> で示すように、ランダム効果項は各オブザベーションで異なる値を持つことができる。<span class="math inline">\(u_i\)</span> 項は0を中心とし、固定効果による推定値を増加させたり、減少させたりすることができる。</p>
+<p><span class="math display" id="eq:pes17">\[\begin{equation}
+{y}_i = {\beta_0} + {\beta_1}x_i + u_i + \epsilon_i
+\tag{4.17}
+\end{equation}\]</span></p>
+<p>メタ分析は、このモデルの特殊なタイプで、<span class="math inline">\(\beta_1x_i\)</span> 項が存在しないものと見なすことができる。このモデルは切片 <span class="math inline">\(\beta_0\)</span> のみを含み、これはランダム効果モデルにおける全体の効果量 <span class="math inline">\(\mu\)</span> に相当する。<span class="math inline">\(u_i\)</span> と <span class="math inline">\(\epsilon_i\)</span> の部分は、メタ分析における <span class="math inline">\(\zeta_k\)</span> と <span class="math inline">\(\epsilon_k\)</span> の誤差項に相当する。このことから、メタ分析は混合効果回帰モデルと等価であることがわかる。しかし、この混合効果モデルには切片とそれに連なるランダム効果しか含まれていない。二項ロジットリンクを用いると<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;研究 &lt;span class="math inline"&gt;\(k\)&lt;/span&gt; の logit 変換は、&lt;span class="math inline"&gt;\(\theta_k^{\text{LO}}=\log_e\left(\frac{p_k}{1-p_k}\right)\)&lt;/span&gt;と定義される。&lt;span class="math inline"&gt;\(u_k \sim \mathcal{N}(0, \tau^2)\)&lt;/span&gt;　を用いて、&lt;span class="math inline"&gt;\(\theta_k^{\text{LO}} \sim \theta+u_k\)&lt;/span&gt; と導かれる。割合のメタ分析 GLMM では、ある研究のイベント数 (&lt;span class="math inline"&gt;\(a_k\)&lt;/span&gt;) が二項分布に従うと仮定する: &lt;span class="math inline"&gt;\(a_k \sim \text{B}\left(n_k, \frac{\exp(\theta_k^{\text{LO}})}{1+ \exp(\theta_k^{\text{LO}})}\right)\)&lt;/span&gt;。より詳しい説明は &lt;span class="citation"&gt;Schwarzer et al. (&lt;a href="references.html#ref-schwarzer2019seriously"&gt;2019&lt;/a&gt;)&lt;/span&gt;, A.2.2. を参照&lt;/p&gt;'><sup>26</sup></a>、したがって、(一般化) ロジスティック混合効果モデルを適用してプール効果を推定することが可能である。</p>
+<p>GLMM は割合だけでなく、オッズ比や発生率比のような二値やカウントデータに基づく他のアウトカム指標にも適用できる <span class="citation">(<a href="references.html#ref-stijnen2010random">Stijnen, Hamza, and Özdemir 2010</a>)</span> 。GLMMは二値アウトカムデータのメタ分析に普遍的に推奨されているわけではないが <span class="citation">(<a href="references.html#ref-bakbergenuly2018meta">Bakbergenuly and Kulinskaya 2018</a>)</span> 、割合についてはその使用が提唱されている <span class="citation">(<a href="references.html#ref-schwarzer2019seriously">Schwarzer et al. 2019</a>)</span>。</p>
+<p></p>
+<p>GLMM を <code>metaprop</code> の一部として使用すると、次の3つの意味がある: (1) 出力は、各効果のメタ分析重みを表示しない、(2) <span class="math inline">\(\tau^2\)</span>推定量は <code>"ML"</code> にしか設定できない (最尤法を使用してGLMMを推定するので)、(3) <span class="math inline">\(\tau^2\)</span> の推定量の信頼区間が存在しなくなる。この情報が必要な場合は、逆分散メタ分析の実行に切り替えることが可能である。 <code>metaprop</code> には、5つの関数固有の引数がある。</p>
+<ul>
+<li><p><strong><code>event</code></strong>. イベント数。</p></li>
+<li><p><strong><code>n</code></strong>. 観測数。</p></li>
+<li><p><strong><code>method</code></strong>. プーリング手法。GLMM (<code>method = "GLMM"</code>) あるいは逆 (Inverse) 分散プーリング (<code>method = "Inverse"</code>) のいずれかを指定することができる。</p></li>
+<li><p><strong><code>incr</code></strong>. ゼロセルでの連続性補正のために追加される増分。これは、逆分散プーリングが使用される場合にのみ関係する。</p></li>
+<li><p><strong><code>sm</code></strong>. 使用する要約尺度を指定する。<code>sm = "PLOGIT"</code> (デフォルト)とすることで、logit 変換された比率を使用することが推奨される。</p></li>
+</ul>
+<p><code>metaprop</code> 関数の説明のために、 <code>OpioidMisuse</code> データセットを使用することにする。このデータは、米国の青年・若年成人における処方オピオイドの誤用12ヶ月有病率を調査したメタ分析から得られたものである <span class="citation">(<a href="references.html#ref-jordan2017past">Jordan et al. 2017</a>)</span>。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“OpioidMisuse” データセット</strong>
+</p>
+<p>
+<code>OpioidMisuse</code> のデータセットも <strong>{dmetar}</strong>
+パッケージに直接含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong>
+がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/opioidmisuse.rda">インターネット</a>から
+<em>.rda</em>
+ファイルとしてデータセットをダウンロードして作業ディレクトリに保存し、R
+Studio ウィンドウでクリックするとインポートすることができる。
+</p>
+</div>
+<p>データセットをロードして見てみよう。</p>
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/meta/">meta</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">OpioidMisuse</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">OpioidMisuse</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 15
+## Columns: 3
+## $ author &lt;chr&gt; "Becker, 2008", "Boyd, 2009", "Boyd, 2007", "Cerda, 2014", "Fie…
+## $ event  &lt;dbl&gt; 2186, 91, 126, 543, 6496, 10850, 86, 668, 843, 647, 11521, 1111…
+## $ n      &lt;dbl&gt; 21826, 912, 1084, 7646, 55215, 114783, 527, 9403, 11274, 8888, …</code></pre>
+<p>GLMM と logit 変換された割合を用いて有病率データをプールする。</p>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/meta/man/metaprop.html">metaprop</a></span><span class="op">(</span>event <span class="op">=</span> <span class="va">event</span>,</span>
+<span>                   n <span class="op">=</span> <span class="va">n</span>,</span>
+<span>                   studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                   data <span class="op">=</span> <span class="va">OpioidMisuse</span>,</span>
+<span>                   method <span class="op">=</span> <span class="st">"GLMM"</span>,</span>
+<span>                   sm <span class="op">=</span> <span class="st">"PLOGIT"</span>,</span>
+<span>                   fixed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                   random <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   hakn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   title <span class="op">=</span> <span class="st">"Opioid Misuse"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.prop</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Opioid Misuse
+##                proportion           95%-CI
+## Becker, 2008       0.1002 [0.0962; 0.1042]
+## Boyd, 2009         0.0998 [0.0811; 0.1211]
+## Boyd, 2007         0.1162 [0.0978; 0.1368]
+## Cerda, 2014        0.0710 [0.0654; 0.0770]
+## Fiellin, 2013      0.1176 [0.1150; 0.1204]
+## [...]
+## 
+## 
+## Number of studies combined: k = 15
+## Number of observations: o = 434385
+## Number of events: e = 41364
+## 
+##                      proportion           95%-CI
+## Random effects model     0.0944 [0.0836; 0.1066]
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.0558; tau = 0.2362; I^2 = 98.3% [97.9%; 98.7%]; H = 7.74 [6.92; 8.66]
+## 
+## Test of heterogeneity:
+##       Q d.f.  p-value             Test
+##  838.21   14 &lt; 0.0001        Wald-type
+##  826.87   14 &lt; 0.0001 Likelihood-Ratio
+## 
+## Details on meta-analytical method:
+## - Random intercept logistic regression model
+## - Maximum-likelihood estimator for tau^2
+## - Hartung-Knapp adjustment for random effects model
+## - Logit transformation
+## - Clopper-Pearson confidence interval for individual studies</code></pre>
+<p>出力では、選択された研究における処方オピオイドの誤用のプールされた12ヶ月の有病率は9.4％であり、信頼区間の範囲は8.36から10.66％であることがわかる。</p>
+<p>前述したように、この出力には各効果の個別の重みが表示されていない。同じように、研究間の異質性の推定値 (<span class="math inline">\(\tau^2 =\)</span> 0.056) が得られるが、その周りの信頼区間はない。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span>
+<br></p>
+</div>
+</div>
+<div id="演習問題-3" class="section level2" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-3"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+固定効果モデルとランダム効果モデルの違いは何か？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+固定効果モデルとランダム効果モデルの結果が同じになるケースは考えられるか。
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+<span class="math inline"><span class="math inline">\(\tau^2\)</span></span>
+とは何か？どのように推定するのか？
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+Knapp-Hartung
+の調整はどの分布に基づいているか？どのような効果があるか？
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+「逆分散」 (inverse-variance)
+プーリングとはどういう意味か？この方法が最適解でないのはどのような場合か？
+</li>
+</ol>
+<ol start="6" style="list-style-type: decimal">
+<li>
+二値アウトカムデータをメタ分析したい。試験群の観察数はほぼ同じで、観察された事象は非常にまれで、治療効果が大きくなることは期待できない。どのようなプール方法を使用するか？
+</li>
+</ol>
+<ol start="7" style="list-style-type: decimal">
+<li>
+GLMM はどのようなアウトカム指標に使用できるのか。
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda4">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="要約" class="section level2" number="4.4">
+<h2>
+<span class="header-section-number">4.4</span> 要約<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>統計学において、モデルは、観測されたデータが生成された過程を記述する、簡略化された「理論」と見なすことができる。メタ分析には、固定効果モデルとランダム効果モデルの2つのモデルがある。</p></li>
+<li><p>固定効果モデルが真の効果量が1つであることを仮定しているのに対し、ランダム効果モデルは真の効果量がメタ分析内でも変化することを述べている。したがって、ランダム効果モデルの目的は、データの根底にある真の効果量の分布の平均を見つけることである。</p></li>
+<li><p>ランダム効果メタ分析では、真の効果量の分散 <span class="math inline">\(\tau^2\)</span> (研究間異質性分散とも呼ばれる) を推定する必要がある。これにはいくつかの方法があり、どれが一番効果的かは文脈によって異なる。</p></li>
+<li><p>プール効果量を計算する最も一般的な方法は、逆分散法である。しかし、二値アウトカム・データでは、Mantel-Haenszel 法のような他のアプローチが望ましい場合がある。</p></li>
+<li><p><strong>{meta}</strong> パッケージには、事前に計算された効果量データのメタ分析を行う関数と、さまざまな種類の「生の」アウトカムデータに対して使用できる関数群がある。</p></li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="effects.html"><span class="header-section-number">3</span> 効果量</a></div>
+<div class="next"><a href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#pooling-es"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li>
+<a class="nav-link" href="#fem-rem"><span class="header-section-number">4.1</span> 固定効果モデルとランダム効果モデルの比較</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#fem"><span class="header-section-number">4.1.1</span> 固定効果モデルの場合</a></li>
+<li><a class="nav-link" href="#rem"><span class="header-section-number">4.1.2</span> ランダム効果モデル</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#pooling-es-r"><span class="header-section-number">4.2</span> R で効果量をプール</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#pre-calculated-es"><span class="header-section-number">4.2.1</span> 事前算出された効果量のデータ</a></li>
+<li><a class="nav-link" href="#pooling-smd"><span class="header-section-number">4.2.2</span> (標準化) 平均差</a></li>
+<li><a class="nav-link" href="#%E4%BA%8C%E5%80%A4%E3%82%A2%E3%82%A6%E3%83%88%E3%82%AB%E3%83%A0"><span class="header-section-number">4.2.3</span> 二値アウトカム</a></li>
+<li><a class="nav-link" href="#pooling-cor"><span class="header-section-number">4.2.4</span> 相関関係</a></li>
+<li><a class="nav-link" href="#pooling-mean"><span class="header-section-number">4.2.5</span> プール平均</a></li>
+<li><a class="nav-link" href="#pooling-props"><span class="header-section-number">4.2.6</span> 割合</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-3"><span class="header-section-number">4.3</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84"><span class="header-section-number">4.4</span> 要約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

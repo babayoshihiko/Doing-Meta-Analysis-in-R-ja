@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>7 サブグループ解析 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="C hapter 5 では、研究間異質性の概念と、それがメタ分析においてなぜ重要であるかについて説明した。また、外れ値分析や影響力分析の一環として、どの研究が観察された異質性に寄与しているかを特定するための手法も学んだ。この分析では、純粋に統計学的な立場からメタ分析にアプローチする。データ中のかなりの異質性を「測定」し、その結果、統計的特性に合わない研究...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="7 サブグループ解析 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="C hapter 5 では、研究間異質性の概念と、それがメタ分析においてなぜ重要であるかについて説明した。また、外れ値分析や影響力分析の一環として、どの研究が観察された異質性に寄与しているかを特定するための手法も学んだ。この分析では、純粋に統計学的な立場からメタ分析にアプローチする。データ中のかなりの異質性を「測定」し、その結果、統計的特性に合わない研究...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="7 サブグループ解析 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="C hapter 5 では、研究間異質性の概念と、それがメタ分析においてなぜ重要であるかについて説明した。また、外れ値分析や影響力分析の一環として、どの研究が観察された異質性に寄与しているかを特定するための手法も学んだ。この分析では、純粋に統計学的な立場からメタ分析にアプローチする。データ中のかなりの異質性を「測定」し、その結果、統計的特性に合わない研究...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="active" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="subgroup" class="section level1" number="7">
+<h1>
+<span class="header-section-number">7</span> サブグループ解析<a class="anchor" aria-label="anchor" href="#subgroup"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/fassade.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">C</span>
+hapter <a href="heterogeneity.html#heterogeneity">5</a> では、研究間異質性の概念と、それがメタ分析においてなぜ重要であるかについて説明した。また、外れ値分析や影響力分析の一環として、どの研究が観察された異質性に寄与しているかを特定するための手法も学んだ。この分析では、純粋に統計学的な立場からメタ分析にアプローチする。データ中のかなりの異質性を「測定」し、その結果、統計的特性に合わない研究 (すなわち、外れ値や影響力のある研究) を除外して、モデルの頑健性を向上させる。</p>
+<p>
+</p>
+<p>この方法は、<strong>post hoc</strong> な手続きと見なすことができる。外れ値や影響力の分析は、データを見た<strong>後</strong>に行われ、多くの場合、見つけた結果の<strong>ために</strong>行われるのである。また、データそのもの以外のものには注意を払わない。影響力分析の方法論は、ある研究がモデルの予測に適切に沿わないことを教えてくれるとしても、それが<strong>なぜ</strong>なのかは教えてくれない。原因は、この研究がわずかに異なる研究手法や治療法を用いているからかもしれない。しかし、このことは研究の影響力だけではわからないのである。</p>
+<p>ある治療法の効果を調べるためにメタ分析を行うとする。その結果、全体としてその治療には効果がないことが分かったとする。しかし、大きな治療効果が認められた研究が 3 つあるとしよう。これらの研究を影響力分析で検出することは可能だろうが、なぜその研究が影響力があるのかはわからない。この 3 つの研究では、他のすべての研究で使用された治療法とわずかに異なる治療法が使用され、この小さなディテールが治療効果に大きな影響を与えたということがあり得るのである。これは画期的な発見だろう。しかし、外れ値解析や影響力分析だけではできない発見である。</p>
+<p>
+</p>
+<p>このことから、データから特定の異質性パターンを見出すためには、別のアプローチが必要であることは明らかである。<strong>サブグループ解析</strong>は、これを行うための一つの方法であり、<strong>モデレータ分析</strong>とも呼ばれる。ある種の研究が、なぜ他の研究よりも低い効果や高い効果をもたらすのかを説明し、特定の仮説を検証することが可能である。</p>
+<p>Chapter <a href="intro.html#analysis-plan">1.4.2</a> で学んだように、サブグループ検定は <strong>a priori</strong> で定義されるべきである。メタ分析を始める前に、観察された効果量に影響を与える可能性のあるさまざまな研究特性を定義し、それに従って各研究をコーディングする必要がある。効果量が異なる理由は無数にあるが、分析の文脈上、重要なものに限定すべきである。</p>
+<p>例として、ある種の薬が他の薬より高い効果をもたらすかどうかを調べることができる。あるいは、追跡期間が短い研究と長い研究を比較することもできる。また、研究が実施された文化的地域によって、観察された効果が異なるかどうかを調べることも可能である。メタ分析では、その分野に特化した専門知識があると、その分野の他の科学者や実務者に実際に関連する質問を見つけることができることがある。</p>
+<p>サブグループ解析の背景にある考え方は、メタ分析が平均的な効果量を計算するだけでなく、エビデンスのばらつきを調べるツールにもなり得るということである。サブグループ解析では、異質性を単に厄介なものとしてではなく、科学的仮説によって説明できるか否かという興味深い変動としてとらえる。最良の場合、これは私たちを取り巻く世界の理解を深めるものとなる。そうでなくとも、少なくとも将来の意思決定の指針となる実用的な洞察を生み出すものとなる。</p>
+<p>この章では、サブグループ解析の背後にある統計モデルと、 <em>R</em> で直接サブグループ解析を行う方法について説明する。</p>
+<p><br></p>
+<div id="fixed-effect-plural" class="section level2" number="7.1">
+<h2>
+<span class="header-section-number">7.1</span> 固定効果 (複数) モデル<a class="anchor" aria-label="anchor" href="#fixed-effect-plural"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>サブグループ解析では、メタ分析に含まれる研究は、1 つの総体的集団から生じているのではないと仮定する。その代わりに、異なる<strong>サブグループ</strong>に分類され、各サブグループが独自の真の全体効果を持つと仮定する。研究の目的としては、サブグループ間の効果量に差がないという帰無仮説を棄却することになる。</p>
+<p>サブグループ解析の計算は、2 つの部分からなる。まず、各サブグループでの効果をプールする。その後、統計的検定 を用いて、各サブグループの効果を比較する <span class="citation">(<a href="references.html#ref-borenstein2013meta">Borenstein and Higgins 2013</a>)</span> 。</p>
+<p><br></p>
+<div id="サブグループにおける効果のプール化" class="section level3" number="7.1.1">
+<h3>
+<span class="header-section-number">7.1.1</span> サブグループにおける効果のプール化<a class="anchor" aria-label="anchor" href="#%E3%82%B5%E3%83%96%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%8A%B9%E6%9E%9C%E3%81%AE%E3%83%97%E3%83%BC%E3%83%AB%E5%8C%96"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>最初の部分は、サブグループなしのメタ分析 (Chapter <a href="pooling-es.html#fem-rem">4.1</a>) と同じ基準が適用されるので、かなり簡単である。もし、サブグループ内のすべての研究が同じ集団から発生し、1つの共有された真の効果を持つと仮定すると、固定効果モデルを使用することが可能である。前に述べたように、研究をより小さなグループに分割しても、実際にはこの仮定が成立しないことがよくある。</p>
+<p></p>
+<p>したがって、代替案は、ランダム効果モデルを使用することである。これは、サブグループ内の研究は、推定したい平均値を持つ母集団から抽出されると仮定する。通常のメタ分析との違いは、各サブグループごとに別々のランダム効果メタ分析を実施することである。論理的には、この結果、各サブグループ <span class="math inline">\(g\)</span> のプール効果 <span class="math inline">\(\hat\mu_g\)</span> が得られる。</p>
+<p></p>
+<p>各サブグループはそれぞれ個別のメタ分析を受けるので、<span class="math inline">\(\tau^2\)</span> 異質性の推定値もサブグループごとに異なる。しかし実際には、個々の異質性の値 <span class="math inline">\(\hat\tau^2_g\)</span> は、サブグループ間でプールされた <span class="math inline">\(\tau^2\)</span> に置き換えられることが多いようである。</p>
+<p>つまり、すべてのサブグループが研究間の異質性の<strong>共通の</strong>推定値を共有すると仮定することになる。これは、実用的な理由で行われることがほとんどである。サブグループ内の研究数が少ない場合、例えば <span class="math inline">\(k_g \leq 5\)</span> <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 19</a>)</span> の場合、<span class="math inline">\(\tau^2\)</span> の推定値が不正確になる可能性がある。この場合、1 つのサブグループにおける研究間異質性の非常に不正確な推定値に頼るよりも、すべてのサブグループで使用するプールされた <span class="math inline">\(\tau^2\)</span> を計算する方がよいだろう。</p>
+<p><br></p>
+</div>
+<div id="comparing-the-subgroup-effects" class="section level3" number="7.1.2">
+<h3>
+<span class="header-section-number">7.1.2</span> サブグループ効果の比較<a class="anchor" aria-label="anchor" href="#comparing-the-subgroup-effects"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>次のステップでは、<span class="math inline">\(G\)</span> 件のサブグループ間に <strong>真の</strong>差があるかどうかを評価する。この仮定は、サブグループが異なっていること、つまり、少なくとも 1 つのサブグループが研究の異なる集団の一部であることを意味する。</p>
+<p>これをテストするエレガントな方法は、サブグループのプール効果が、実は<strong>1つの大規模研究</strong>の<strong>観察された効果量</strong>に過ぎないというふりをすることである <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011</a>、chap. 19 参照)</span>。例えば、<span class="math inline">\(G=3\)</span> のサブグループ解析を行う場合、3 つの大きな研究の観察された効果量 (および標準誤差) を計算したふりをするのである。</p>
+<p>このようにサブグループを見ると、通常のメタ分析の異質性を評価するときに直面する質問と非常に似ていることがわかる。効果量の差が、サンプルエラーによってのみ存在するのか、それとも効果量の<strong>真の</strong>差によって存在するのかを知りたいと思っている。</p>
+<p></p>
+<p>したがって、サブグループの差が、サンプル誤差だけでは説明できないほど大きいかどうかを判断するために、<span class="math inline">\(Q\)</span> の値を使用する。サブグループ効果が<strong>観察された</strong>効果量であると仮定して、<span class="math inline">\(Q\)</span> の値を計算する。この観察された <span class="math inline">\(Q\)</span> の値は、<span class="math inline">\(\chi^2\)</span> の分布と仮定した場合の期待値と比較され、この場合は自由度 <span class="math inline">\(G-1\)</span> である (Chapter <a href="heterogeneity.html#cochran-q">5.1.1</a>)。</p>
+<p><span class="math inline">\(Q\)</span> の観測値が期待値よりかなり大きい場合、<span class="math inline">\(Q\)</span> 検定の <span class="math inline">\(p\)</span> -値は有意になる。これは、サブグループ間の真の効果量に差があることを示す。この <span class="math inline">\(Q\)</span> 検定は、<strong>オムニバス検定</strong>である。これは、すべてのサブグループの効果量が等しいという帰無仮説を検定し、少なくとも 2 つのサブグループ、またはそれらの組み合わせが異なる場合に有意であることを示すものである。</p>
+<p>通常、サブグループ内の研究はランダム効果モデルに従ってふるまうと仮定するが、プールされたサブグループレベルでは状況は異なるように見える。Borenstein and Higgins <span class="citation">(<a href="references.html#ref-borenstein2013meta">2013</a>)</span> は、多くの分野で、分析するために選択したサブグループは、可能なサブグループの「宇宙」からランダムに抽出したものとは見なせず、調査したい特性の<strong>固定</strong>レベルを表していると論じている。例として、雇用形態を挙げる。雇用形態には、“employed” と “unemployed” という2つの固定されたサブグループがある。同じことが、例えば、特定の併存疾患を持つ患者と持たない患者における研究にも当てはまる。</p>
+<p>
+</p>
+<p>Borenstein and Higgins は、サブグループ解析のためのモデルを<strong>固定効果 (複数) モデル</strong> (fixed-effects (plural) model) と呼んでいる。「複数」という言葉がついているのは、標準的な固定効果モデル (fixed-effect model) と区別するためである。固定効果 (複数) モデルは、固定効果モデルとランダム効果モデルの両方の特徴を含むハイブリッドな生き物と見ることが可能である。ランダム効果モデルと同様に、データにはサブグループが存在するため、真の効果量は1つではないと仮定する。</p>
+<p>ただし、サブグループは、サブグループの全宇宙からのランダムな抽選とは見なさない。サブグループの水準は固定で、<strong>網羅的</strong>であり、一般化が必要ないことを意味する。これは、私たちがサブグループデータを生成するプロセスを固定効果「複数」モデルと呼ぶ理由を明確にする: なぜなら、<strong>複数</strong>の真の効果量が存在するが、真の効果量は、<strong>固定</strong>と仮定されるサブグループレベルを表しているからである。</p>
+<p>Borenstein ら <span class="citation">(<a href="references.html#ref-borenstein2011introduction">2011, chap. 19</a>)</span> は、「固定」という言葉が統計学では二つの意味を持つため、少し混乱しているように見えるかもしれないと論じている。従来のメタ分析では、「固定効果」という言葉は「共通効果」と同義に使われる。しかし、サブグループ解析の文脈では、「ランダムではない」ことを強調するために「固定効果」という言葉を使う。固定効果は、一般化することを目的とする包括的な分布の単なるランダムな現れではなく、変数が入ることができる<strong>現実</strong>かつ<strong>唯一</strong>のカテゴリである。</p>
+<p>Figure <a href="subgroup.html#fig:subgroups">7.1</a> は、サブグループ内の研究がランダム効果モデルに従うと仮定して、固定効果 (複数) モデルを可視化する。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:subgroups"></span>
+<img src="images/subgroups_sep.png" alt="サブグループ内でランダム効果モデルを想定した固定効果 (複数) モデルの可視化。" width="90%"><p class="caption">
+Figure 7.1: サブグループ内でランダム効果モデルを想定した固定効果 (複数) モデルの可視化。
+</p>
+</div>
+<div class="boxinfo">
+<p>
+<strong>水準が固定されたサブグループ変数の例</strong>
+</p>
+<ul>
+<li>
+<strong>年齢層</strong>: 小児、若年成人 (young
+adults)、成人、高齢者
+</li>
+</ul>
+<ul>
+<li>
+<strong>文化的背景</strong>: 西洋、非西洋
+</li>
+</ul>
+<ul>
+<li>
+<strong>対照群</strong>: 代替療法、最小限治療、治療なし
+</li>
+</ul>
+<ul>
+<li>
+<strong>アウトカム測定手法</strong>: 自己報告、専門家判断
+</li>
+</ul>
+<ul>
+<li>
+<strong>研究の質</strong>: 高、低、不明
+</li>
+</ul>
+<ul>
+<li>
+<strong>種</strong>: 植物、動物
+</li>
+</ul>
+<ul>
+<li>
+<strong>セッティング</strong>: 学校、病院、家庭
+</li>
+</ul>
+<p>
+サブグループの具体的な選択と定義は、メタアナリシスの目的と範囲に基づいて適合させることができ、またそうすべきであることに注意。
+</p>
+</div>
+<p>
+</p>
+<p>固定効果 (複数) モデルは、ランダム効果 (サブグループ内) と固定効果 (サブグループは固定されていると仮定されているため) の両方を含むので、文献上では<strong>混合効果モデル</strong> (mixed-effects model) としても知られている。Chapter <a href="pooling-es.html#pooling-props">4.2.6</a> ですでにこの用語に触れている。たとえば、割合をプールするために使用できる異なるタイプの (一般化) 混合効果モデルについて議論してきた。</p>
+<p>サブグループ解析に使用するモデルは、メタ分析でよく使用される他の手法と大きく関連している。Chapter <a href="metareg.html#metareg">8</a> では、サブグループ解析が単なる<strong>メタ分析</strong>の特殊なケースであり、そのために混合効果モデルも使用することを示す予定である。</p>
+<p></p>
+<p>さらに、サブグループの水準が固定であると仮定できない可能性もある。効果が観察された場所によって、効果の大きさが異なるかどうかを評価したいと想像してみよう。ある研究はイスラエルで、ある研究はイタリアで、ある研究はメキシコで、ある研究は中国本土で、効果を評価してきたとする。世界にはたくさんの国があり、国を水準数の固定された因子とはみなすことはできないため、「ランダム」な選択を含んでいることにする。</p>
+<p>この場合、サブグループを固定的にモデル化するのではなく、ランダム効果として国ごとのばらつきを推定するようにすることが理にかなっている。これは、Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で扱う<strong>マルチレベル・モデル</strong>につながる。</p>
+<p><br></p>
+</div>
+</div>
+<div id="limits-subgroup" class="section level2" number="7.2">
+<h2>
+<span class="header-section-number">7.2</span> サブグループ解析の限界と落とし穴<a class="anchor" aria-label="anchor" href="#limits-subgroup"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p>直感的には、サブグループ解析は、効果を弱める因子を検出するのに非常に優れたツールであると考えるかもしれない。結局のところ、メタ分析の目的は、利用可能なすべてのエビデンスを調査することである。これは、メタ分析で分析される個体の総数は、通常、一次研究のそれを桁違いに上回ることを意味した。</p>
+<p>しかし、残念ながら、この方法では、サブグループの違いを検出するための<strong>統計的検出力</strong>は必ずしも高くはない。これにはいくつかの理由がある <span class="citation">(<a href="references.html#ref-hedges2004power">L. V. Hedges and Pigott 2004</a>)</span>。</p>
+<ul>
+<li><p>まず、サブグループ解析では、サブグループ内の結果は通常ランダム効果モデルを使用してプールされることを覚えておこう。サブグループ内の研究間異質性が大きい場合、プール効果の精度が低下する (すなわち、標準誤差が増加する) ことになる。しかし、サブグループの効果推定値が非常に不正確な場合、これは、それらの信頼区間が大きく重なることを意味する。結果的に、たとえ差が存在するとしても、サブグループ間の有意差を見つけることを難しくする。</p></li>
+<li><p>同じように、サブグループ解析で検出したい効果は、通常のメタ分析よりもはるかに低いため、統計的検出力も低くなりがちである。例えば、あるアウトカムを<strong>自己報告</strong>と<strong>専門家の評価</strong>で評価する研究間で、効果に差があるかどうかを調べるとした。たとえ差があったとしても、それは非常に小さいものだろう。治療群と対照群の間に有意差を見出すことはしばしば可能である。しかし、<strong>研究間</strong>の効果量の差を検出することは、差が小さいため、通常より多くの統計的検出力が必要とされ、より困難である。</p></li>
+<li><p>上記の点から、重要な注意事項がある: <strong>エビデンスの欠如は、欠如のエビデンスではない</strong>。もし、サブグループ間の効果量に<strong>差がない</strong>としても、それは自動的にサブグループが<strong>同等の</strong>アウトカムをもたらすということにはならない。上で述べたように、私たちのサブグループ解析が、効果の真の差を確認するのに必要な統計的検出力を持たないかもしれない様々な理由があるのである。この場合、サブグループが同じ効果を持つと言うのは重大な誤訳である–私たちは、差が存在するかどうか単に知らないのである。このことは、ある治療法が他の治療法よりも優れているかどうかを評価したい場合に、特に問題となる。企業を含む一部の利害関係者は、しばしば治療の同等性を示すことに既得権益を有している。しかし、サブグループ解析は、通常、これを証明する適切な方法ではない。</p></li>
+<li><p>事前に<strong>サブグループ検出力分析</strong>を行うことで、サブグループ解析において統計的検出力が問題となるかどうかを確認することが可能である。このような分析では、サブグループ解析で検出できる最小の効果量の差を確認することが可能である。各種ツールの Chapter <a href="power.html#power-subgroup">14.3</a> では、 <em>R</em> でどのようにサブグループ検出力分析を行うことができるかを説明している。しかし、検出力分析は、せいぜい有用な診断として見られるだけで、私たちの分析の検出力が十分に高く、サブグループが同等であることを示す証明にはならないことに注意してみよう。Schwarzer ら <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 4.3</a>)</span> は、一般的な経験則として、サブグループ解析は、メタ分析が少なくとも <span class="math inline">\(K=\)</span> 10 件の研究を含むときにのみ意味をなすと言及している。</p></li>
+</ul>
+<p>サブグループ解析のもう一つの重要な限界は、純粋に観察的であることである <span class="citation">(<a href="references.html#ref-borenstein2013meta">Borenstein and Higgins 2013</a>)</span>。メタ分析には、参加者が治療群または対照群のいずれかにランダムに割り付けられたランダム化比較試験 (RCT) しか含まれていないことが多い。このような RCT は、適切に実施されれば、研究で観察された群間差を治療が<strong>引き起こした</strong>というエビデンスを提供することが可能である。これは、評価されたアウトカムに影響を与える可能性のあるすべての関連変数が 2 つのグループで等しいために言うことができる。唯一の違いは、一方のグループが治療を受け、もう一方のグループが受けなかったということである。</p>
+<p>サブグループ解析は、ランダム化された研究のみからなる場合でも、因果関係を示すことができない。サブグループ解析で、ある種の治療が他の治療より効果的であることがわかったとした。この発見が偽りかもしれない理由は無数にある；たとえば、治療 A を調査した研究では、治療 B を調査した研究とは別の対照群を使用していた可能性がある。これは、両方の治療が同じように有効である可能性があり、治療タイプが方法論の因子と<strong>交絡</strong> (confound) するので、違いを見ているだけだということである。この例は、サブグループ解析の結果を常に批判的に評価する必要があることを強調するものである。</p>
+<p>最後の重要な落とし穴は、サブグループの定義の仕方である。しばしば、<strong>集合的な情報</strong>に基づいて研究をサブグループに分類したくなることがある。Schwarzer ら <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 4.3</a>)</span> は、よくある例として、研究の平均年齢を挙げている。例えば、高齢者 (65歳以上) と一般成人との間で効果が異なるかどうかを評価したいとする。そこで、報告された平均年齢が65歳以上か以下かによって、研究をこの2つのカテゴリに分類する。</p>
+<p>もし、平均年齢の高いサブグループで効果が高いことがわかれば、直感的に、高齢者ほど効果が高いことを示していると考えるかもしれない。しかし、この推論には深い欠陥がある。一次研究の<strong>平均</strong>年齢が 65 歳以上である場合、それよりも<strong>若い</strong>個人の割合がかなり含まれている可能性がある。<strong>その逆もまた然り</strong>で、<strong>平均</strong>年齢が 65 歳<strong>より低い</strong>場合でも、65 歳<strong>より上</strong>の人が多く含まれている可能性は十分にあるのである。</p>
+<p>つまり、「高齢者」サブグループに見られる高い効果は、実際には 65 歳未満の個人によって<strong>のみ</strong>もたらされる可能性がある。逆に、「若い」サブグループでは、低い効果は 65 歳以上の研究対象者によってもたらされた可能性がある。</p>
+<p>このことは、逆説的な状況をもたらす。すなわち、全体レベルでは、平均年齢が高い研究ほど効果が高いことがわかる。しかし、個人レベルではその逆で、年齢が上がるにつれて効果は<strong>低く</strong>なる。</p>
+<p></p>
+<p>今述べたシナリオは、いわゆる<strong>生態学的バイアス</strong> <span class="citation">(<a href="references.html#ref-thompson2002should">S. G. Thompson and Higgins 2002</a>; <a href="references.html#ref-piantadosi1988ecological">Piantadosi, Byar, and Green 1988</a>)</span> によって引き起こされるものである。このバイアスは、個人 (<strong>ミクロ</strong>) レベルの関連を予測するために、集合体 (<strong>マクロ</strong>) レベルの関係を利用したいときに発生するものである。</p>
+<p>生態学的バイアスを回避する最善の方法は、サブグループ解析やメタ回帰において、集計情報を<strong>決して</strong>使用しないことである。しかし、ある研究の<strong>すべての</strong>個人が 1 つのカテゴリに分類されるとわかっている場合は、状況が違ってくる。例えば、18 歳未満の青少年<strong>のみ</strong>を対象としたいくつかの研究と、成人 (18 歳以上) <strong>のみ</strong>を対象としたいくつかの研究があれば、生態学的バイアスのリスクはほぼ排除される。しかし、効果の違いは、参加者の年齢ではなく、交絡変数によって引き起こされた可能性が残っている。</p>
+<div class="boxinfo">
+<p>
+<strong>サブグループ解析: やって良いことと悪いこと</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+サブグループ解析は統計的検出力に依存するため、研究数が小さい場合は通常実施する意味がない
+(つまり <span class="math inline"><span class="math inline">\(K\)</span></span> &lt; 10)。
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+サブグループ間の効果量に差がない場合、これは自動的にサブグループが<strong>同等な</strong>結果をもたらすことを意味するものでは<strong>ない</strong>。
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+サブグループ解析は純粋に<strong>観察的</strong>なものなので、効果の違いは交絡変数によっても引き起こされる可能性があることを常に念頭に置いておく必要がある。
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+サブグループ解析において、集合的な研究情報を使用することは、生態学的なバイアスをもたらす可能性があるため、良くない考えである。
+</li>
+</ol>
+</div>
+<p><br></p>
+</div>
+<div id="subgroup-R" class="section level2" number="7.3">
+<h2>
+<span class="header-section-number">7.3</span> <em>R</em> のサブグループ解析<a class="anchor" aria-label="anchor" href="#subgroup-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p><em>R</em> で学んだことを実行する時が来た。<strong>{meta}</strong> パッケージを使ってサブグループ解析を行うのは比較的簡単である。<strong>{meta}</strong> のすべてのメタ分析関数において、 <code>subgroup</code> 引数を指定することが可能である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;古いバージョンの&lt;strong&gt;{meta}&lt;/strong&gt; (バージョン 5.0-0 以前) では、この引数は &lt;code&gt;byvar&lt;/code&gt; とされている&lt;/p&gt;"><sup>30</sup></a>。これは、どの効果量がどのサブグループに該当するかを関数に伝え、サブグループ解析を実行する。引数 <code>subgroup</code> には、<code>character</code>、<code>factor</code>、<code>logical</code>、<code>numeric</code> の変数を指定することが可能である。唯一気をつけなければならないのは、同じサブグループに属する研究は絶対に同じラベルを持つということである。</p>
+<p>この例では、再び <code>m.gen</code> メタ分析オブジェクトを使用する。メタ分析の計算に使用した <code>ThirdWave</code> データセットには、サブグループ情報を持ついくつかの列が含まれている。ここでは、バイアスのリスクが高い研究と低い研究の間で効果量に差があるかどうかを調べたい。バイアスリスクの情報は、<code>RiskOfBias</code> 列に格納されている。</p>
+<p>まず、この列を見てみよう。このコードでは、データセットの最初の数行だけが表示されるように <code>head</code> 関数を使用している。</p>
+<div class="sourceCode" id="cb214"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 研究名と 'RiskOfBias' 列、最初のデータを表示</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ThirdWave</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Author"</span>, <span class="st">"RiskOfBias"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##            Author RiskOfBias
+## 1     Call et al.       high
+## 2 Cavanagh et al.        low
+## 3   DanitzOrsillo       high
+## 4  de Vibe et al.        low
+## 5  Frazier et al.        low
+## 6  Frogeli et al.        low</code></pre>
+<p>データセット内の各研究は、バイアスのリスク評価を指定するラベルを持っていることがわかる。<code>metagen</code> を使用してメタ分析を計算した際、この情報は内部的に <code>m.gen</code> オブジェクトに保存された。サブグループ解析を行うには、<code>update.meta</code> 関数を使用して <code>m.gen</code> オブジェクトを指定し、<code>subgroup</code> 引数を使用してデータセットのどの列にサブグループラベルが含まれるかを指定する。</p>
+<p>前に、サブグループ解析は、サブグループ間で共通の推定値 (<span class="math inline">\(\tau^2\)</span> ) の有無で実施できることも取り上げた。これは、<strong>{meta}</strong> で <code>tau.common</code> を <code>TRUE</code> または <code>FALSE</code> に設定することで制御することが可能である。とりあえず、各サブグループでの研究間異質性分散の別々の推定値を使用することにしよう。</p>
+<p>この例では、固定効果 (複数) モデルを適用し、サブグループ内の研究はランダム効果モデルを使用してプールされると仮定する。<code>m.gen</code> にランダム効果モデルの結果が含まれているので、(<code>comb.fixed</code> を <code>FALSE</code>、<code>comb.random</code> を <code>TRUE</code> に設定したので) 何も変更する必要はない。元のメタ分析はランダム効果モデルを用いて行われたため、<code>update.meta</code> は自動的に、サブグループ内の研究もランダム効果モデルを用いてプールすることを想定している。</p>
+<p>したがって、出来上がったコードは次のようになる。</p>
+<div class="sourceCode" id="cb216"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/update.meta.html">update.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>            subgroup <span class="op">=</span> <span class="va">RiskOfBias</span>, </span>
+<span>            tau.common <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Review:     Third Wave Psychotherapies
+## 
+## Number of studies combined: k = 18
+## 
+##                         SMD           95%-CI    t  p-value
+## Random effects model 0.5771 [0.3782; 0.7760] 6.12 &lt; 0.0001
+## Prediction interval              [-0.0572; 1.2115]     
+## 
+## Quantifying heterogeneity:
+##  tau^2 = 0.0820 [0.0295; 0.3533]; tau = 0.2863 [0.1717; 0.5944]
+##  I^2 = 62.6% [37.9%; 77.5%]; H = 1.64 [1.27; 2.11]
+## 
+## Test of heterogeneity:
+##      Q d.f. p-value
+##  45.50   17  0.0002
+## 
+## Results for subgroups (random effects model (HK)):
+##                     k    SMD           95%-CI  tau^2    tau     Q   I^2
+## RiskOfBias = high   7 0.8126 [0.2835; 1.3417] 0.2423 0.4922 25.89 76.8%
+## RiskOfBias = low   11 0.4300 [0.2770; 0.5830] 0.0099 0.0997 13.42 25.5%
+## 
+## Test for subgroup differences (random effects model (HK)):
+##                     Q d.f. p-value
+## Between groups   2.84    1  0.0917
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Restricted maximum-likelihood estimator for tau^2
+## - Q-profile method for confidence interval of tau^2 and tau
+## - Hartung-Knapp (HK) adjustment for random effects model (df = 17)
+## - Prediction interval based on t-distribution (df = 16)</code></pre>
+<p>この出力では、<code>Results for subgroups</code> と呼ばれる新しいセクションが表示される。出力のこの部分は、各サブグループで別々にプール効果量を示している。バイアスのリスクが高い研究が <span class="math inline">\(k=\)</span> 7 件、バイアスのリスクが低い研究が 11 件であることがわかる。推定された研究間の異質性はかなり異なっており、バイアスのリスクの高い研究では <span class="math inline">\(I^2=\)</span> 77% であるが、リスクの低い研究では 26% にすぎない。</p>
+<p>また、サブグループの効果量も異なっている。<span class="math inline">\(g=\)</span> 0.43 で、バイアスリスクの低い研究の効果推定値は、バイアスリスクの高い研究よりも小さい。バイアスのかかった研究は治療効果を過大評価する可能性が高いので、このことはよく見られる所見である。</p>
+<p>しかし、その差は統計的に有意なのだろうか？<code>Test for subgroup differences</code> には、<span class="math inline">\(Q\)</span>-検定を示している 結果があるので、これで確認することができる。この例では、2つのサブグループがあり、自由度1に基づいている。この検定の <span class="math inline">\(p\)</span>-値は 0.09 で、従来の有意水準より大きいが、それでも傾向レベルの差を示している。</p>
+<p>また、両方のサブグループで<strong>共通の</strong> <span class="math inline">\(\tau^2\)</span> 推定値を仮定した場合の結果も確認することができる。<code>tau.common</code> を <code>TRUE</code> に設定するだけである。</p>
+<div class="sourceCode" id="cb218"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/update.meta.html">update.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, subgroup <span class="op">=</span> <span class="va">RiskOfBias</span>, tau.common <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [...]
+##                     k    SMD           95%-CI  tau^2    tau     Q   I^2
+## RiskOfBias = high   7 0.7691 [0.2533; 1.2848] 0.0691 0.2630 25.89 76.8%
+## RiskOfBias = low   11 0.4698 [0.3015; 0.6382] 0.0691 0.2630 13.42 25.5%
+## 
+## Test for subgroup differences (random effects model (HK)):
+##                    Q d.f. p-value
+## Between groups  1.79    1  0.1814
+## Within groups  39.31   16  0.0010
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - Restricted maximum-likelihood estimator for tau^2 
+##   (assuming common tau^2 in subgroups)
+## [...]</code></pre>
+<p>この出力では、推定された研究間異質性分散が <span class="math inline">\(\tau^2=\)</span> 0.069 で、両方のサブグループで同じであることがわかる。２つの <span class="math inline">\(Q\)</span> -検定が提示される。すなわち、<strong>between</strong> groups の異質性 (実際のサブグループ) と <strong>within-subgroup</strong> の異質性 (サブグループ内の異質性) である。</p>
+<p>通常のメタ分析と同様に、後者は単にサブグループに過剰な変動があることを示している (<span class="math inline">\(p=\)</span> 0.001)。サブグループ差の検定でも、バイアスリスクが低い研究と高い研究の間に有意な差がないことが示された (<span class="math inline">\(p=\)</span> 0.181)。</p>
+<p>ここで、<span class="math inline">\(\tau^2\)</span> が独立しているか、あるいは共通のであるかを仮定して結果を探った。両サブグループの異質性が等しいと仮定する十分な理由がなく、また、各サブグループに最低 <span class="math inline">\(k=\)</span> 7 件の研究があることから、<span class="math inline">\(\tau^2\)</span> の別々の推定が適切であると考えられる。しかし、少なくともこの例では、どちらのアプローチでも結果の解釈は同じようなものだとわかった。</p>
+
+<div class="boxreport">
+<p><strong>サブグループ解析の結果を報告</strong></p>
+<p>サブグループ解析の結果は、通常、各サブグループにおける推定効果と異質性、およびサブグループの差の検定の <span class="math inline">\(p\)</span> 値を表示した表で報告される。</p>
+</div>
+<div class="inline-table"><table class="table table-condensed table-striped" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+<span class="math inline">\(g\)</span>
+</th>
+<th style="text-align:left;">
+95%CI
+</th>
+<th style="text-align:left;">
+<span class="math inline">\(p\)</span>
+</th>
+<th style="text-align:left;">
+<span class="math inline">\(I^2\)</span>
+</th>
+<th style="text-align:left;">
+95%CI
+</th>
+<th style="text-align:left;">
+<span class="math inline">\(p\)</span><sub>subgroup</sub>
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Risk of Bias
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+0.092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<ul><li>High
+</li></ul>
+</td>
+<td style="text-align:left;">
+0.81
+</td>
+<td style="text-align:left;">
+0.28-1.34
+</td>
+<td style="text-align:left;">
+0.009
+</td>
+<td style="text-align:left;">
+0.77
+</td>
+<td style="text-align:left;">
+0.51-0.89
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<ul><li>Low
+</li></ul>
+</td>
+<td style="text-align:left;">
+0.43
+</td>
+<td style="text-align:left;">
+0.28-0.58
+</td>
+<td style="text-align:left;">
+<span class="math inline">\(&lt;\)</span> 0.001
+</td>
+<td style="text-align:left;">
+0.25
+</td>
+<td style="text-align:left;">
+0.00-0.63
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table></div>
+<div class="boxempty">
+<p>上の表で、第３列の <span class="math inline">\(p\)</span> 値はサブグループに特有の効果が有意であることを示している。これは、高バイアスと低バイアスのどちらでも発生する。また、<span class="math inline">\(p_{\textsf{subgroup}}\)</span> より小さい値は
+高リスクと低リスクの効果の<u>差</u>は有意ではないことを示している。</p>
+<p>サブグループに特有の <span class="math inline">\(p\)</span> 値を抽出するには、<code>update.meta</code> の結果をオブジェクトとして保存し、このオブジェクトから <code>pval.random.w</code> 要素を <code>$</code> 演算子を使って抽出する。</p>
+複数のサブグループ解析が行われた場合は、表にさらに行を追加することができる。
+</div>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+<div id="演習問題-6" class="section level2" number="7.4">
+<h2>
+<span class="header-section-number">7.4</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-6"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+影響力分析や外れ値分析ではわからないことのうち、何がサブグループ解析ではわかることがあるか？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+サブグループ解析の背景にあるモデルが、なぜ固定効果 (複数)
+モデルと呼ばれるのか。
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+メタ分析の一環として、ある教育研修プログラムの効果が、実施された学区によって異なるかどうかを調べたいと考えている。この問いに答えるために、固定効果
+(複数) モデルを用いたサブグループ解析は適切か？
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+あなたの友人が、合計9つの研究を含むメタ分析を行った。これらの研究のうち5つが1つのサブグループに分類され、4つが他のサブグループに分類されている。彼女は、サブグループ解析を行うことに意味があるかどうかをあなたに尋ねている。あなたならどうするか？
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+メタ分析で、分析した治療法が男性よりも女性でより効果的であると著者が主張しているものがあった。この知見は、研究対象者に含まれる女性の割合に基づいて研究をサブグループに分けたサブグループ解析に基づいている。この知見は信頼できるか、またその理由は？
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda7">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="要約-3" class="section level2" number="7.5">
+<h2>
+<span class="header-section-number">7.5</span> 要約<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84-3"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>メタ分析の不均一性を評価する方法はいろいろあるが、これらのアプローチでは、データに過剰な変動が見られる<strong>理由</strong>を知ることはできない。サブグループ解析では、ある研究の真の効果量が他の研究よりも高い、または低い理由についての仮説を検証することが可能である。</p></li>
+<li><p>サブグループ解析では、通常、<strong>固定効果 (複数) モデル</strong>を仮定する。サブグループ内の研究は、ほとんどの場合、ランダム効果モデルを用いてプールされる。その後、全体のサブグループの結果に基づいた <span class="math inline">\(Q\)</span> -検定を使用して、グループが有意に異なるかどうかを判断する。</p></li>
+<li><p>サブグループ解析モデルは、異なるカテゴリ自体が固定されていると仮定されているため、「固定効果」モデルと呼ばれる。サブグループの水準は、可能なカテゴリの宇宙からのランダムな抽選とは見なされない。それらは、サブグループ変数が取り得る唯一の値を表す。</p></li>
+<li><p>サブグループ解析を計算する場合、サブグループ内の結果をプールするために、研究間の異質性の推定値を別々にするか、共通にするかを決めなければならない。</p></li>
+<li><p>サブグループ解析は万能ではない。サブグループの差を検出するのに必要な統計的検出力が不足していることが多い。したがって、サブグループの差について有意でない検定は、自動的にサブグループが同等の結果をもたらすことを意味するものでは<strong>ない</strong>。</p></li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></div>
+<div class="next"><a href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#subgroup"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li>
+<a class="nav-link" href="#fixed-effect-plural"><span class="header-section-number">7.1</span> 固定効果 (複数) モデル</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%82%B5%E3%83%96%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%8A%B9%E6%9E%9C%E3%81%AE%E3%83%97%E3%83%BC%E3%83%AB%E5%8C%96"><span class="header-section-number">7.1.1</span> サブグループにおける効果のプール化</a></li>
+<li><a class="nav-link" href="#comparing-the-subgroup-effects"><span class="header-section-number">7.1.2</span> サブグループ効果の比較</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#limits-subgroup"><span class="header-section-number">7.2</span> サブグループ解析の限界と落とし穴</a></li>
+<li><a class="nav-link" href="#subgroup-R"><span class="header-section-number">7.3</span> R のサブグループ解析</a></li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-6"><span class="header-section-number">7.4</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84-3"><span class="header-section-number">7.5</span> 要約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

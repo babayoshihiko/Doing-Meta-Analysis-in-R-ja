@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>6 フォレストプロット | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="前 章では、 R で効果量をプールする方法と、メタ分析で異質性を評価する方法について学んだ。ここからは、メタ分析の中でも楽しい部分で、前のステップで得た結果を可視化していく。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="6 フォレストプロット | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="前 章では、 R で効果量をプールする方法と、メタ分析で異質性を評価する方法について学んだ。ここからは、メタ分析の中でも楽しい部分で、前のステップで得た結果を可視化していく。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="6 フォレストプロット | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="前 章では、 R で効果量をプールする方法と、メタ分析で異質性を評価する方法について学んだ。ここからは、メタ分析の中でも楽しい部分で、前のステップで得た結果を可視化していく。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="active" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="forest" class="section level1" number="6">
+<h1>
+<span class="header-section-number">6</span> フォレストプロット<a class="anchor" aria-label="anchor" href="#forest"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/forest2.jpg"></div>
+<p><br></p>
+<p></p>
+<p><span class="firstcharacter">前</span>
+章では、 <em>R</em> で効果量をプールする方法と、メタ分析で異質性を評価する方法について学んだ。ここからは、メタ分析の中でも楽しい部分で、前のステップで得た結果を可視化していく。</p>
+<p>メタ分析を可視化する最も一般的な方法は、<strong>フォレストプロット</strong>である。このプロットは、観察された効果、信頼区間、そして通常は各研究の重み付けをグラフィカルに表示する。また、メタ分析で計算されたプール効果も表示される。全体として、この図によって、含まれる研究の精度や広がり、プール効果が観察された効果量とどのように関連しているのかを素早く調べることが可能である。</p>
+<p></p>
+<p><strong>{meta}</strong> パッケージには、 <em>R</em> で直接美しいフォレストプロットを非常に簡単に作成するための関数が組み込まれている。この関数は幅広い機能を持ち、プロットの外観を好きなように変更することが可能である。このフォレストプロット関数と、それを実際にどのように使うことができるかが、この章の主な焦点である。さらに、メタ分析の結果を可視化するための別のアプローチについても簡単に説明する。</p>
+<p><br></p>
+<div id="フォレストプロットとは" class="section level2" number="6.1">
+<h2>
+<span class="header-section-number">6.1</span> フォレストプロットとは？<a class="anchor" aria-label="anchor" href="#%E3%83%95%E3%82%A9%E3%83%AC%E3%82%B9%E3%83%88%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%A8%E3%81%AF"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>Figure <a href="forest.html#fig:forest">6.1</a> は、フォレストプロットの主な構成要素を示している。フォレストプロットの左側には、メタ分析に含まれる各研究の名前が表示される。各研究について、通常はプロットの中央に効果量のグラフが表示され、x 軸に研究の点推定値を示している。推定値の点からは線が伸びており、観察された効果量に対して計算された信頼区間の範囲を示している。通常、点推定値は四角で囲まれている。この四角の大きさは効果量の重み (Chapter <a href="pooling-es.html#fem">4.1.1</a>) で決まり、重みの大きな研究では大きな四角が、重みの小さな研究では小さな四角が与えられる。</p>
+<p>通常、フォレストプロットにはメタ分析に使用した効果量のデータも掲載している。これにより、結果を再現するために必要なデータを他の人に提供することが可能である。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:forest"></span>
+<img src="images/forest_sep.png" alt="フォレストプロットの重要要素" width="100%"><p class="caption">
+Figure 6.1: フォレストプロットの重要要素
+</p>
+</div>
+<p>プロットの下部にある菱形は、平均効果を表している。菱形の長さは、x 軸上のプールされた結果の信頼区間を表している。通常、フォレストプロットには垂直の<strong>参照線</strong>がある。この線は x 軸上の効果がない値を示している。さらに、フォレストプロットは、例えば、<span class="math inline">\(I^2\)</span> や <span class="math inline">\(\tau^2\)</span> のような異質性指標を表示すことによって強化されることがある。これについては、例で見ていこう。</p>
+<p></p>
+<p>フォレストプロットにおける効果量と信頼区間は、通常、線形スケールで表示される。しかし、要約尺度が<strong>比</strong> (オッズ比やリスク比など) である場合、x 軸で<strong>対数</strong>スケールを使用することが一般的である。これは、1 よりずっと低い値や高い値よりも、1 付近の値の方がより多くあることを意味する。</p>
+<p>比に意味がある効果量の測定基準は「線形」に解釈することができない (すなわち、RR = 0.50 の「反対」は 1.5 ではなく 2 である。Chapter <a href="effects.html#ratios">3.3.2</a> を参照)。この場合の効果量の参照線は、通常 1 であり、1 が効果がないことを示す。</p>
+<p><br></p>
+</div>
+<div id="forest-R" class="section level2" number="6.2">
+<h2>
+<span class="header-section-number">6.2</span> <em>R</em> のフォレストプロット<a class="anchor" aria-label="anchor" href="#forest-R"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>メタ分析オブジェクト (例: <code>metagen</code>、<code>metacont</code>、<code>metabin</code> の結果) の種類に関わらず、 <code>forest.meta</code> 関数を使用してフォレストプロットを作成することが可能である (訳注: 関数名は <code>forest</code> でよい。一般に、 <em>R</em> では、 <code>forest</code> 関数が <code>forest.meta</code> のようにドット以降にクラスを指定したものを自動的に読み込む。)。<code>forest.meta</code> に <strong>{meta}</strong> オブジェクトを渡すだけで、プロットが作成される。通常、フォレストプロットはデフォルトで非常に良い見た目をしているが、この関数はさらに見た目を整えるための追加引数をたくさん持っている。すべての引数は関数のドキュメントに記載されている (<code><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">?forest.meta</a></code>を実行することでアクセス可能)。ここでは、より重要なものをリストアップしよう。</p>
+<ul>
+<li><p><strong><code>sortvar</code></strong>. メタ分析データセットの変数で、フォレストプロットで研究をソートするためのもの。例えば、効果量によって結果を並べ替えたい場合、<code>sortvar = TE</code> というコードを使用することが可能である。</p></li>
+<li><p><strong><code>comb.fixed</code></strong>. 論理値。固定効果モデルの推定値をプロットに含めるかどうかを示す。</p></li>
+<li><p><strong><code>comb.random</code></strong>. 論理値。ランダム効果モデルの推定値をプロットに含めるかどうかを示す。</p></li>
+<li><p><strong><code>text.fixed</code></strong>. 固定効果モデルによるプール効果の<strong>ラベル</strong>を表示する。デフォルトでは <code>"Fixed effect model"</code> と表示される。</p></li>
+<li><p><strong><code>text.random</code></strong>. ランダム効果モデルによるプール効果のラベル。デフォルトでは <code>"Random effects model"</code> と表示される。</p></li>
+<li><p><strong><code>prediction</code></strong>. 論理値。予測区間をプロットに追加するかどうかを示す。</p></li>
+<li><p><strong><code>label.left</code></strong> と <strong><code>label.right</code></strong>. フォレストプロットの左側と右側に追加されるラベル。例えば、この側の効果は治療に有利であることを明示できる (例: <code>label.left = "Favors treatment"</code>)。</p></li>
+<li><p><strong><code>smlab</code></strong>. プロットの上に表示されるラベル。どの効果量メトリックを使用したかを示すために使用できる。</p></li>
+<li><p><strong><code>xlim</code></strong>. x 軸の限界値、または対称的なフォレストプロットを作成したいときは文字 <code>"s"</code> を指定する。結果がゼロから大きく外れている場合や、外れ値を表示させたい場合に関係する。例えば、x 軸を 0 から 2 の範囲にしたい場合、コードは <code>xlim = c(0,2)</code> となる。</p></li>
+<li><p><strong><code>ref</code></strong>. プロットにおける参照線。使用した要約尺度に依存し、デフォルトでは 0 または 1 のどちらかになる。</p></li>
+<li><p><strong><code>leftcols</code></strong> と <strong><code>rightcols</code></strong>. ここでは、フォレストプロットの左側と右側に表示する変数を指定することができる。この関数がデフォルトで使用する要素がいくつかある。例えば、<code>"studlab"</code> は研究のラベル、 <code>"effect"</code> は観測された効果量、 <strong><code>effect.ci</code></strong> は効果量とその信頼区間を表す。また、最初に <strong>{meta}</strong> 関数に提供した <code>data.frame</code> に含まれていれば、ユーザー定義の列を追加することも可能である。この場合、列の名前を文字列として追加するだけである。</p></li>
+<li><p><strong><code>leftlabs</code></strong> と <strong><code>rightlabs</code></strong>. フォレストプロットの左側と右側に表示される列に使用されるラベル。</p></li>
+<li><p><strong><code>print.I2</code></strong> と <strong><code>print.I2.ci</code></strong>. 論理値。<span class="math inline">\(I^2\)</span> 値とその信頼区間を表示すかどうかを指定する。デフォルトでは <code>TRUE</code>。</p></li>
+<li><p><strong><code>print.tau2</code></strong> と <strong><code>print.tau</code></strong>. 論理値。<span class="math inline">\(\tau^2\)</span> と <span class="math inline">\(\tau\)</span> の値を表示すかどうかを指定する。デフォルトでは、<span class="math inline">\(\tau^2\)</span> の値を表示する。</p></li>
+<li><p><strong><code>col.square</code></strong>, <strong><code>col.diamond</code></strong>, <strong><code>col.predict</code></strong>. それぞれ、正方形、菱形、予測区間の色 (例: <code>"blue"</code>) を指定する。</p></li>
+</ul>
+<p>それではフォレストプロットを作成してみよう。この例では、前の例で使用した <code>m.gen</code> オブジェクトをプロットしている。フォレストプロットでは、効果量によって研究を並べ替え、予測区間を追加し、左側にユーザー定義のラベルを追加している。<code>forest.meta</code> 関数は、デフォルトで <span class="math inline">\(\tau^2\)</span> 値を出力するが、ここでは不要なので、<code>print.tau2</code> を <code>FALSE</code> に設定する。</p>
+<p>最終的にこのようなコードになる。(訳注: 原著では引数が間違っていた。<code>pdrediction</code> が正しい。)</p>
+<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">forest.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>            sortvar <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>            prediction <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>            print.tau2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>            leftlabs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Author"</span>, <span class="st">"g"</span>, <span class="st">"SE"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/ch08-95-1.png" width="768"></div>
+<p><code>forest.meta</code> のプロットの見た目は、すでにかなり良い。また、太めの線がプロットに追加され、プール効果の予測区間を表していることがわかる。</p>
+<p></p>
+<p>各研究のバイアスリスクを表示す列を追加することで、プロットを強化することが可能である。<code>m.gen</code> の生成に使用した <code>ThirdWave</code> データセットには、<code>RiskOfBias</code> という列があり、そこに各研究のバイアスリスク評価が保存されている。</p>
+<p>メタ分析の計算に <code>metagen</code> を使用している場合 (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a>)、この関数は自動的にこのデータを <code>m.gen</code> 内に保存する。したがって、 <code>leftcols</code> 引数を使用して、プロットに列を追加することが可能である。この結果、次のようなコードになる。</p>
+<div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>bg<span class="op">=</span><span class="st">"#FFFEFA"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wviechtb.github.io/metafor/reference/forest.html">forest</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>       sortvar <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>       prediction <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>       print.tau2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>       leftcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"studlab"</span>, <span class="st">"TE"</span>, <span class="st">"seTE"</span>, <span class="st">"RiskOfBias"</span><span class="op">)</span>,</span>
+<span>       leftlabs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Author"</span>, <span class="st">"g"</span>, <span class="st">"SE"</span>, <span class="st">"Risk of Bias"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-165-1.png" width="864"></div>
+<p>フォレストプロットに各研究のバイアスリスク情報が追加されたことがわかる。</p>
+<p><br></p>
+<div id="レイアウトの種類" class="section level3" number="6.2.1">
+<h3>
+<span class="header-section-number">6.2.1</span> レイアウトの種類<a class="anchor" aria-label="anchor" href="#%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><code>forest.meta</code> 関数には2つの 「パッケージ済み」レイアウトがあり、これを使用すると、多数の引数を指定することなくフォレストプロットを特定の形式にすることが可能である。そのうちの1つは <code>"JAMA"</code> レイアウトで、<strong>Journal of the American Medical Association</strong> のガイドラインに従ったフォレストプロットを提供するものである。このレイアウトは、メタ分析を医学雑誌に掲載したい場合に使用される。</p>
+<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">forest.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, layout <span class="op">=</span> <span class="st">"JAMA"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-167-1.png" width="75%" style="display: block; margin: auto;"></div>
+<p></p>
+<p>もう一つのレイアウトは <code>"RevMan5"</code> で、Cochrane の <strong>Review Manager 5</strong> で生成されるものと同様のフォレストプロットを生成する。</p>
+<div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">forest.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, layout <span class="op">=</span> <span class="st">"RevMan5"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-169-1.png" width="75%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="フォレストプロットを保存" class="section level3" number="6.2.2">
+<h3>
+<span class="header-section-number">6.2.2</span> フォレストプロットを保存<a class="anchor" aria-label="anchor" href="#%E3%83%95%E3%82%A9%E3%83%AC%E3%82%B9%E3%83%88%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%92%E4%BF%9D%E5%AD%98"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><code>forest.meta</code> によって生成されたフォレストプロットは、PDF、PNG、または <strong>scalable vector graphic</strong> (SVG) ファイルとして保存することが可能である。base <em>R</em> や <strong>{ggplot2}</strong> パッケージによって生成される他のプロットとは対照的に、<code>forest.meta</code> の出力はファイルとして保存する際に自動的にサイズ調整されていない。このため、フォレストプロットは 2 辺または 4 辺が切り取られることがあり、すべてが見えるように幅と高さを手動で調整する必要がある。</p>
+<p><code>pdf</code>、<code>png</code>、<code>svg</code> 関数を使用すると、 <em>R</em> のコードでプロットを保存することができる。まず、いずれかの関数をコールして、次のコードの出力をドキュメントに保存するように <em>R</em> に指示する。そして、<code>forest.meta</code> 関数の呼び出しを追加する。最後の行では、<code><a href="https://rdrr.io/r/grDevices/dev.html">dev.off()</a></code> とし、生成された出力を上記で指定したファイルに保存する。</p>
+<p>どの関数も <code>file</code> という引数でファイル名を指定する。ファイルは、その名前で自動的に作業ディレクトリに保存される。さらに、<code>width</code> と <code>height</code> 引数でプロットの大きさを指定することができるので、出力が途切れるような場合に役立つ。</p>
+<p>最初のフォレストプロットを “forestplot” という名前で保存すると仮定して、以下のようなコードで PDF、PNG、SVG ファイルを生成することが可能である。</p>
+<p><strong>PDF</strong></p>
+<div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"forestplot.pdf"</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">forest.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>            sortvar <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>            prediction <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>            print.tau2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>            leftlabs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Author"</span>, <span class="st">"g"</span>, <span class="st">"SE"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>PNG</strong></p>
+<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"forestplot.png"</span>, width <span class="op">=</span> <span class="fl">2800</span>, height <span class="op">=</span> <span class="fl">2400</span>, res <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">forest.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>            sortvar <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>            prediction <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>            print.tau2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>            leftlabs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Author"</span>, <span class="st">"g"</span>, <span class="st">"SE"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>SVG</strong></p>
+<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">svg</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"forestplot.svg"</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/forest.meta.html">forest.meta</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>            sortvar <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>            prediction <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>            print.tau2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>            leftlabs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Author"</span>, <span class="st">"g"</span>, <span class="st">"SE"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+</div>
+<div id="drapery" class="section level2" number="6.3">
+<h2>
+<span class="header-section-number">6.3</span> ドレーパリープロット<a class="anchor" aria-label="anchor" href="#drapery"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p></p>
+<p></p>
+<p>フォレストプロットは、メタ分析を可視化する最も一般的な方法である。発表されたメタ分析のほとんどにフォレストプロットが含まれており、多くの研究者がその解釈方法を理解している。フォレストプロットは、調査結果の包括的で理解しやすい要約を提供するので、メタ分析レポートにもフォレストプロットを含めることが推奨される。</p>
+<p>しかし、フォレストプロットだけが結果を説明する手段ではない。メタ分析は、例えば、<strong>ドレーパリープロット</strong> <span class="citation">(<a href="references.html#ref-rucker2020beyond">Rücker and Schwarzer 2021</a>)</span> (drapery plot、訳注: ドレーパリーとは、衣服やカーテンなどのひだのこと。美術史では、衣文とも訳される。) などでも可視化することが可能である。フォレストプロットの欠点は、固定された有意閾値、慣習的に<span class="math inline">\(p&lt;\)</span> 0.05を仮定した信頼区間しか表示できないことである。研究者は、これらの信頼区間に基づいて、効果が有意であるか否かを決定している。</p>
+<p>近年、<span class="math inline">\(p\)</span> 値の利用をめぐる論争があり <span class="citation">(<a href="references.html#ref-wellek2017critical">Wellek 2017</a>)</span>、<span class="math inline">\(p\)</span> 値に基づく仮説検定が、多くの研究領域で「再現性の危機」に寄与しているという議論もある <span class="citation">(<a href="references.html#ref-nuzzo2014statistical">Nuzzo 2014</a>)</span>。</p>
+<p>ドレーパリープロットは、<span class="math inline">\(p\)</span>-<strong>値関数</strong>に基づいている。この <span class="math inline">\(p\)</span> 値関数とは、解析結果を解釈する際に <span class="math inline">\(p\)</span> &lt; 0.05 の有意性閾値だけに頼らないために提案されたものである <span class="citation">(<a href="references.html#ref-infanger2019p">Infanger and Schmidt-Trucksäss 2019</a>)</span>。</p>
+<p>したがって、<span class="math inline">\(p\)</span> 値関数は 95% 信頼区間を計算するだけでなく、<span class="math inline">\(p\)</span> の値を変化させた場合の信頼区間を示す連続曲線を提供する。ドレーパリープロットでは、各研究の信頼曲線と平均効果の信頼曲線がプロットされる。x 軸は効果量指標を示し、y 軸は仮定された <span class="math inline">\(p\)</span> 値を示す。</p>
+<p>ドレーパリープロットは、 <strong>{meta}</strong> の <code>drapery</code> 関数によって生成することが可能である。<code>forest.meta</code> と同様に、この関数に <strong>{meta}</strong> メタ分析オブジェクトを与えると、自動的にプロットが生成される。追加引数が複数あるが、最も重要なのは以下の引数である。</p>
+<ul>
+<li><p><strong><code>type</code></strong>: y 軸にプロットされる値の種類を定義する。検定統計量の <code>"zvalue"</code> (デフォルト)、または <span class="math inline">\(p\)</span>-値 (<code>"pvalue"</code>) とする。</p></li>
+<li><p><strong><code>study.results</code></strong>: 論理値。各研究の結果をプロットに含めるかどうかを指定する。<code>FALSE</code> の場合、効果の要約のみが表示される。</p></li>
+<li><p><strong><code>labels</code></strong>: この引数を <code>"studlab"</code> に設定すると、試験のラベルがプロットに含まれるようになる。</p></li>
+<li><p><strong><code>legend</code></strong>: 論理値。凡例を表示すかどうかを示す。</p></li>
+<li><p><strong><code>pos.legend</code></strong>. 凡例の位置。<code>"bottomright"</code>、<code>"bottom"</code>、<code>"bottomleft"</code>、<code>"left"</code>、<code>"topleft"</code>、<code>"top"</code>、<code>"topright"</code>、<code>"right"</code>、<code>"center"</code> のいずれかを指定。</p></li>
+</ul>
+<p>メタ分析オブジェクト <code>m.gen</code> を使って <code>drapery</code> 関数を試してみよう。</p>
+<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/meta/man/drapery.html">drapery</a></span><span class="op">(</span><span class="va">m.gen</span>, </span>
+<span>        labels <span class="op">=</span> <span class="st">"studlab"</span>,</span>
+<span>        type <span class="op">=</span> <span class="st">"pval"</span>, </span>
+<span>        legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-174-1.png" width="1152" style="display: block; margin: auto;"></div>
+<p>結果として得られるプロットは、各効果量の <span class="math inline">\(p\)</span>-値曲線を含み、すべて逆 V 字の形をしている。太線はランダム効果モデルによる平均効果を表した。プロットで見られる斜線部分は予測区間で、プール効果の信頼区間よりもかなり広い。</p>
+<p><span class="math inline">\(p\)</span> 値関数の「ピーク」は、メタ分析における効果量の正確な値を表している。y 軸を下に行くに従って、<span class="math inline">\(p\)</span> 値は小さくなり、信頼区間は広くなり、破線の水平線で示される従来の有意閾値に到達することになる。</p>
+<p><span class="math inline">\(p\)</span> がすでに非常に小さいとき (&lt;0.01) に太線が x 軸上でゼロになることから、プロットに基づいて、プール効果量がゼロより大きいことをかなり確信できることがわかる。</p>
+<p>Rücker et al. <span class="citation">(<a href="references.html#ref-rucker2020beyond">2021</a>)</span> は、ドレーパリープロットは主にフォレストプロット<strong>に加えて</strong>使用すべきであると推奨している。なぜなら、フォレストプロットは、結果を再現するために必要な効果量情報を含んでいないことがある。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+<div id="演習問題-5" class="section level2" number="6.4">
+<h2>
+<span class="header-section-number">6.4</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-5"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+フォレストプロットの主要な構成要素は何か？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+メタ分析でフォレストプロットを提示するメリットは何か？
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+フォレストプロットの限界は何か、ドレーパリープロットはこの限界をどのように克服しているのか。
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda6">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="要約-2" class="section level2" number="6.5">
+<h2>
+<span class="header-section-number">6.5</span> 要約<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84-2"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>メタ分析の結果は、フォレストプロットで可視化するのが一般的である。</p></li>
+<li><p>フォレストプロットは、各研究の効果量と信頼区間をグラフ化したもので、総合効果の計算値も表示される。さらに、プールに使用された効果量データも含まれる。</p></li>
+<li><p>フォレストプロットには、各研究が受けた品質評価など、他の種類の情報を追加することも可能である。</p></li>
+</ul>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></div>
+<div class="next"><a href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#forest"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="nav-link" href="#%E3%83%95%E3%82%A9%E3%83%AC%E3%82%B9%E3%83%88%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%A8%E3%81%AF"><span class="header-section-number">6.1</span> フォレストプロットとは？</a></li>
+<li>
+<a class="nav-link" href="#forest-R"><span class="header-section-number">6.2</span> R のフォレストプロット</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E"><span class="header-section-number">6.2.1</span> レイアウトの種類</a></li>
+<li><a class="nav-link" href="#%E3%83%95%E3%82%A9%E3%83%AC%E3%82%B9%E3%83%88%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%92%E4%BF%9D%E5%AD%98"><span class="header-section-number">6.2.2</span> フォレストプロットを保存</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#drapery"><span class="header-section-number">6.3</span> ドレーパリープロット</a></li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-5"><span class="header-section-number">6.4</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84-2"><span class="header-section-number">6.5</span> 要約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

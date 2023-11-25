@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>15 バイアスリスクのプロット | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="Luke A. McGuinness による  この章を引用する場合は McGuinness, L. A. (2021). Risk of Bias Plots. In Harrer, M., Cuijpers, P., Furukawa, T.A., &amp; Ebert, D.D., Doing Meta-Analysis with R: A Hands-On Guide (online...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="15 バイアスリスクのプロット | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Luke A. McGuinness による  この章を引用する場合は McGuinness, L. A. (2021). Risk of Bias Plots. In Harrer, M., Cuijpers, P., Furukawa, T.A., &amp; Ebert, D.D., Doing Meta-Analysis with R: A Hands-On Guide (online...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="15 バイアスリスクのプロット | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="Luke A. McGuinness による  この章を引用する場合は McGuinness, L. A. (2021). Risk of Bias Plots. In Harrer, M., Cuijpers, P., Furukawa, T.A., &amp; Ebert, D.D., Doing Meta-Analysis with R: A Hands-On Guide (online...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="active" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="risk-of-bias-plots" class="section level1" number="15">
+<h1>
+<span class="header-section-number">15</span> バイアスリスクのプロット<a class="anchor" aria-label="anchor" href="#risk-of-bias-plots"><i class="fas fa-link"></i></a>
+</h1>
+<p><strong>Luke A. McGuinness による</strong></p>
+<hr>
+<div class="inline-figure"><img src="_figs/traffic_light.jpg"></div>
+
+<div class="boxempty">
+<p><strong>この章を引用する場合は</strong></p>
+McGuinness, L. A. (2021). Risk of Bias Plots. In Harrer, M., Cuijpers, P., Furukawa, T.A., &amp; Ebert, D.D., <em>Doing Meta-Analysis with R: A Hands-On Guide</em> (online version). <a href="https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/rob-plots.html" class="uri">https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/rob-plots.html</a>.
+</div>
+<p><br></p>
+<p><span class="firstcharacter">こ</span>
+の章では、 <strong>{robvis}</strong> パッケージを使用して、 <em>R</em> でRisk of Bias プロットを作成する方法について説明する。</p>
+<p><br></p>
+<div id="イントロダクション" class="section level2" number="15.1">
+<h2>
+<span class="header-section-number">15.1</span> イントロダクション<a class="anchor" aria-label="anchor" href="#%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AD%E3%83%80%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>システマティックレビューやメタ分析の一環として、関連する<a href="https://handbook-5-1.cochrane.org/chapter_8/8_3_1_types_of_tools.htm">領域別バイアスリスク評価ツール</a>を用いて、含まれる研究の内部妥当性 (バイアスリスク、Risk of Bias) を調べ、この評価結果をグラフで提示すとよいだろう。</p>
+<p>コクランハンドブックでは、2種類の図を推奨している。各ドメイン内で所定のバイアスリスク判定を受けた研究の割合を示す要約棒グラフと、各研究のドメインレベルの判定を提示す交通信号プロット (Traffic Light Plot、今のところ定着した日本語訳はない) である。</p>
+<p>しかし、これらの図を作成する際に、研究者が利用できる選択肢は限られている。RevMan にはプロットを作成する機能があるが、多くの研究者はシステマティックレビューを行うために RevMan を使用していないため、関連データをシステムにコピーする解決方法は非効率的である。</p>
+<p>同様に、MS PowerPoint などのソフトウェアを使用して手作業でグラフを作成するのは時間がかかり、変更が必要な場合は手作業で図を更新しなければならない。さらに、ジャーナルは通常、出版品質 (300-400 dpi 以上) の図を要求するが、RevMan からバイアスリスクの図をエクスポートしたり、手作業で作成したりする場合、品質を維持するのが難しい場合がある。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rob-revman"></span>
+<img src="images/robsummaryrevman.jpg" alt="Example RevMan output." width="75%"><p class="caption">
+Figure 15.1: Example RevMan output.
+</p>
+</div>
+<p>このようなことを避けるために、バイアスリスク評価の要約表を要約プロットまたは交通信号プロットに変換する関数を提供する <strong>{robvis}</strong> パッケージ <span class="citation">(<a href="references.html#ref-mcguinness2020risk">McGuinness and Higgins 2020</a>; <a href="references.html#ref-robvis">McGuinness 2019</a>)</span> を使用して、R Studio 内でバイアスリスク数値を自分で簡単にプロットできるようになる。</p>
+<p><br></p>
+<div id="robvis-を読み込む" class="section level3" number="15.1.1">
+<h3>
+<span class="header-section-number">15.1.1</span> <strong>{robvis}</strong> を読み込む<a class="anchor" aria-label="anchor" href="#robvis-%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>すでに <strong>{dmetar}</strong> パッケージがインストールされていると仮定して (Chapter <a href="discovering-R.html#dmetar">2.3</a> 参照)、<strong>{robvis}</strong> パッケージを使用しロードする。</p>
+<div class="sourceCode" id="cb481"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mcguinlu/robvis">robvis</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="バイアスリスクの要約表データをインポート" class="section level3" number="15.1.2">
+<h3>
+<span class="header-section-number">15.1.2</span> バイアスリスクの要約表データをインポート<a class="anchor" aria-label="anchor" href="#%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%83%AA%E3%82%B9%E3%82%AF%E3%81%AE%E8%A6%81%E7%B4%84%E8%A1%A8%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A4%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>プロットを作成するために、まず、<strong>Excel</strong> から <em>R</em> にバイアスリスク評価の結果をインポートする必要がある。なお、<strong>{robvis}</strong> はデータ作成方法について指定があり、Excel で表を設定する際には以下のガイダンスに必ず従わなければならない。</p>
+<ol style="list-style-type: decimal">
+<li>最初の列名は “Study” とし、研究識別子を記述する (例: <strong>Anthony et al, 2019</strong>)。</li>
+<li>最後から2番目の列名は “Overall” とする。全体のリスクオブバイアス判定を記載する。</li>
+<li>最後の列名は “Weight” とし、研究の精度の指標 (例えば、メタ分析で各研究に割り当てられた重み、またはメタ分析が行われなかった場合は、各研究のサンプルサイズ) を記述する。詳しくは、Chapter <a href="pooling-es.html#fem">4.1.1</a> を参照。</li>
+<li>その他の列は、特定のドメインのバイアスリスク評価結果を含む。</li>
+</ol>
+<p>上記のガイダンスを詳しく説明するために、5つのドメインを持つ ROB2 ツールを例として考えてみよう。このツールで <strong>{robvis}</strong> が期待する結果のデータセットは8列である。</p>
+<ul>
+<li>
+<strong>列 1</strong>. 試験の識別子</li>
+<li>
+<strong>列 2-6</strong>. 1列につき1つの RoB2 ドメイン</li>
+<li>
+<strong>列 7</strong>. 総合的なリスクオブバイアス判定</li>
+<li>
+<strong>列 8</strong>. 重み</li>
+</ul>
+<p>Excel では、このバイアスリスクの要約表は次のようになる。</p>
+<div class="inline-figure"><img src="images/rob_excel.png" width="75%" style="display: block; margin: auto;"></div>
+<div class="boximportant">
+<p>
+<strong>列の名前</strong>
+</p>
+<p>
+４種類あるうちの３種類のテンプレート (ROB2, ROBINS-I, QUADAS-2)
+では、ドメインレベル判定を含む列の名前は重要ではない。robvis
+内のテンプレートが各ドメインを正しく修正する。
+</p>
+</div>
+<p>Excel で作成した表をカンマ区切りファイル (例: “robdata.csv”) として作業ディレクトリに保存し、以下のコマンドを使用してプログラム的にそのファイルを <em>R</em> に読み込むか、Chapter <a href="discovering-R.html#data-prep-R">2.4</a> で説明したインポート機能を使用して読み込むことができる。</p>
+<div class="sourceCode" id="cb482"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">my_rob_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"robdata.csv"</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="テンプレート" class="section level3" number="15.1.3">
+<h3>
+<span class="header-section-number">15.1.3</span> テンプレート<a class="anchor" aria-label="anchor" href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><strong>{robvis}</strong> は、使用したバイアスリスク評価ツールに固有のテンプレート図を入力するために、提供されたデータを使用してバイアスリスク図を作成する。現在、<strong>{robvis}</strong> には、以下の3つのツールのテンプレートが含まれている。</p>
+<ul>
+<li>
+<strong>ROB2</strong> は、ランダム化比較試験のための新しい Cochrane の Risk Of Bias ツール。</li>
+<li>
+<strong>ROBINS-I</strong> は、Risk of Bias In Non-randomized Studies of Interventions (ランダム化されていない介入研究におけるバイアスのリスク) ツール。</li>
+<li>
+<strong>QUADAS-2</strong> は、Quality and Applicability of Diagnostic Accuracy Studies, Version 2。</li>
+</ul>
+<p><strong>{robvis}</strong> には、ROB1 とラベル付けされた特別な汎用テンプレートも含まれている。ランダム化対照試験用の Cochrane risk of bias ツールで使用するために設計されているが、上記のリストに含まれていない他のドメインベースのツールで実行された評価結果を可視化するために使用することも可能である。このテンプレートを使用する際に必要な追加ステップの詳細については、Chapter <a href="risk-of-bias-plots.html#rob1-template">15.4</a> を参照。</p>
+<p><br></p>
+</div>
+<div id="データセット例" class="section level3" number="15.1.4">
+<h3>
+<span class="header-section-number">15.1.4</span> データセット例<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%82%BB%E3%83%83%E3%83%88%E4%BE%8B"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><strong>{robvis}</strong> パッケージには、上記の各テンプレートに対応したデータセット例が格納されている。これらは以下のオブジェクトに格納されている。</p>
+<ul>
+<li>
+<code>data_rob2</code> :ROB2 ツールのデータ例</li>
+<li>
+<code>data_robins</code> :ROBINS-I ツールのデータ例</li>
+<li>
+<code>data_quadas</code> :QUADAS-2 ツール用のサンプルデータ</li>
+<li>
+<code>data_rob1</code> :RoB-1 ツール用のサンプルデータ</li>
+</ul>
+<p>データセットは <code>glimpse</code> 関数を用いて探索することができる (Chapter <a href="discovering-R.html#class-conversion">2.5.1</a> 参照)。例えば、<code><a href="https://github.com/mcguinlu/robvis">library(robvis)</a></code> を用いてパッケージをロードしたら、以下のコマンドを実行して ROBINS-I のサンプルデータセットを閲覧してみよう。</p>
+<div class="sourceCode" id="cb483"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">data_robins</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Rows: 12
+## Columns: 10
+## $ Study   &lt;fct&gt; Study 1, Study 2, Study 3, Study 4, Study 5, Study 6, Study 7,…
+## $ D1      &lt;fct&gt; Critical, Moderate, Moderate, Low, Serious, Critical, Critical…
+## $ D2      &lt;fct&gt; Low, Low, Low, Low, Serious, Serious, Moderate, Moderate, Low,…
+## $ D3      &lt;fct&gt; Critical, Low, Moderate, Serious, Low, Moderate, Moderate, Low…
+## $ D4      &lt;fct&gt; Critical, Critical, Critical, Critical, Low, Critical, Serious…
+## $ D5      &lt;fct&gt; Low, Low, Critical, Moderate, Moderate, Critical, Critical, Lo…
+## $ D6      &lt;fct&gt; Low, Moderate, Low, Low, Low, Moderate, Serious, Low, Serious,…
+## $ D7      &lt;fct&gt; Serious, Low, Serious, Critical, Moderate, Serious, Serious, C…
+## $ Overall &lt;fct&gt; Critical, Low, Serious, Low, Serious, Serious, Moderate, Moder…
+## $ Weight  &lt;dbl&gt; 33.3333333, 33.3333333, 0.1428571, 9.0909091, 12.5000000, 25.0…</code></pre>
+<p>このサンプルデータセットを、このガイドの残りの部分で提示されるプロットを作成するために使用する。</p>
+<p><br></p>
+</div>
+</div>
+<div id="要約プロット" class="section level2" number="15.2">
+<h2>
+<span class="header-section-number">15.2</span> 要約プロット<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84%E3%83%97%E3%83%AD%E3%83%83%E3%83%88"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<div id="基本情報" class="section level3" number="15.2.1">
+<h3>
+<span class="header-section-number">15.2.1</span> 基本情報<a class="anchor" aria-label="anchor" href="#%E5%9F%BA%E6%9C%AC%E6%83%85%E5%A0%B1"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><em>R</em> にバイアスリスク要約表をインポートしたら、バイアスリスク図の作成は非常に簡単である。</p>
+<p>まず始めに、ROB2 サンプルデータセット (<code>data_rob2</code>) を用いた単純な重み付き要約棒グラフを、以下のコードを実行して作成する。</p>
+<div class="sourceCode" id="cb485"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROB2"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-471-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="プロットを修正" class="section level3" number="15.2.2">
+<h3>
+<span class="header-section-number">15.2.2</span> プロットを修正<a class="anchor" aria-label="anchor" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%92%E4%BF%AE%E6%AD%A3"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><code>rob_summary</code> 関数には以下のパラメータがある。</p>
+<ul>
+<li>
+<code>data</code>. 要約 (ドメイン) レベルの risk-of-bias 評価を含むデータフレーム。最初の列は研究の詳細、2 番目の列は評価の最初のドメイン、最後の列は各研究に割り当てる重み付けを含む。この関数は、データに全体的なリスクオブバイアスの列が含まれていることを想定している。例えば、ROB2.0 のデータセットでは、8列 (研究の詳細1、ドメインレベルの判定5、総合判定1、重み付け1の順) となる。</li>
+<li>
+<code>tool</code>. 使用したバイアスリスク評価ツール。現在、RoB2.0 (<code>"ROB2"</code>)、<code>"ROBINS-I"</code>、<code>"QUADAS-2"</code> がサポートされている。</li>
+<li>
+<code>overall</code>. 図に全体の Risk of Bias を示す追加のバーを含めるかどうかのオプション。デフォルトは <code>FALSE</code> である。</li>
+<li>
+<code>weighted</code>. 棒グラフに重みをつけるかどうかを指定するオプション。デフォルトは <code>TRUE</code> で、現在の Cochrane Collaboration のガイダンスに沿ったものである。</li>
+<li>
+<code>colour</code>. プロットの配色を指定するための引数である。デフォルトは <code>"cochrane"</code> で、普遍的なコクランカラーを使用する。また、色覚異常者に優しいパレットのプリセットオプションも利用できる (<code>colour = "colourblind"</code>)。</li>
+<li>
+<code>quiet</code>. プロットを表示せず、静かに生成するための論理オプション。デフォルトは <code>FALSE</code>。</li>
+</ul>
+<p>各引数の機能例を以下に示す。</p>
+<p><br></p>
+<div id="tool" class="section level4" number="15.2.2.1">
+<h4>
+<span class="header-section-number">15.2.2.1</span> <code>tool</code><a class="anchor" aria-label="anchor" href="#tool"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p><code>tool</code> は、使用するツールテンプレートを定義するための引数である。上の例では、ROB2 テンプレートが使用されている。他の2つの主要なテンプレート、ROBINS-I と QUADAS-2 テンプレートは、以下に示されている。</p>
+<div class="sourceCode" id="cb486"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_robins</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROBINS-I"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-472-1.png" width="90%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb487"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_quadas</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"QUADAS-2"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-473-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="overall" class="section level4" number="15.2.2.2">
+<h4>
+<span class="header-section-number">15.2.2.2</span> <code>overall</code><a class="anchor" aria-label="anchor" href="#overall"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>デフォルトでは、全体の Risk of Bias 判定を表す追加のバーはプロットに含まれない。これを含めたい場合は、<code>overall = TRUE</code> と設定する。例えば</p>
+<div class="sourceCode" id="cb488"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
+<span>            overall <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-474-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="重み付けのある棒グラフとない棒グラフ" class="section level4" number="15.2.2.3">
+<h4>
+<span class="header-section-number">15.2.2.3</span> 重み付けのある棒グラフとない棒グラフ<a class="anchor" aria-label="anchor" href="#%E9%87%8D%E3%81%BF%E4%BB%98%E3%81%91%E3%81%AE%E3%81%82%E3%82%8B%E6%A3%92%E3%82%B0%E3%83%A9%E3%83%95%E3%81%A8%E3%81%AA%E3%81%84%E6%A3%92%E3%82%B0%E3%83%A9%E3%83%95"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>デフォルトでは、棒グラフは研究の精度の指標で重み付けされ、特定のバイアスのリスクがある研究の割合ではなく、情報の割合を示すようになる。このアプローチは、<a href="https://training.cochrane.org/handbook/current/chapter-07#section-7-4">Cochrane Handbook</a>に沿っている。</p>
+<p>このオプションをオフにするには、<code>weighted = FALSE</code> と設定し、重み付けしない棒グラフを作成する。例えば、次の2つのプロットを比較してみてみよう。</p>
+<div class="sourceCode" id="cb489"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROB2"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-475-1.png" width="90%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb490"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROB2"</span>,</span>
+<span>            weighted <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-476-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="カラースキーム" class="section level4" number="15.2.2.4">
+<h4>
+<span class="header-section-number">15.2.2.4</span> カラースキーム<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%A9%E3%83%BC%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%A0"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<div class="boximportant">
+<p><strong>イギリス英語</strong></p>
+アメリカ英語ではなく、イギリス英語の <strong>colour</strong> であることに注意。
+</div>
+<p>両プロット関数の <code>colour</code> 引数は、2つの定義済みカラースキーム、<code>"cochrane"</code> (デフォルト) または <code>"colourblind"</code> から選択するか、あるいは <strong>hex code</strong> のベクトルを与えて自分自身のパレットを定義することが可能である。例えば、定義済みの <code>"colourblind"</code> パレットを使用するため、以下のようにする。</p>
+<div class="sourceCode" id="cb491"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
+<span>            colour <span class="op">=</span> <span class="st">"colourblind"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-478-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p>自分だけのカラースキームを決めることもできる。</p>
+<div class="sourceCode" id="cb492"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>            tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
+<span>            colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#f442c8"</span>,<span class="st">"#bef441"</span>,<span class="st">"#000000"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-479-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p>独自のカラースキームを定義する場合、離散判定 (例: 「低」、「中」、「高」、「重要」) の数と指定する色の数が同じであることを確認する必要がある。さらに、色はバイアスのリスクの昇順 (例: 「Low」～「Critical」) で指定する必要があり、最初の16進数はバイアスのリスクが “Low” に対応する。</p>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="交通信号プロット" class="section level2" number="15.3">
+<h2>
+<span class="header-section-number">15.3</span> 交通信号プロット<a class="anchor" aria-label="anchor" href="#%E4%BA%A4%E9%80%9A%E4%BF%A1%E5%8F%B7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>研究者は、評価した各研究の各領域におけるバイアスのリスクを提示したいと思うことがよくある。このプロットは一般的に交通信号プロットと呼ばれ、<strong>{robvis}</strong> の <code>rob_traffic_light</code> 関数で作成することができる。</p>
+<p><br></p>
+<div id="基本情報-1" class="section level3" number="15.3.1">
+<h3>
+<span class="header-section-number">15.3.1</span> 基本情報<a class="anchor" aria-label="anchor" href="#%E5%9F%BA%E6%9C%AC%E6%83%85%E5%A0%B1-1"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>まず、ROB2 サンプルデータセット( <code>data_rob2</code> )を用いた交通信号プロットを、以下のコードを実行して作成した。</p>
+<div class="sourceCode" id="cb493"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"ROB2"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-480-1.png" width="65%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="プロットを修正-1" class="section level3" number="15.3.2">
+<h3>
+<span class="header-section-number">15.3.2</span> プロットを修正<a class="anchor" aria-label="anchor" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%92%E4%BF%AE%E6%AD%A3-1"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><code>rob_summary</code> 関数には以下のパラメータがある。</p>
+<ul>
+<li>
+<code>data</code>. 要約 (ドメイン) レベルの risk-of-bias 評価を含むデータフレーム。最初の列は研究の詳細、2 番目の列は評価の最初のドメイン、最後の列は各研究に割り当てる重み付けを含む。この関数は、データに全体的なリスク・オブ・バイアスの列が含まれていることを想定している。例えば、ROB2.0のデータセットでは、8列 (研究の詳細1、ドメインレベルの判断5、総合判断1、重み1、この順) となる。</li>
+<li>
+<code>tool</code>. 使用したバイアスリスク評価ツール。現在、RoB2.0 (<code>"ROB2"</code>)、<code>"ROBINS-I"</code>、<code>"QUADAS-2"</code> がサポートされている。</li>
+<li>
+<code>colour</code>. プロットの配色を指定するための引数である。デフォルトは <code>"cochrane"</code> で、どこにでもあるコクランカラーを使用する。また、色覚異常者に優しいパレット (<code>"colourblind"</code>)のプリセットオプションも利用できる。</li>
+<li>
+<code>psize</code>.「交通信号」ポイントの大きさを変更するためのオプション。デフォルトは <code>20</code>。</li>
+<li>
+<code>quiet</code>. プロットを表示せず、静かに生成するための論理オプション。デフォルトは <code>FALSE</code>。</li>
+</ul>
+<p><br></p>
+<div id="ツール" class="section level4" number="15.3.2.1">
+<h4>
+<span class="header-section-number">15.3.2.1</span> ツール<a class="anchor" aria-label="anchor" href="#%E3%83%84%E3%83%BC%E3%83%AB"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>使用するツールテンプレートを定義するための引数である。ROB2 テンプレートのデモと、他の2つの主要テンプレートである ROBINS-I と QUADAS-2 テンプレートを以下に表示する。</p>
+<div class="sourceCode" id="cb494"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_robins</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"ROBINS-I"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-481-1.png" width="65%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb495"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_quadas</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"QUADAS-2"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-482-1.png" width="65%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="カラースキーム-1" class="section level4" number="15.3.2.2">
+<h4>
+<span class="header-section-number">15.3.2.2</span> カラースキーム<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%A9%E3%83%BC%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%A0-1"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<div class="boximportant">
+<p><strong>イギリス英語</strong></p>
+「色」のスペルは、アメリカ英語ではなく <strong>colour</strong> である。
+</div>
+<p>両プロット関数の <code>colour</code> 引数は、2つの定義済み配色 <code>"cochrane"</code> (デフォルト) と <code>"colourblind"</code> から選択することができる。</p>
+<p>例えば、定義済みの <code>"colourblind"</code> パレットを使用する場合。</p>
+<div class="sourceCode" id="cb496"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
+<span>                  colour <span class="op">=</span> <span class="st">"colourblind"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-484-1.png" width="65%" style="display: block; margin: auto;"></div>
+<p>自分だけのカラースキームを決めることもできる。</p>
+<div class="sourceCode" id="cb497"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rob2</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
+<span>                  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#f442c8"</span>,<span class="st">"#bef441"</span>,<span class="st">"#000000"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-485-1.png" width="65%" style="display: block; margin: auto;"></div>
+<p>独自のカラースキームを定義する場合、離散判定 (例: “Low”、“Moderate”、“High”、“Critical”) の数と指定する色の数が同じであることを確認する必要がある。さらに、色はバイアスのリスクの昇順 (例: “Low”～“Critical”) で指定する必要があり、最初の16進数はバイアスのリスクが “Low” の色に対応する。</p>
+<p><br></p>
+</div>
+<div id="ポイントサイズ" class="section level4" number="15.3.2.3">
+<h4>
+<span class="header-section-number">15.3.2.3</span> ポイントサイズ<a class="anchor" aria-label="anchor" href="#%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88%E3%82%B5%E3%82%A4%E3%82%BA"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>多数のバイアスリスク評価を実施した場合、結果の交通信号プロットが長すぎて役に立たないこともある。このような場合には、<code>rob_traffic_light</code> 関数の <code>psize</code> 引数を小さくすることで対応できる (デフォルトは <code>20</code>)。例えば</p>
+<div class="sourceCode" id="cb498"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create bigger dataset (18 studies)</span></span>
+<span><span class="va">new_rob2_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">data_rob2</span>, <span class="va">data_rob2</span><span class="op">)</span></span>
+<span><span class="va">new_rob2_data</span><span class="op">$</span><span class="va">Study</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Study"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">new_rob2_data</span><span class="op">$</span><span class="va">Study</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># Plot bigger dataset, reducing the psize argument from 20 to 8</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">new_rob2_data</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
+<span>                  psize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-486-1.png" width="45%" style="display: block; margin: auto;"><br></p>
+</div>
+</div>
+</div>
+<div id="rob1-template" class="section level2" number="15.4">
+<h2>
+<span class="header-section-number">15.4</span> “ROB1” ジェネリックテンプレート<a class="anchor" aria-label="anchor" href="#rob1-template"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<div id="モチベーション" class="section level3" number="15.4.1">
+<h3>
+<span class="header-section-number">15.4.1</span> モチベーション<a class="anchor" aria-label="anchor" href="#%E3%83%A2%E3%83%81%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>このテンプレートは、プロットに含まれるドメインの柔軟性を高めている。任意の数のドメインを扱うことができ (ドメインの数が設定されている他のツールテンプレートを参照)、結果の図ではユーザー定義の列見出しをドメインのタイトルとして使用する。</p>
+<p><br></p>
+</div>
+<div id="ドメイン数の違い" class="section level3" number="15.4.2">
+<h3>
+<span class="header-section-number">15.4.2</span> ドメイン数の違い<a class="anchor" aria-label="anchor" href="#%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E6%95%B0%E3%81%AE%E9%81%95%E3%81%84"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>“ROB1” テンプレート ( <code>tool = "ROB1"</code> ) は、さまざまな数の列を扱うことができる。これはもともとROB1アセスメントツールで使用するために設計されたが、頻繁にドメインが追加または削除されるようになった。<strong>このテンプレートは他のツール (ROB2、QUADAS-2、ROBINS-I) の調整版を使用して行われた評価の結果を提示すために使用できるが、これは勧めない</strong>。他の公表されているツールを使用する著者は、ガイダンスに適合することを確実にするために、前の章で示されたより厳格なテンプレートを使用する必要がある。</p>
+<p><br></p>
+</div>
+<div id="ドメイン名" class="section level3" number="15.4.3">
+<h3>
+<span class="header-section-number">15.4.3</span> ドメイン名<a class="anchor" aria-label="anchor" href="#%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E5%90%8D"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>前のセクションで挙げた他のツールでは、ドメインレベルのバイアスリスク判定を含む列の名称は重要ではない。例えば、 <em>D1</em> 、 <em>D2</em> 、 <em>D3</em> などの名前が一般的である。しかし、<code>"ROB1"</code> テンプレートを使用する場合は、この限りではない。</p>
+<p>data_rob2 と data_rob1 の列見出しを比較する (ここでは比較しやすいように横向きで表示している)。</p>
+<div class="inline-table"><table class="kable_wrapper table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-487">Table 15.1: </span>データセット <code>data_rob2</code> (左) and <code>data_rob1</code> (右) における列名の比較。
+</caption>
+<tbody><tr>
+<td>
+<table class="table table-sm">
+<thead><tr>
+<th style="text-align:right;">
+No. 
+</th>
+<th style="text-align:left;">
+列名
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Study
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+D1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+D2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+D3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+D4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+D5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+Overall
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+Weight
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table class="table table-sm">
+<thead><tr>
+<th style="text-align:right;">
+No. 
+</th>
+<th style="text-align:left;">
+列名
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Study
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+Random.sequence.generation.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+Allocation.concealment.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+Blinding.of.participants.and.personnel.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+Blinding.of.outcome.assessment
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+Incomplete.outcome.data
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+Selective.reporting.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+Other.sources.of.bias.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:left;">
+Overall
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:left;">
+Weight
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr></tbody>
+</table></div>
+<p>ROB2 サンプルデータセットのドメイン列 (列 2-6) には、 <em>D1</em> ～ <em>D5</em> という任意の名前が付けられているが、これは ROB2 ガイダンスで与えられた正しいドメインタイトルに対応するようにツールで上書きされるためである。</p>
+<p>一方、ROB1 サンプルデータセットのドメイン列 (列 2-8) は、<code>rob_summary</code> と <code>rob_traffic_light</code> が生成する図に使用されるため、正しくラベル付けされていることがわかる。</p>
+<p>例として、“Random.sequence.generation” 列の名前を “これはテスト” に変更してみよう。<code>rob_summary</code> 図では、最初のバーのタイトルが変更され、<code>rob_traffic_light</code> 図では、この変更を反映してキャプションが更新されている。</p>
+<div class="sourceCode" id="cb499"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># data_rob1 データセットのコピーを作成</span></span>
+<span><span class="va">new_rob1_data</span> <span class="op">&lt;-</span> <span class="va">data_rob1</span></span>
+<span></span>
+<span><span class="co"># 最初のドメインの列名を変更</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">new_rob1_data</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"これはテスト"</span></span>
+<span></span>
+<span><span class="co"># 要約棒グラフを作成; macOS では文字化けするためフォント (ただし y 軸が追加されてしまう) </span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">new_rob1_data</span>, tool <span class="op">=</span> <span class="st">"ROB1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span>base_family <span class="op">=</span> <span class="st">"Hiragino Kaku Gothic Pro W3"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-488-1.png" width="90%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb500"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 交通信号プロットを作成</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_traffic_light.html">rob_traffic_light</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">new_rob1_data</span>, </span>
+<span>                  tool <span class="op">=</span> <span class="st">"ROB1"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-489-1.png" width="65%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+</div>
+<div id="カスタマイズと保存" class="section level2" number="15.5">
+<h2>
+<span class="header-section-number">15.5</span> カスタマイズと保存<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA%E3%81%A8%E4%BF%9D%E5%AD%98"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<div id="ggplot2-パッケージ" class="section level3" number="15.5.1">
+<h3>
+<span class="header-section-number">15.5.1</span> <strong>{ggplot2}</strong> パッケージ<a class="anchor" aria-label="anchor" href="#ggplot2-%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p><strong>{robvis}</strong> 関数 (<code>rob_summary</code> と <code>rob_traffic_light</code>) は共に <code>ggplot</code> オブジェクトを生成するので、<strong>{ggplot2}</strong> パッケージの関数を使用してカスタマイズしたり保存したりすることができる。このパッケージを読み込むには、次のコードを使用する。</p>
+<div class="sourceCode" id="cb501"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="プロットの修正" class="section level3" number="15.5.2">
+<h3>
+<span class="header-section-number">15.5.2</span> プロットの修正<a class="anchor" aria-label="anchor" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E4%BF%AE%E6%AD%A3"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>プロットには、<strong>{ggplot2}</strong> 関数を使ってポストプロダクションで行うことができる様々な修正がある。便利な例は、プロットにタイトルを追加することである。</p>
+<div class="sourceCode" id="cb502"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 事前に ggplot2 がインストールされ、ロードされていること</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span><span class="va">data_rob2</span>, <span class="st">"ROB2"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Your custom title"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-491-1.png" width="90%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="プロットの保存" class="section level3" number="15.5.3">
+<h3>
+<span class="header-section-number">15.5.3</span> プロットの保存<a class="anchor" aria-label="anchor" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E4%BF%9D%E5%AD%98"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>バイアスのリスクのプロットを保存するために、まず &lt;- 演算子を用いてオブジェクトに割り当て、次に <strong>{ggplot2}</strong> パッケージの <code>ggsave</code> 関数を用いて保存する。</p>
+<p>要約棒グラフを保存する際は、高さと幅をデフォルト値にして、以下のコードを使用することを勧める。</p>
+<div class="sourceCode" id="cb503"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># プロットを作成し、オブジェクトに格納</span></span>
+<span><span class="va">rob_barplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/robvis/man/rob_summary.html">rob_summary</a></span><span class="op">(</span><span class="va">data_rob2</span>, <span class="st">"ROB2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># プロットを保存</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span>plot <span class="op">=</span> <span class="va">rob_barplot</span>,        <span class="co"># 保存するオブジェクト</span></span>
+<span>       filename <span class="op">=</span> <span class="st">"robplot2.png"</span>, <span class="co"># 保存先</span></span>
+<span>       width <span class="op">=</span> <span class="fl">8</span>,                 <span class="co"># 画像の幅 (推奨値) </span></span>
+<span>       height <span class="op">=</span> <span class="fl">2.41</span>,             <span class="co"># 画像の高さ (推奨値) </span></span>
+<span>       dpi <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>                <span class="co"># 画像の解像度</span></span></code></pre></div>
+<p>交通信号プロットも、保存する方法は同じである。しかし、<code>width</code> と <code>height</code> パラメータの最適な値は、含まれる研究の数や名前が変わると、プロットごとに異なるため、推奨値はない。</p>
+<p><br></p>
+</div>
+<div id="異なるフォーマットで保存" class="section level3" number="15.5.4">
+<h3>
+<span class="header-section-number">15.5.4</span> 異なるフォーマットで保存<a class="anchor" aria-label="anchor" href="#%E7%95%B0%E3%81%AA%E3%82%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E3%81%A7%E4%BF%9D%E5%AD%98"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>プロットは、ファイル名の拡張子を変えるだけで (例えば “.png” から “.pdf” に)、上記の関数を使って様々なフォーマットで保存することが可能である。使用可能なフォーマットは .png、.pdf、.tiff、.svg<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;SVG は、&lt;strong&gt;{svglite}&lt;/strong&gt; パッケージのインストールとロードを要する。&lt;code&gt;install.packages("svglite")&lt;/code&gt; して &lt;code&gt;library(svglite)&lt;/code&gt; とする。&lt;/p&gt;'><sup>74</sup></a> である。</p>
+<p>例えば、上で作成した棒グラフ (<code>rob_barplot</code>) を PDF として保存するには、以下のようにする。</p>
+<div class="sourceCode" id="cb504"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># プロットを保存</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span>plot <span class="op">=</span> <span class="va">rob_barplot</span>,                  </span>
+<span>       filename <span class="op">=</span> <span class="st">"robplot2.pdf"</span>, <span class="co"># 拡張子を ".pdf"</span></span>
+<span>       width <span class="op">=</span> <span class="fl">8</span>,                           </span>
+<span>       height <span class="op">=</span> <span class="fl">2.41</span>,                       </span>
+<span>       dpi <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+</div>
+<div id="ウェブアプリ" class="section level2" number="15.6">
+<h2>
+<span class="header-section-number">15.6</span> ウェブアプリ<a class="anchor" aria-label="anchor" href="#%E3%82%A6%E3%82%A7%E3%83%96%E3%82%A2%E3%83%97%E3%83%AA"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>robvis の機能を手軽に体験してもらうために、<strong>{robvis}</strong> パッケージのグラフィカルなインターフェースを提供する Web アプリケーションを作成した。</p>
+<p>ウェブアプリは<a href="https://mcguinlu.shinyapps.io/robvis">こちら</a>で公開されている。以下に、簡単なガイド付きウォークスルーを紹介する。</p>
+<p><br></p>
+<div id="ランディングページ" class="section level3" number="15.6.1">
+<h3>
+<span class="header-section-number">15.6.1</span> ランディングページ<a class="anchor" aria-label="anchor" href="#%E3%83%A9%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%83%9A%E3%83%BC%E3%82%B8"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<div class="inline-figure"><img src="images/robvis-app-landingpage.png" width="90%" style="display: block; margin: auto;"></div>
+<p>このページでは、前の章で紹介したガイダンスの簡潔版、特にデータセットのセットアップについて紹介した。さらに重要なのは、各ツールのサンプルデータセットを CSV ファイルとしてダウンロードし、アプリとの対話や機能探索に利用できることである。</p>
+<p><br></p>
+</div>
+<div id="交通信号プロットページ" class="section level3" number="15.6.2">
+<h3>
+<span class="header-section-number">15.6.2</span> 交通信号プロットページ<a class="anchor" aria-label="anchor" href="#%E4%BA%A4%E9%80%9A%E4%BF%A1%E5%8F%B7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%83%9A%E3%83%BC%E3%82%B8"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>2番目のタブをクリックすると、以下の画面が表示される。</p>
+<div class="inline-figure"><img src="images/robvis-app-traffic-light.png" width="45%" style="display: block; margin: auto;"></div>
+<p>このメニューは <code>rob_traffic_light</code> 関数のグラフィカルインターフェイスとして機能する。</p>
+<ul>
+<li>“Browse…” をクリックし、CSV ファイルを保存した場所に移動して、バイアスリスクの要約表をアップロードした。</li>
+<li>ドロップダウン・ボックスを使用して、バイアス・リスクの評価を行うために使用するツールを選択する。</li>
+</ul>
+<p>基本的な交通信号のプロットがウィンドウの右側に表示されるはずである。以下のオプションを使ってプロットをカスタマイズすることができる。</p>
+<ul>
+<li>使用する配色を選択してみよう (“Cochrane” または “Colour-blind friendly” のいずれか)</li>
+<li>ポイントサイズの変更 (1つの交通信号プロット上に多数の研究をプロットしたい場合に有効)</li>
+<li>文字サイズの変更</li>
+</ul>
+<p>プロットが完成したら、必要な形式 (.png, .jpg, .tiff, .eps) を選んで “Download plot” ボタンをクリックすれば、プロットをダウンロードすることができる。最初に形式を選択しないと、ダウンロードエラーになる。</p>
+<p><br></p>
+</div>
+<div id="要約プロットページ" class="section level3" number="15.6.3">
+<h3>
+<span class="header-section-number">15.6.3</span> 要約プロットページ<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%83%9A%E3%83%BC%E3%82%B8"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>3番目のタブをクリックすると、以下の画面が表示される。</p>
+<p><img src="images/robvis-app-summary-plot.png" width="45%" style="display: block; margin: auto;"><strong>このメニューは <code>rob_summary</code> 関数のグラフィカルインターフェイスとして機能する。</strong></p>
+<ul>
+<li>“Browse…” をクリックし、CSV ファイルを保存した場所に移動して、バイアスリスクの要約表をアップロードする。</li>
+<li>ドロップダウン・ボックスを使用して、バイアス・リスクの評価を行うために使用するツールを選択する。</li>
+</ul>
+<p>基本的な加重要約棒グラフがウィンドウの右側に表示されるはずである。</p>
+<p><strong>以下のオプションを使用して、プロットをカスタマイズすることができる。</strong></p>
+<ul>
+<li>図形の作成時にウェイトを使用するかどうかを選択することができる。</li>
+<li>バイアス判定全体のリスク分布を表す棒グラフを追加してみよう。</li>
+<li>使用する配色を選択してみよう (“Cochrane” または “Colour-blind friendly” のいずれか)</li>
+</ul>
+<p>交通信号プロットタブと同様に、必要なフォーマットを選択し、“Download plot” ボタンをクリックすると、プロットをダウンロードすることができる。</p>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+
+</div>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="power.html"><span class="header-section-number">14</span> 検出力分析</a></div>
+<div class="next"><a href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#risk-of-bias-plots"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li>
+<a class="nav-link" href="#%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AD%E3%83%80%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3"><span class="header-section-number">15.1</span> イントロダクション</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#robvis-%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80"><span class="header-section-number">15.1.1</span> {robvis} を読み込む</a></li>
+<li><a class="nav-link" href="#%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%83%AA%E3%82%B9%E3%82%AF%E3%81%AE%E8%A6%81%E7%B4%84%E8%A1%A8%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A4%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%88"><span class="header-section-number">15.1.2</span> バイアスリスクの要約表データをインポート</a></li>
+<li><a class="nav-link" href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88"><span class="header-section-number">15.1.3</span> テンプレート</a></li>
+<li><a class="nav-link" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%82%BB%E3%83%83%E3%83%88%E4%BE%8B"><span class="header-section-number">15.1.4</span> データセット例</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E8%A6%81%E7%B4%84%E3%83%97%E3%83%AD%E3%83%83%E3%83%88"><span class="header-section-number">15.2</span> 要約プロット</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%83%85%E5%A0%B1"><span class="header-section-number">15.2.1</span> 基本情報</a></li>
+<li><a class="nav-link" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%92%E4%BF%AE%E6%AD%A3"><span class="header-section-number">15.2.2</span> プロットを修正</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E4%BA%A4%E9%80%9A%E4%BF%A1%E5%8F%B7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88"><span class="header-section-number">15.3</span> 交通信号プロット</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%83%85%E5%A0%B1-1"><span class="header-section-number">15.3.1</span> 基本情報</a></li>
+<li><a class="nav-link" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%92%E4%BF%AE%E6%AD%A3-1"><span class="header-section-number">15.3.2</span> プロットを修正</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#rob1-template"><span class="header-section-number">15.4</span> “ROB1” ジェネリックテンプレート</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%83%A2%E3%83%81%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"><span class="header-section-number">15.4.1</span> モチベーション</a></li>
+<li><a class="nav-link" href="#%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E6%95%B0%E3%81%AE%E9%81%95%E3%81%84"><span class="header-section-number">15.4.2</span> ドメイン数の違い</a></li>
+<li><a class="nav-link" href="#%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E5%90%8D"><span class="header-section-number">15.4.3</span> ドメイン名</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA%E3%81%A8%E4%BF%9D%E5%AD%98"><span class="header-section-number">15.5</span> カスタマイズと保存</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#ggplot2-%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8"><span class="header-section-number">15.5.1</span> {ggplot2} パッケージ</a></li>
+<li><a class="nav-link" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E4%BF%AE%E6%AD%A3"><span class="header-section-number">15.5.2</span> プロットの修正</a></li>
+<li><a class="nav-link" href="#%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E4%BF%9D%E5%AD%98"><span class="header-section-number">15.5.3</span> プロットの保存</a></li>
+<li><a class="nav-link" href="#%E7%95%B0%E3%81%AA%E3%82%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E3%81%A7%E4%BF%9D%E5%AD%98"><span class="header-section-number">15.5.4</span> 異なるフォーマットで保存</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E3%82%A6%E3%82%A7%E3%83%96%E3%82%A2%E3%83%97%E3%83%AA"><span class="header-section-number">15.6</span> ウェブアプリ</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%83%A9%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%83%9A%E3%83%BC%E3%82%B8"><span class="header-section-number">15.6.1</span> ランディングページ</a></li>
+<li><a class="nav-link" href="#%E4%BA%A4%E9%80%9A%E4%BF%A1%E5%8F%B7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%83%9A%E3%83%BC%E3%82%B8"><span class="header-section-number">15.6.2</span> 交通信号プロットページ</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%83%9A%E3%83%BC%E3%82%B8"><span class="header-section-number">15.6.3</span> 要約プロットページ</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

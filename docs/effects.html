@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>3 効果量 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="前 章では、 R の世界に慣れ親しみ、データのインポートと操作に役立ついくつかのツールを学んだ。本書の第 2 部では、 R の知識を応用して拡張しながら、メタ分析で使用される主要な統計技術について学習していこう。 Chapter 1.1 では、メタ分析を「複数の研究から得られた定量的な結果を要約する手法」と定義した。メタ分析では、個人ではなく研究が分析の基本単位となる。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="3 効果量 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="前 章では、 R の世界に慣れ親しみ、データのインポートと操作に役立ついくつかのツールを学んだ。本書の第 2 部では、 R の知識を応用して拡張しながら、メタ分析で使用される主要な統計技術について学習していこう。 Chapter 1.1 では、メタ分析を「複数の研究から得られた定量的な結果を要約する手法」と定義した。メタ分析では、個人ではなく研究が分析の基本単位となる。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3 効果量 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="前 章では、 R の世界に慣れ親しみ、データのインポートと操作に役立ついくつかのツールを学んだ。本書の第 2 部では、 R の知識を応用して拡張しながら、メタ分析で使用される主要な統計技術について学習していこう。 Chapter 1.1 では、メタ分析を「複数の研究から得られた定量的な結果を要約する手法」と定義した。メタ分析では、個人ではなく研究が分析の基本単位となる。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="active" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="effects" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> 効果量<a class="anchor" aria-label="anchor" href="#effects"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/effect_sizes.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">前</span>
+章では、 <em>R</em> の世界に慣れ親しみ、データのインポートと操作に役立ついくつかのツールを学んだ。本書の第 2 部では、 <em>R</em> の知識を応用して拡張しながら、メタ分析で使用される主要な統計技術について学習していこう。</p>
+<p></p>
+<p>Chapter <a href="intro.html#what-are-mas">1.1</a> では、メタ分析を「複数の研究から得られた定量的な結果を要約する手法」と定義した。メタ分析では、個人ではなく研究が分析の基本単位となる。</p>
+<p>これは新たな問題を引き起こす。一次研究において、収集したデータを記述するための<strong>要約統計</strong>を計算することは、通常、非常に簡単である。例えば一次研究では、連続変数アウトカムの<strong>算術平均</strong> (arithmetic mean) <span class="math inline">\(\bar{x}\)</span> と<strong>標準偏差</strong> (standard deviation) <span class="math inline">\(s\)</span> を計算するのは、非常によくある手法である。</p>
+<p>しかし、これが可能なのは、通常、一次研究において本質的な前提条件の一つが満たされているからである。この条件とは、アウトカム変数がすべての研究対象者において<strong>同じ方法で測定された</strong>ことである。メタ分析では、この前提は通常満たされていない。中学校 2 年の数学能力をアウトカムとするメタ分析を実施したいと想像してみよう。どんなに厳密な包括基準を適用しても (Chapter <a href="intro.html#research-question">1.4.1</a> 参照)、すべての研究がまったく同じテストを使って数学能力を測定しているとは思われないし、テストの合格・不合格の割合だけを報告している研究もあるかもしれない。このため、アウトカムを直接定量的に統合することは事実上不可能である。</p>
+<p>メタ分析を行うには、すべての研究にわたって要約される<strong>効果量</strong> (effect size) を見つけなければならない。そのような効果量は、論文から直接抽出できることもあるが、多くの場合、研究で報告された他のデータから計算する必要がある。効果量の計量は、メタ分析の結果およびその解釈可能性に大きな影響を与える可能性がある。そのため、重要な基準を満たす必要がある <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001</a>; <a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019</a>)</span>。特に、メタ分析で選択される効果量指標は、以下のようなものであるべきである。</p>
+<ul>
+<li><p><strong>比較できる</strong> (Comparable). 効果量の測定は、すべての研究において同じ意味を持つことが重要である。再び数学のスキルを例にとってみよう。異なるテストを使用した研究において、数学のテストで達成した点数における実験群と対照群の差をプールすることは意味がない。例えば、テストは難易度や達成できる最大点数が異なる場合がある。</p></li>
+<li><p><strong>計算できる</strong> (Computable). 効果量の指標は、主要な研究からその数値を導き出すことが可能である場合のみ、メタ分析に使用することが可能である。含まれるすべての研究のデータに基づいて、効果量を計算することが可能でなければならない。</p></li>
+<li><p><strong>信頼できる</strong> (Reliable). たとえ含まれるすべての研究の効果量を計算できたとしても、それらを統計的に<strong>プール</strong>することもできなければならない。メタ分析で何らかの指標を用いるには、少なくとも<strong>標準誤差</strong> (次章参照) を算出できなければならない。また、効果量の形式が、適用したいメタ分析手法に適しており、推定値に誤差やバイアスが生じないことも重要である。</p></li>
+<li><p><strong>解釈できる</strong> (Interpretable). 効果量の種類は、リサーチクエスチョンに答えるために適切でなければならない。例えば、2つの連続変数間の関連性の強さに関心がある場合、効果の大きさを表すには相関を用いるのが一般的である。相関の大きさを解釈するのは比較的簡単で、多くの研究者が理解することが可能である。しかし、この後の章では、解釈しやすく、かつ統計計算に最適な結果指標を用いることができない場合があることを学びる。このような場合、効果量をプールする前に、より良い数学的特性を持つ形式に変換する必要がある。</p></li>
+</ul>
+<p>「効果量」という言葉は、すでにどこかで目にしたことがあるのではないだろうか。私たちも、この言葉が何を表しているのか、あまり気にせずに使ってきた。そこで、次節では、「効果量」という言葉が実際に何を意味しているのかを探ってみたい。</p>
+<p><br></p>
+<div id="what-is-es" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> 効果量とは何か？<a class="anchor" aria-label="anchor" href="#what-is-es"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>効果量とは、本書では 2 つの実体の間の関係を定量化する指標と定義する。効果量は、この関係の<strong>方向</strong>と<strong>大きさ</strong>を捉えたものである。関係性が同じ効果量として表現されていれば、それらを比較することが可能である。</p>
+<p>
+</p>
+<p>ここで強調したいのは、これは効果量の意味を定義するための<strong>1つ</strong>の方法に過ぎないということである。効果量の定義には幅があり、人によって使い方が異なる <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 3</a>)</span>。研究者の中には、介入研究の結果に言及する際にのみ効果量を定義する人もおり、治療群と対照群の差として表現される (Chapter <a href="effects.html#s-md">3.3.1</a> 参照)。この概念では、「効果量」とは、ある治療の効果とその大きさを指す。</p>
+<p>私たち、これはかなり狭い定義であると考えている。治療が何らかの変数に影響を与えるだけでなく、人間が直接介入しなくても、効果は<strong>自然に</strong>現れることもある。例えば、親の収入や親の教育などの社会人口統計学的変数が、その子どもの教育達成度に影響を与える可能性がある。相関は、ある変数の値から別の変数の値をどれだけ予測できるかを記述し、効果量の一形態として見ることもできる。</p>
+<p>逆に、メタ分析としてプールできるものはすべて自動的に効果量になる、というのは行き過ぎかもしれない。これから学ぶように、サンプル平均のような<strong>中心傾向</strong> (central tendency) の指標はメタ分析に用いることが可能だが、これだけでは 2 つの現象の関係を定量化することはできず、「効果」は存在しない。とはいえ、本書では、実際の効果の推定値だけでなく、「一変数」や「中心傾向」の指標も表す、<strong>全体を代表する部分</strong> (pars pro toto) として、「効果量」という言葉をよく使う。これは正確だからではなく、その方が便利だからである。</p>
+<p>「効果量」という言葉を全面的に否定する人もいる。その主張は、「効果量」の「効果」という言葉が、<strong>因果関係</strong>を示唆していると強調しているためである。しかし、私たちは皆、<strong>相関は因果関係ではない</strong>ことを知っており、介入群と対照群の差が自動的に治療そのものを原因とするものであってはならない。最終的にどちらの定義を好むかは使う人次第であるが、効果量について話すとき、人々は異なる概念を持っているかもしれないことを意識する必要がある。</p>
+<p></p>
+<p>数学の表記法では、<strong>真の</strong>効果量を表す記号としてギリシャ文字の<strong>シータ</strong> (<span class="math inline">\(\theta\)</span>) を用いるのが一般的である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;本書では、効果量を議論する際に Schwarzer ら&lt;span class="citation"&gt;(&lt;a href="references.html#ref-schwarzer2015meta"&gt;2015&lt;/a&gt;)&lt;/span&gt;が用いた表記法をほぼ踏襲した&lt;/p&gt;'><sup>8</sup></a>。より正確には、 <span class="math inline">\(\theta_k\)</span> は研究 <span class="math inline">\(k\)</span> の真の効果量を表している。真の効果量は、公表された研究アウトカムに見られる<strong>観察された効果量</strong>と<strong>同一ではない</strong>という点は重要である。観測された効果量は、真の効果量の<strong>推定値</strong>に過ぎない。私たちが言及する実体が推定値に過ぎないことを明確にするために、<strong>ハット</strong> (^) の記号を使用するのが一般的である。したがって、真の効果量の推定値である <span class="math inline">\(k\)</span> 試験で観測された効果量は、<span class="math inline">\(\hat\theta_k\)</span> (「シータ・ハット・k」と読む) と書くことが可能となる。</p>
+<p>しかし、なぜ <span class="math inline">\(\hat\theta_k\)</span> と <span class="math inline">\(\theta_k\)</span> は異なるのだろうか？それは、<strong>サンプル誤差</strong>のためで、 <span class="math inline">\(\epsilon_k\)</span> (「イプシロン・k」と読む) として記号化できる。どのような一次調査でも、研究者は母集団全体から小さなサンプルしか抽出することができない。例えば、プライマリケア患者の心臓血管の健康に対する定期的な運動の効果を調べたい場合、世界中のプライマリケア患者すべてではなく、ごく一部の患者を対象とすることが可能である。無限に大きな母集団から小さなサンプルしか取れないということは、観察された効果が真の母集団効果とは異なることを意味する。</p>
+<p>つまり、 <span class="math inline">\(\hat\theta_k\)</span> は <span class="math inline">\(\theta_k\)</span> にサンプル誤差 <span class="math inline">\(\epsilon_k\)</span> を加えたものと同じになる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;観測された効果量が真の効果量とサンプル誤差以上に異なることもよくある。例えば、研究の方法論におけるバイアスや測定誤差である。この点については、Chapter &lt;a href="effects.html#es-correction"&gt;3.4&lt;/a&gt; で詳しく説明する。&lt;/p&gt;'><sup>9</sup></a>。</p>
+<p><span class="math display" id="eq:es1">\[\begin{align}
+\hat\theta_k = \theta_k + \epsilon_k
+\tag{3.1}
+\end{align}\]</span></p>
+<p>研究 <span class="math inline">\(k\)</span> の効果量推定値 <span class="math inline">\(\hat\theta_k\)</span> が真の効果量にできるだけ近く、かつ <span class="math inline">\(\epsilon_k\)</span> が最小であることが望ましいのは明らかである。すべての条件が同じであれば、<span class="math inline">\(\epsilon\)</span> が小さい研究ほど、真の効果量の<strong>正確な</strong>推定値を提供すると考えることが可能である。メタ分析の手法では、効果量の推定値の精度を考慮する (Chapter <a href="pooling-es.html#pooling-es">4</a> 参照)。異なる研究の結果をプールする場合、精度が高い (サンプル誤差が少ない) 効果ほど、真の効果量の推定精度が高いため、高いウェイトを与える <span class="citation">(<a href="references.html#ref-hedges2014statistical">L. Hedges and Olkin 2014</a>)</span>。</p>
+<p>しかし、サンプル誤差の大きさはどのようにして知ることができるのだろうか。当然のことながら、研究の真の効果は <span class="math inline">\(\theta_k\)</span> なので、<span class="math inline">\(\epsilon_k\)</span> も不明である。しかし、多くの場合、統計理論を使ってサンプル誤差を近似的に求めることが可能である。一般に、<span class="math inline">\(\epsilon\)</span> を定量化する方法として、<strong>標準誤差</strong> (<span class="math inline">\(SE\)</span>) がある。標準誤差は、<strong>サンプル分布</strong>の標準偏差として定義される。サンプル分布とは、母集団から同じサンプルサイズ <span class="math inline">\(n\)</span> のサンプルを<strong>多数回</strong>無作為に抽出したときに得られる指標の分布のことである。</p>
+<p><em>R</em> でデータをシミュレートすることによって、これをより具体的に見てみよう。<code>rnorm</code> 関数を使って、より大きな母集団から無作為にサンプルを抽出しているようにしてみたい。この関数名は、正規 (<strong>norm</strong>al) 分布から 無作為 (<strong>r</strong>andom) サンプルを作成することからきている。<code>rnorm</code> 関数は、真の母集団で値がどのように分布しているかを<strong>知っている</strong>という「完璧な世界」をシミュレートし、サンプルを取ることを可能にする。</p>
+<p>この関数は、以下の3つの引数を取る。すなわち、<code>n</code>: サンプルとして取得したい観測数、 <code>mean</code>: 母集団の<strong>真の</strong>平均値、 <code>sd</code>: <strong>真の</strong>標準偏差である。<code>rnorm</code> 関数は乱数要素を持っているので、結果を再現するために、まず <strong>seed</strong> を設定する必要がある。これは <code>set.seed</code> 関数で行うことができるが、数値を指定する必要がある。この例では、<code>123</code> を seed に設定する。さらに、母集団の真の平均は <span class="math inline">\(\mu =\)</span> 10、真の標準偏差は <span class="math inline">\(\sigma =\)</span> 2、サンプルは <span class="math inline">\(n=\)</span> 50のランダムに選んだ観測からなり、これを <code>sample</code> という名前で保存するシミュレーションをしたい。</p>
+<p>このようなコードになる。</p>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span>, mean <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p>さて、サンプルの平均を計算することが可能である。</p>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 10.06881</code></pre>
+<p></p>
+<p>平均は <span class="math inline">\(\bar{x} =\)</span> 10.07 であり、すでに母集団における真の値に非常に近いことがわかる。ここでやったことを繰り返すと、サンプル分布ができあがる。このプロセスをシミュレートするために、先ほどのステップを 1000 回実行する。</p>
+<p>その結果を Figure <a href="effects.html#fig:samplingdist">3.1</a> のヒストグラムに示す。サンプルの平均は、平均が 10 の正規分布に近いことがわかる。さらに多くのサンプルを抽出すれば、平均の分布はさらに正規分布に近くなる。この考え方は、統計学の最も基本的な考え方の1つである「<strong>中心極限定理</strong>」(central limit theorem) で表現されている <span class="citation">(<a href="references.html#ref-aronow2019foundations">Aronow and Miller 2019, chap. 3.2.4</a>)</span>。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:samplingdist"></span>
+<img src="Doing_Meta_Analysis_in_R_files/figure-html/samplingdist-1.png" alt="平均値の「サンプル分布」 (1000 件のサンプル)。" width="70%"><p class="caption">
+Figure 3.1: 平均値の「サンプル分布」 (1000 件のサンプル)。
+</p>
+</div>
+<p>標準誤差はこのサンプル分布の標準偏差と定義される。そこで、標準誤差の近似値を得るために、1000 個の模擬平均の標準偏差を計算しておいた。その結果、<span class="math inline">\(SE =\)</span> 0.267 となる。</p>
+<p>前にも述べたように、現実世界ではサンプル分布をシミュレーションして標準誤差を計算することはできない。しかし、統計理論に基づいた公式があるので、観測されたサンプルが1つしかない (通常の) 場合でも、標準誤差の推定値を計算することが可能である)。<strong>平均値</strong>の標準誤差を計算する公式は次のように定義されている。</p>
+<p><span class="math display" id="eq:es2">\[\begin{align}
+SE = \frac{s}{\sqrt{n}}
+\tag{3.2}
+\end{align}\]</span></p>
+<p>つまり、サンプル <span class="math inline">\(s\)</span> の標準偏差をサンプルサイズ <span class="math inline">\(n\)</span> の平方根で割ったものを標準誤差と定義している。この式を使って、 <em>R</em> を使う前に作った <code>sample</code> オブジェクトの標準誤差を簡単に計算することが可能である。ランダムサンプルのサイズは <span class="math inline">\(n =\)</span> 50 であったことを思い出す。</p>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.2618756</code></pre>
+<p>この値をサンプル分布のシミュレーションで求めた値と比較すると、ほぼ同じであることがわかる。この公式を使えば、手持ちのサンプルだけで、かなり正確に標準誤差を推定することができるのである。</p>
+<p>式 3.2 から、平均値の標準誤差は研究のサンプルサイズに依存することがわかる。<span class="math inline">\(n\)</span> が大きくなると標準誤差は小さくなり、真の母平均の推定値がより正確になることを意味している。</p>
+<p>この関係を説明するために、別のシミュレーションを行おう。ここでも、<code>rnorm</code> 関数を使用し、母集団の平均を <span class="math inline">\(\mu =\)</span> 10、<span class="math inline">\(\sigma =\)</span> 2 とする。しかし、今回は、<span class="math inline">\(n =\)</span> 2 から <span class="math inline">\(n =\)</span> 500 まで、サンプルサイズを変化させる。各シミュレーションについて、式 3.2 を用いて、平均と標準誤差を計算する。</p>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated
+## in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to
+## see where this warning was generated.</code></pre>
+<div class="figure">
+<span style="display:block;" id="fig:simulse"></span>
+<img src="Doing_Meta_Analysis_in_R_files/figure-html/simulse-1.png" alt="サンプルサイズの関数としてのサンプル平均とサンプル誤差。" width="672"><p class="caption">
+Figure 3.2: サンプルサイズの関数としてのサンプル平均とサンプル誤差。
+</p>
+</div>
+<p>その結果を Figure <a href="effects.html#fig:simulse">3.2</a> に示す。サンプルサイズが大きくなるにつれて、平均値の推定値はどんどん正確になっていき、10 に向かって収束していく。この精度の向上は標準誤差で表される。サンプルサイズが大きくなると、標準誤差はどんどん小さくなっていく。</p>
+<p>ここまで、メタ分析を行うために必要な要素、すなわち、(１) 観察された効果量またはアウトカム指標、および (２) 標準誤差として表されるその精度について探ってきた。発表された研究からこの2つの情報を算出することができれば、通常はメタ分析合成を行うことも可能である (Chapter <a href="pooling-es.html#pooling-es">4</a> 参照)。</p>
+<p>このシミュレーションでは、例として変数の平均を使用した。上で見た特性は、よく使われる効果量など、他のアウトカム指標でも見られることを理解することが重要である。もし、平均ではなく、サンプルの平均<strong>差</strong>を計算したとすると、この平均差は、同じような形のサンプル分布を示し、平均差の標準誤差もサンプルサイズが大きくなると小さくなる (標準偏差が同じであることが条件)。例えば、(Fisher’s <span class="math inline">\(z\)</span> 変換された) 相関関係についても同様である。</p>
+<p>以下の節では、メタ分析で最も一般的に使用される効果量とアウトカム指標について説明する。これらの効果量測定がよく使われる理由の1つは、本章の最初に定義した2つの基準、すなわち、<strong>信頼できる</strong>、<strong>計算できる</strong>を満たしているからである。</p>
+<p>式 3.2 で平均値の標準誤差を計算する方法を説明したが、この式は<strong>平均値</strong>に<strong>のみ</strong>容易に適用することができる。他の効果量やアウトカム指標では、標準誤差を計算するための公式が異なる。ここで取り上げる効果量の測定基準については、幸いにも公式が存在するので、それらをすべて紹介していこう。公式のコレクションは、<a href="formula.html#formula">Appendix</a>でも見ることが可能である。公式の中にはやや複雑なものもあるが、標準誤差を手動で計算する必要はほとんどない。 <em>R</em> は、この大変な計算を代行してくれる様々な関数がある。</p>
+<p>以下の節では、様々な効果量の測定基準についての理論的な議論を提供するだけではない。後で使用する <em>R</em> メタ分析関数が効果量を簡単に計算できるように、データセットにどのような情報を用意しなければならないかも紹介する。</p>
+<p>研究デザインの種類ごとに、通常現れる効果量をグループ分けしよう。すなわち、<strong>単群デザイン</strong> (例: 自然主義研究、調査、非対照試験)、<strong>対照群デザイン</strong> (例: 実験研究、対照臨床試験) である。これはあくまで大まかな分類であり、厳密なルールではないことに注意したい。ここで提示する効果量の多くは、アウトカムデータの種類が適切であれば、技術的にはどのようなタイプの研究デザインにも適用可能である。</p>
+<p><br></p>
+</div>
+<div id="single-group-es" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> 単群デザインにおける測定値と効果量<a class="anchor" aria-label="anchor" href="#single-group-es"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<div id="means" class="section level3" number="3.2.1">
+<h3>
+<span class="header-section-number">3.2.1</span> 平均値<a class="anchor" aria-label="anchor" href="#means"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p><strong>算術平均</strong>は、おそらく最もよく使われる中心傾向の尺度である。平均がアウトカム指標として使われることはあまりないが、メタ分析では簡単にプールすることが可能である。例えば、男性の平均身長をセンチメートルやインチで表現し、いくつかの代表的な研究をプールして調査することが可能である。</p>
+<p>算術平均は、サンプル中の個々の値 <span class="math inline">\(x_i\)</span> をすべて合計し、その合計をサンプルサイズで割ったものである。</p>
+<p><span class="math display" id="eq:es3">\[\begin{equation}
+\bar{x} = \frac{\sum^{n}_{i=1}x_i}{n}
+\tag{3.3}
+\end{equation}\]</span></p>
+<p>平均の標準誤差の求め方は、すでに説明した (Chapter <a href="effects.html#what-is-es">3.1</a> 参照)。サンプルの標準偏差 <span class="math inline">\(s\)</span> をサンプルサイズの平方根で割ればいいだけである。</p>
+<p><span class="math display" id="eq:es4">\[\begin{equation}
+SE_{\bar{x}} = \frac{s}{\sqrt{n}}
+\tag{3.4}
+\end{equation}\]</span></p>
+<p>先に見たように、 <em>R</em> では平均とその標準誤差を簡単に計算することが可能である。</p>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 再現性のために123のシードを設定する</span></span>
+<span><span class="co"># そして、無作為にサンプルを取る (n=50)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 平均値を計算する</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 20.17202</code></pre>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 標準誤差を計算する</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6546889</code></pre>
+<p>平均値のメタ分析を行うには、データセットに少なくとも以下の列が含まれている必要がある。</p>
+<ul>
+<li>
+<strong><code>n</code></strong>. 研究の観測数 (サンプルサイズ)。</li>
+<li>
+<strong><code>mean</code></strong>. 研究で報告された平均値。</li>
+<li>
+<strong><code>sd</code></strong>. 研究で報告された変数の標準偏差。</li>
+</ul>
+<p><br></p>
+</div>
+<div id="props" class="section level3" number="3.2.2">
+<h3>
+<span class="header-section-number">3.2.2</span> 割合<a class="anchor" aria-label="anchor" href="#props"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p><strong>割合</strong> (proportion) もまた、中心傾向の測定方法である。割合は、サンプルのうち何件が特定のサブグループに分類されるかを指定する。割合は、0 から 1 の値を取ることができ、100 を掛けることで<strong>パーセント</strong>に変換することができる。割合は、例えば、ある時点の病気の有病率を調べたいときに、アウトカム指標として使われることがある。割合 <span class="math inline">\(p\)</span> を計算するためには、特定のサブグループに属する個人の数 <span class="math inline">\(k\)</span> を全サンプルサイズ <span class="math inline">\(n\)</span> で割る必要がある。</p>
+<p><span class="math display" id="eq:es5">\[\begin{equation}
+p = \frac{k}{n}
+\tag{3.5}
+\end{equation}\]</span></p>
+<p>割合の標準誤差は、以下のように計算することができる。</p>
+<p><span class="math display" id="eq:es6">\[\begin{equation}
+SE_{p} = \sqrt{\frac{p(1-p)}{n}}
+\tag{3.6}
+\end{equation}\]</span></p>
+<p>以下のコードを使って、 <em>R</em> の割合とその標準誤差を計算することが可能である。</p>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># k と n に以下の値を定義する。</span></span>
+<span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">25</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">125</span></span>
+<span></span>
+<span><span class="co"># 割合を計算する</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">k</span><span class="op">/</span><span class="va">n</span></span>
+<span><span class="va">p</span></span></code></pre></div>
+<pre><code>## [1] 0.2</code></pre>
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 標準誤差を計算する</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">p</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="va">n</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.03577709</code></pre>
+<p>
+</p>
+<p>割合の範囲が 0 と 1 の間に制限されていることが問題になることがある <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001, chap. 3</a>)</span>。<span class="math inline">\(p\)</span> が 0 または 1 に近いと、標準誤差が人為的に圧縮され、割合の推定値の精度が過大評価されることになる。</p>
+<p>これは、サンプル分布と関係がある。<span class="math inline">\(p\)</span> の値が非常に小さいか大きい場合、サンプル分布は Figure <a href="effects.html#fig:samplingdist">3.1</a> のような正規分布になることはほとんどない。0-1 の範囲外の計算された割合を持つランダムなサンプルは不可能であるため、分布は<strong>右側に裾が伸びる</strong> (right-skewed) か、または<strong>左側に裾が伸びる</strong> (left-skewed)。</p>
+<p>これを避けるために、割合をプールする前に <strong>logit</strong> 変換するのが一般的である。logit 変換では、まず<strong>オッズ</strong>を計算する (Chapter <a href="effects.html#or">3.3.2.2</a> 参照)。オッズは、特定のカテゴリーに該当する参加者の割合を、そのカテゴリーに該当しない参加者の割合で割ったものとして定義される。</p>
+<p>そして、自然対数関数 <span class="math inline">\(\log_e\)</span> を使って、オッズを <span class="math inline">\(p=\)</span> 0.5 が値 0 に等しく、かつ範囲制限のない形式に変換している。これにより、サンプル分布がほぼ正規分布となり、標準誤差にバイアスがないことが確認できる。</p>
+<p>logit 変換された割合とその標準誤差は以下の式で計算できる <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001, chap. 3</a>)</span><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;logit-割合を元の尺度に戻すには、以下の式を使えば良い。&lt;span class="math inline"&gt;\(p=\frac{\exp(p_{\text{logit}})}{1+\exp(p_{\text{logit}})}\)&lt;/span&gt;。ここで &lt;span class="math inline"&gt;\(\exp\)&lt;/span&gt; は &lt;em&gt;R&lt;/em&gt; の &lt;code&gt;exp&lt;/code&gt; で実装された&lt;strong&gt;指数関数&lt;/strong&gt;である (Chapter &lt;a href="pooling-es.html#ppoolbin"&gt;4.2.3.1.4&lt;/a&gt; 参照)。&lt;/p&gt;'><sup>10</sup></a>:</p>
+<p><span class="math display" id="eq:es7">\[\begin{equation}
+p_{\text{logit}} = \log_{e} \left(\frac{p}{1-p}\right)
+\tag{3.7}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:es8">\[\begin{equation}
+SE_{p_{\text{logit}}} = \sqrt{\frac{1}{np}+\frac{1}{n(1-p)}}
+\tag{3.8}
+\end{equation}\]</span></p>
+<p>幸い、 <em>R</em> のメタ分析機能を使えば、この logit 変換を自動的に行ってくれる。そのため、データセットには以下の列を用意するだけでよい。</p>
+<ul>
+<li>
+<strong><code>event</code></strong>. 特定のサブグループ (<span class="math inline">\(k\)</span>) に含まれる観測数。</li>
+<li>
+<strong><code>n</code></strong>. サンプルサイズの合計 <span class="math inline">\(n\)</span>。</li>
+</ul>
+<p><br></p>
+</div>
+<div id="cors" class="section level3" number="3.2.3">
+<h3>
+<span class="header-section-number">3.2.3</span> 相関関係<a class="anchor" aria-label="anchor" href="#cors"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<div id="pearson-cors" class="section level4" number="3.2.3.1">
+<h4>
+<span class="header-section-number">3.2.3.1</span> ピアソン積率相関<a class="anchor" aria-label="anchor" href="#pearson-cors"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>
+</p>
+<p>相関とは、2つの変数間の<strong>共分散</strong>の大きさを表す効果量である。最も一般的なのは、2つの連続変数に対して計算できる<strong>ピアソン積率相関</strong> (Pearson Product-Moment Correlation)<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;この相関は、メタ分析の歴史にも関わる有名な統計学者 Karl Pearson (Chapter &lt;a href="intro.html#history"&gt;1.2&lt;/a&gt; 参照) から名付けられた&lt;/p&gt;'><sup>11</sup></a>であり、この積率相関は、例えば、メタ分析の研究者が2つの変数の間の<strong>共分散</strong>の量を表す効果量として用いることが可能である。積率相関は、例えば、メタ分析で関係の質と幸福度の関係を調べたいときに、効果量として使うことができる。</p>
+<p>変数 <span class="math inline">\(x\)</span> と変数 <span class="math inline">\(y\)</span> の相関 <span class="math inline">\(r_{xy}\)</span> は、<span class="math inline">\(x\)</span> と <span class="math inline">\(y\)</span> の <strong>共分散</strong> <span class="math inline">\(\text{Cov}(x,y)=\sigma^{2}_{xy}\)</span> を、それらの標準偏差<span class="math inline">\(\sigma_x\)</span> と <span class="math inline">\(\sigma_y\)</span> の<strong>積</strong> で割ったもので定義される。</p>
+<p><span class="math display" id="eq:es9">\[\begin{equation}
+r_{xy} = \frac{\sigma^{2}_{xy}}{\sigma_x \sigma_y}
+\tag{3.9}
+\end{equation}\]</span></p>
+<p>サンプルサイズ <span class="math inline">\(n\)</span> を用いると、<span class="math inline">\(r_{xy}\)</span> の標準誤差は次のように計算できる。</p>
+<p><span class="math display" id="eq:es10">\[\begin{equation}
+SE_{r_{xy}} = \frac{1-r_{xy}^2}{\sqrt{n-2}}
+\tag{3.10}
+\end{equation}\]</span></p>
+<p>積率相関を計算するとき、2つの変数の間の共変動をそれらの標準偏差で標準化する。つまり、2つ以上の研究が同じ尺度で構成要素を測定していれば、あまり意味がなく、相関を計算すれば、自動的に効果を比較することが可能になる。</p>
+<p>相関は -1 ～ 1 の値をとる。相関の大きさは、しばしば Cohen <span class="citation">(<a href="references.html#ref-cohen1988statistical">1988</a>)</span> の慣例を用いて解釈される。</p>
+<ul>
+<li>
+<span class="math inline">\(r \approx\)</span> 0.10: 小さい効果。</li>
+<li>
+<span class="math inline">\(r \approx\)</span> 0.30: 中程度の効果。</li>
+<li>
+<span class="math inline">\(r \approx\)</span> 0.50: 大きい効果。</li>
+</ul>
+<p>しかし、これらの慣例はあくまで経験則であることに留意すべきである。対象や先行研究に応じて、相関の大小を定量化する方がはるかに良い場合が多いのである。</p>
+<p>
+</p>
+<p>残念ながら、相関は割合 (Chapter <a href="effects.html#props">3.2.2</a>) と同様に範囲が限定されており、サンプルサイズの小さい研究に対して標準誤差を推定する際にバイアスをもたらす可能性がある <span class="citation">(<a href="references.html#ref-alexander1989statistical">Alexander, Scozzaro, and Borodkin 1989</a>)</span>。</p>
+<p>そのため、メタ分析では相関を <strong>Fisher’s</strong> <span class="math inline">\(z\)</span><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Fisher’s &lt;span class="math inline"&gt;\(z\)&lt;/span&gt; は、Chapter &lt;a href="intro.html#history"&gt;1.2&lt;/a&gt; で紹介した有名な統計学者 Ronald A. Fisher にちなんで名づけられた&lt;/p&gt;'><sup>12</sup></a> に変換することが一般的である。これも logit 変換と同様に、サンプル分布がほぼ正規分布になるように自然対数関数を用いる (詳しい説明は、Chapter <a href="effects.html#ratios">3.3.2</a> を参照)。式は次のようになる。</p>
+<p><span class="math display" id="eq:es11">\[\begin{equation}
+z = 0.5\log_{e}\left(\frac{1+r}{1-r}\right)
+\tag{3.11}
+\end{equation}\]</span></p>
+<p>サンプルサイズ <span class="math inline">\(n\)</span> がわかれば、Fisher’s <span class="math inline">\(z\)</span> の近似標準誤差はこの式で求めることができる <span class="citation">(<a href="references.html#ref-olkin1995correlations">Olkin and Finn 1995</a>)</span>。</p>
+<p><span class="math display" id="eq:es12">\[\begin{equation}
+SE_{z} = \frac{1}{\sqrt{n-3}}
+\tag{3.12}
+\end{equation}\]</span></p>
+<p>また、 <em>R</em> では <code>cor</code> と <code>log</code> 関数を用いて <span class="math inline">\(r_{xy}\)</span> と <span class="math inline">\(z\)</span> を直接計算することが可能である。</p>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 2 つの連続変数 x と y をシミュレート</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># x と y の相関を計算する</span></span>
+<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
+<span><span class="va">r</span></span></code></pre></div>
+<pre><code>## [1] 0.2840509</code></pre>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Fisher's z を計算する</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fl">0.5</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">r</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">r</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">z</span></span></code></pre></div>
+<pre><code>## [1] 0.2920831</code></pre>
+<p>ありがたいことに、 <em>R</em> の相関のメタ分析を行う際に、Fisher’s <span class="math inline">\(z\)</span> 変換を手動で行う必要はない。データセットに必要な列は以下の通りである。</p>
+<ul>
+<li>
+<strong><code>cor</code></strong>. ある研究の (変換されていない) 相関係数。</li>
+<li>
+<strong><code>n</code></strong>. 研究のサンプルサイズ。</li>
+</ul>
+<p><br></p>
+</div>
+<div id="pb-cors" class="section level4" number="3.2.3.2">
+<h4>
+<span class="header-section-number">3.2.3.2</span> 点双列相関<a class="anchor" aria-label="anchor" href="#pb-cors"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>
+</p>
+<p>ピアソン積率相関は、2つの連続変数間の関係を記述する。一方の変数 <span class="math inline">\(y\)</span> だけが連続的で、もう一方の変数 <span class="math inline">\(x\)</span> が二値的 (つまり、2つの値だけをとる) な場合、<span class="math inline">\(x\)</span> の因子の割合と因子ごとの <span class="math inline">\(y\)</span> 平均値から、<span class="math inline">\(y\)</span> がどれだけ予測できるかを表す<strong>点双列相関</strong> (point-biserial correlation) を計算することができる。</p>
+<p>点双列相関は、以下の式で計算できる。</p>
+<p><span class="math display" id="eq:es13">\[\begin{equation}
+{r_{pb}}= \frac{(\bar{y_1}-\bar{y_2})\sqrt{p_1(1-p_1)}}{s_y}
+\tag{3.13}
+\end{equation}\]</span></p>
+<p>この式で、<span class="math inline">\(\bar{y_1}\)</span> は二項変数 <span class="math inline">\(x\)</span> の第1群のみを考えたときの連続変数の平均、<span class="math inline">\(\bar{y_2}\)</span> は <span class="math inline">\(x\)</span> の第2群のみを考えたときの平均、<span class="math inline">\(p_1\)</span> は <span class="math inline">\(x\)</span> の第1群に該当する症例の割合、<span class="math inline">\(s_y\)</span> は <span class="math inline">\(y\)</span> の標準偏差とする。</p>
+<p>点双列相関は、 <em>R</em> で <code>cor</code> 関数を使って計算することができる (前節を参照)。与えられた変数の1つが2つの値しかとらず、もう1つが連続的である場合、(近似的な) 点双列相関が自動的に計算される。</p>
+<p></p>
+<p>点双列相関は、後述する<strong>標準化平均差</strong>とよく似ている (Chapter <a href="effects.html#b-group-smd">3.3.1.2</a>)。どちらの効果量指標も、連続変数の値が 2 群間でどれだけ異なるかを定量化するものである。しかし、点双列相関がメタ分析でプールされることはあまり一般的ではない。積率相関と同様に、点双列相関は、群比率が同じでない場合に範囲制限を受けるなど、メタ分析には好ましくない統計的性質を持っている <span class="citation">(<a href="references.html#ref-bonett2019point">Bonett 2020</a>)</span>。</p>
+<p>連続的なアウトカム変数の群間差に興味がある場合、メタ分析のために点双列相関を標準化平均差に変換することが推奨される <span class="citation">(<a href="references.html#ref-lipsey2001practical">Lipsey and Wilson 2001, chap. 3</a>)</span>。点双列相関を標準化平均差に変換する公式は、本書の「各種ツール」の Chapter <a href="es-calc.html#convert-corr">17.3</a> に掲載されている。</p>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="対照群デザインにおける効果量" class="section level2" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> 対照群デザインにおける効果量<a class="anchor" aria-label="anchor" href="#%E5%AF%BE%E7%85%A7%E7%BE%A4%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%8A%B9%E6%9E%9C%E9%87%8F"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<div id="s-md" class="section level3" number="3.3.1">
+<h3>
+<span class="header-section-number">3.3.1</span> (標準化) 平均差<a class="anchor" aria-label="anchor" href="#s-md"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<div id="b-group-md" class="section level4" number="3.3.1.1">
+<h4>
+<span class="header-section-number">3.3.1.1</span> 群間平均差<a class="anchor" aria-label="anchor" href="#b-group-md"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p><strong>群間平均差</strong> (group between mean difference) <span class="math inline">\(\text{MD}_{\text{between}}\)</span> は、2つの <strong>独立した</strong> 群間の平均の未標準化の差として定義される。群間平均差は、対照試験や他のタイプの実験的研究で通常見られるように、研究が少なくとも2つの群を含んでいる場合に計算することが可能である。メタ分析では、すべての研究が全く同じ尺度でアウトカムを測定した場合のみ、平均値を使用することが可能である。例えば、体重は科学研究においてほぼ常にキログラムで測定され、糖尿病学では、HbA<span class="math inline">\(_{\text{1c}}\)</span>値が血糖値の測定に一般的に使用される。</p>
+<p>平均差は、グループ1の平均値 <span class="math inline">\(\bar{x}_1\)</span> からグループ2の平均値 <span class="math inline">\(\bar{x}_2\)</span> を引いた値と定義される。</p>
+<p><span class="math display" id="eq:es14">\[\begin{equation}
+\text{MD}_{\text{between}} = \bar{x}_1 - \bar{x}_2
+\tag{3.14}
+\end{equation}\]</span></p>
+<p>標準誤差は、この式で求めることができる。</p>
+<p><span class="math display" id="eq:es15">\[\begin{equation}
+SE_{\text{MD}_{\text{between}}} = s_{\text{pooled}}\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}
+\tag{3.15}
+\end{equation}\]</span></p>
+<p></p>
+<p>式中、<span class="math inline">\(n_1\)</span> はグループ 1 のサンプルサイズ、<span class="math inline">\(n_2\)</span> はグループ 2 のサンプルサイズ、<span class="math inline">\(s_{\text{pooled}}\)</span> は両群の<strong>プール標準偏差</strong> (pooled standard deviation) であることを表している。グループ 1 の標準偏差 (<span class="math inline">\(s_1\)</span>) とグループ 2 の標準偏差 (<span class="math inline">\(s_2\)</span>) を用いて、<span class="math inline">\(s_{\text{pooled}}\)</span> の値は以下のように計算することができる。</p>
+<p><span class="math display" id="eq:es16">\[\begin{align}
+s_{\text{pooled}} = \sqrt{\frac{(n_1-1)s^2_1+(n_2-1)s^2_2}{(n_1-1)+(n_2-1)}}
+\tag{3.16}
+\end{align}\]</span></p>
+<p>ここでは、<em>R</em> で平均差とその標準誤差を計算する例を示す。まず初めに、データをシミュレートしよう。これは、実行可能な値を得るためにのみ行う。実際のメタ分析においては、<code>x1</code> と <code>x2</code> の平均値およびその標準偏差 <code>s1</code> と <code>s2</code> は、出版された論文から抽出できるであろうし、各群のサンプルサイズ <code>n1</code> と <code>n2</code> も同様である。このため、ここで示すものはそれほど重要ではない。</p>
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 母平均が異なる2つの確率変数を生成する</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span>, mean <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span>, mean <span class="op">=</span> <span class="fl">15</span>, sd <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 数式に必要な値を計算する</span></span>
+<span><span class="va">s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span>
+<span><span class="va">s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
+<span><span class="va">n1</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span><span class="va">n2</span> <span class="op">&lt;-</span> <span class="fl">20</span></span></code></pre></div>
+<p>このデータを使って、平均差とその標準誤差を、以前の式を使って計算していきたい。</p>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 差の平均を計算する</span></span>
+<span><span class="va">MD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
+<span><span class="va">MD</span></span></code></pre></div>
+<pre><code>## [1] -4.421357</code></pre>
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># s_pooled を計算する</span></span>
+<span><span class="va">s_pooled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span></span>
+<span>  <span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="va">n1</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">s1</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="op">(</span><span class="va">n2</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">s2</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">/</span></span>
+<span>    <span class="op">(</span><span class="op">(</span><span class="va">n1</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">+</span><span class="op">(</span><span class="va">n2</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 標準誤差を計算する</span></span>
+<span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">s_pooled</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">n1</span><span class="op">)</span><span class="op">+</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">n2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">se</span></span></code></pre></div>
+<pre><code>## [1] 0.8577262</code></pre>
+<p>通常、これらの計算をここで示したように<strong>手作業で</strong>行う必要はない。平均値の差のメタ分析では、データセットに以下の列を用意するだけでよい。</p>
+<ul>
+<li>
+<strong><code>n.e</code></strong>. 介入・実験群の観測数。</li>
+<li>
+<strong><code>mean.e</code></strong>. 介入・実験群の平均値。</li>
+<li>
+<strong><code>sd.e</code></strong>. 介入・実験群の標準偏差。</li>
+<li>
+<strong><code>n.c</code></strong>. 対照群の観測数。</li>
+<li>
+<strong><code>mean.c</code></strong>. 対照群の平均値。</li>
+<li>
+<strong><code>sd.c</code></strong>. 対照群の標準偏差。</li>
+</ul>
+<p><br></p>
+</div>
+<div id="b-group-smd" class="section level4" number="3.3.1.2">
+<h4>
+<span class="header-section-number">3.3.1.2</span> 群間標準化平均差<a class="anchor" aria-label="anchor" href="#b-group-smd"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>
+</p>
+<p>群間の標準化平均差 (standardized mean difference, SMD) <span class="math inline">\(\text{SMD}_{\text{between}}\)</span> は、プールした標準偏差 <span class="math inline">\(s_{\text{pooled}}\)</span> で標準化した、独立した2群間の平均値の差と定義される。文献では、標準化平均差は、心理学者で統計学者の Jacob Cohen にちなんで命名された <strong>Cohen’s</strong> <span class="math inline">\(d\)</span> とも呼ばれる。</p>
+<p>標準化されていない平均差とは対照的に、<span class="math inline">\(\text{SMD}_{\text{between}}\)</span> は2群間の差を<strong>標準偏差の単位</strong>で表現する。これは、2つのグループの生の平均差 <span class="math inline">\(\bar{x_1}\)</span> と <span class="math inline">\(\bar{x_2}\)</span> を、両グループのプール標準偏差 <span class="math inline">\(s_{\text{pooled}}\)</span> で割ることにより実現できる。</p>
+<p><span class="math display" id="eq:es17">\[\begin{equation}
+\text{SMD}_{\text{between}} = \frac{\bar{x}_1 - \bar{x}_2}{s_{\text{pooled}}}
+\tag{3.17}
+\end{equation}\]</span></p>
+<p>ここで、<span class="math inline">\(s_{\text{pooled}}\)</span> は、既に取り上げた式 (3.16) を用いて計算する。メタ分析では標準化平均差の方が非標準化平均差よりもずっとよく使われる。これは、<span class="math inline">\(\text{SMD}_{\text{between}}\)</span> が研究間で比較できるためで、それぞれの研究が同じ測定器を使ってアウトカムを測定していなかったとしても、比較することが可能になる。</p>
+<p>標準化によって、<span class="math inline">\(\text{SMD}_{\text{between}}=\)</span> 1 は常に2群の平均が互いに 1 サンプル標準偏差離れていることを意味し (Figure <a href="effects.html#fig:smd">3.3</a> 参照)、<span class="math inline">\(\text{SMD}_{\text{between}}=\)</span> 2 は2標準偏差の差を表す、という効果がある<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Kristoffer Magnusson は標準化平均差の値を変えて2群の分布を可視化する素晴らしいインタラクティブなツールを開発した。このツールはオンラインで見ることができる: &lt;a href="https://www.rpsychologist.com/d3/cohend/" class="uri"&gt;https://www.rpsychologist.com/d3/cohend/&lt;/a&gt;&lt;/p&gt;'><sup>13</sup></a>。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:smd"></span>
+<img src="images/smd_sep.png" alt="標準化平均差が1 (正規性、標準偏差が等しく、両群のサンプルサイズが等しいと仮定した場合)。" width="85%"><p class="caption">
+Figure 3.3: 標準化平均差が1 (正規性、標準偏差が等しく、両群のサンプルサイズが等しいと仮定した場合)。
+</p>
+</div>
+<p>標準化することで、平均値の差の大きさを評価することが非常に容易になる。標準化された平均値の差は、Cohen <span class="citation">(<a href="references.html#ref-cohen1988statistical">1988</a>)</span> による慣例を用いて解釈されることが多い。</p>
+<ul>
+<li>SMD <span class="math inline">\(\approx\)</span> 0.20: 小さい効果。</li>
+<li>SMD <span class="math inline">\(\approx\)</span> 0.50: 中程度の効果。</li>
+<li>SMD <span class="math inline">\(\approx\)</span> 0.80: 大きい効果。</li>
+</ul>
+<p>ピアソン積率相関と同様 (Chapter <a href="effects.html#pearson-cors">3.2.3.1</a>)、経験則に過ぎない。</p>
+<p>通常、標準化された平均値の差は、その「現実的な」意味合いに基づいて解釈する方がずっと良いのである。効果量は Cohen の基準では小さいかもしれないが、それでも非常に重要である可能性がある。例えば、多くの深刻な病気では、統計的な効果が非常に小さくても、集団レベルでは大きな影響を与え、何百万人もの命を救う可能性があるのである。ある研究では、うつ病の治療において、<span class="math inline">\(\text{SMD}_{\text{between}}=\)</span> 0.24 のような小さな効果でさえ、患者の命に臨床的に重要な影響を与えることができることが示された <span class="citation">(<a href="references.html#ref-cuijpers2014threshold">Pim Cuijpers et al. 2014</a>)</span>。</p>
+<p>この式を使って<span class="math inline">\(\text{SMD}_{\text{between}}\)</span> の標準誤差を計算することができる <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011</a>)</span>。</p>
+<p><span class="math display" id="eq:es18">\[\begin{equation}
+SE_{\text{SMD}_{\text{between}}} = \sqrt{\frac{n_1+n_2}{n_1n_2} + \frac{\text{SMD}^2_{\text{between}}}{2(n_1+n_2)}}
+\tag{3.18}
+\end{equation}\]</span></p>
+<p>ここで、<span class="math inline">\(n_1\)</span> と <span class="math inline">\(n_2\)</span> はグループ 1 とグループ 2 のサンプルサイズであり、<span class="math inline">\(\text{SMD}_{\text{between}}\)</span> は計算された群間標準化平均差である。</p>
+<p></p>
+<p><em>R</em> には、<span class="math inline">\(\text{SMD}_{\text{between}}\)</span> /Cohen’s <span class="math inline">\(d\)</span> を一度に計算できる関数がいくつかある。ここでは、<strong>{esc}</strong> パッケージ <span class="citation">(<a href="references.html#ref-esc">Lüdecke 2019</a>)</span> に含まれる <code>esc_mean_sd</code> 関数を使用する。このパッケージは今まで使用したことがないので、まずインストールする必要がある (Chapter <a href="discovering-R.html#packages">2.2</a> 参照)。</p>
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># esc パッケージのロード</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># SMD/d を計算するために必要なデータを定義する。</span></span>
+<span><span class="co"># 医かは、例として作ったダミーデータ</span></span>
+<span><span class="va">grp1m</span> <span class="op">&lt;-</span> <span class="fl">50</span>   <span class="co"># group 1 の平均値</span></span>
+<span><span class="va">grp2m</span> <span class="op">&lt;-</span> <span class="fl">60</span>   <span class="co"># group 2 の平均値</span></span>
+<span><span class="va">grp1sd</span> <span class="op">&lt;-</span> <span class="fl">10</span>  <span class="co"># group 1 の標準偏差</span></span>
+<span><span class="va">grp2sd</span> <span class="op">&lt;-</span> <span class="fl">10</span>  <span class="co"># group 2 の標準偏差</span></span>
+<span><span class="va">grp1n</span> <span class="op">&lt;-</span> <span class="fl">100</span>  <span class="co"># group1 のサンプルサイズ</span></span>
+<span><span class="va">grp2n</span> <span class="op">&lt;-</span> <span class="fl">100</span>  <span class="co"># group2 のサンプルサイズ</span></span>
+<span></span>
+<span><span class="co"># 効果量を計算する</span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_mean_sd.html">esc_mean_sd</a></span><span class="op">(</span>grp1m <span class="op">=</span> <span class="va">grp1m</span>, grp2m <span class="op">=</span> <span class="va">grp2m</span>, </span>
+<span>            grp1sd <span class="op">=</span> <span class="va">grp1sd</span>, grp2sd <span class="op">=</span> <span class="va">grp2sd</span>, </span>
+<span>            grp1n <span class="op">=</span> <span class="va">grp1n</span>, grp2n <span class="op">=</span> <span class="va">grp2n</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: mean and sd to effect size d
+##     Effect Size:  -1.0000
+##  Standard Error:   0.1500
+##            [...]</code></pre>
+<p>この出力では、言及すべきことが2つある。まず、計算された標準化平均の差がちょうど 1 であることがわかる。これは、私たちが定義した 2 つの平均の差が (プールされた) 標準偏差と等しいので、理にかなっている。</p>
+<p>次に、効果量が<strong>マイナス</strong>であることがわかる。これは、グループ 2 の平均がグループ 1 の平均より大きいからである。これは数学的には正しいのであるが、他の人がより簡単に解釈できるように、計算された効果量の符号を変えなければならないことがある。</p>
+<p>この例のデータは、介入 (group 1) または介入なし (group 2) を受けた後、人々が1週間に吸うタバコの平均本数を測定した研究から得られたと想像する。この文脈では、介入群では平均喫煙本数が少なかったので、研究結果は<strong>肯定的</strong>であったとする。したがって、効果量を -1.0 ではなく 1.0 と報告することは理にかなっており、他の人が直感的に介入には正の効果があったと理解できるようになる。</p>
+<p>効果量の符号が特に重要になるのは、ある研究では<strong>高い</strong>値が良いアウトカムを意味し、他の研究では<strong>低い</strong>値が良いアウトカムを意味する尺度を用いた場合である。この場合、すべての効果量が一貫して同じ方向にコード化されていることが不可欠である (例えば、メタ分析のすべての研究で、効果量が大きいほど介入群における転帰が良いことを意味することを確認する必要がある)。</p>
+<p></p>
+<p>多くの場合、標準化平均差に対して小サンプル補正を行い、<strong>Hedges’</strong> <span class="math inline">\(g\)</span> と呼ばれる効果量になる。この補正については、Chapter <a href="effects.html#hedges-g">3.4.1</a> で取り上げる。</p>
+<p>標準化平均差のメタ分析を行うには、データセットに少なくとも以下の列が含まれている必要がある。</p>
+<ul>
+<li>
+<strong><code>n.e</code></strong>. 介入・実験群の観測数。</li>
+<li>
+<strong><code>mean.e</code></strong>. 介入・実験群の平均値。</li>
+<li>
+<strong><code>sd.e</code></strong>. 介入・実験群の標準偏差。</li>
+<li>
+<strong><code>n.c</code></strong>. 対照群の観測数。</li>
+<li>
+<strong><code>mean.c</code></strong>. 対照群の平均値。</li>
+<li>
+<strong><code>sd.c</code></strong>. 対照群の標準偏差。</li>
+</ul>
+<p><br></p>
+
+<div class="boxinfo">
+<p><strong>標準偏差の外部推定値による標準化</strong></p>
+<p>SMD を計算するとき、<span class="math inline">\(s_{\text{pooled}}\)</span> を使うのは、それが母集団における真の標準偏差の代理として機能するからである。しかし、特に研究の規模が小さい場合、サンプルに基づいて計算された標準偏差は、母集団の標準偏差の推定値としては不適切な場合がある。</p>
+<p>この場合、可能な解決策は、平均差を標準化するために <span class="math inline">\(s_{\text{pooled}}\)</span> の<strong>外部</strong>推定値を使用することである <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019</a>)</span>。このような外部推定値は、類似の集団でこの研究と同じ測定器を使用した大規模な横断研究から抽出されるかもしれない。</p>
+</div>
+<p><br></p>
+</div>
+<div id="w-group-smd" class="section level4" number="3.3.1.3">
+<h4>
+<span class="header-section-number">3.3.1.3</span> 群内 (標準化) 平均差<a class="anchor" aria-label="anchor" href="#w-group-smd"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p></p>
+<p><strong>群内</strong>の差を調べる場合、非標準化または標準化された平均差を計算することが可能である。これは通常、同じグループの人々が2つの異なる時点 (例えば、介入前と介入後) で測定される場合である。</p>
+<p>群間平均差とは異なり、<span class="math inline">\(\text{(S)MD}_{\text{within}}\)</span>は<strong>独立ではない</strong>データを用いて計算される。例えば、測定点 <span class="math inline">\(t_1\)</span> での人物 <span class="math inline">\(i\)</span> の値が、測定点 <span class="math inline">\(t_2\)</span> での同じ人物の値に影響を与えている可能性がある。群内平均差は、通常、異なる時点で測定されたデータに基づいていることから、** (標準化) 平均利得** ((standardized) mean gain)とも呼ばれる。</p>
+<p>群内平均差 <span class="math inline">\(\text{MD}_{\text{within}}\)</span> は、同じ群の <span class="math inline">\(t_1\)</span> と <span class="math inline">\(t_2\)</span> の2つの時点の値を比較するようになった以外は、<span class="math inline">\(\text{MD}_{\text{between}}\)</span> と同じ方法 ( Chapter <a href="effects.html#b-group-md">3.3.1.1</a> 参照) で計算される。</p>
+<p><span class="math display" id="eq:es19">\[\begin{equation}
+\text{MD}_{\text{within}} = \bar{x}_{\text{t}_2} - \bar{x}_{\text{t}_1}
+\tag{3.19}
+\end{equation}\]</span></p>
+<p>群内平均差の標準化版を計算したい場合は、より複雑になる。<span class="math inline">\(\text{SMD}_{\text{within}}\)</span> をどのように計算すべきかについて、完全なコンセンサスはない。<a href="http://jakewestfall.org/blog/index.php/2016/03/25/five-different-cohens-d-statistics-for-within-subject-designs/">ブログ記事</a>で、Jake Westfall は少なくとも5つの異なる計算方法があることを指摘している。</p>
+<p>直感的なオプションは、両評価点のプールされた標準偏差 <span class="math inline">\(s_{\text{t}_1}\)</span> と <span class="math inline">\(s_{\text{t}_2}\)</span> を使って平均 <span class="math inline">\(\text{MD}_{\text{within}}\)</span> を標準化することである。群内デザインでは観測点数が通常同じなので、2つの標準偏差の二乗の和を2で割って <span class="math inline">\(s^2_{\text{pooled}}\)</span> を求めればよいことになる。そうでない場合は、Chapter <a href="effects.html#b-group-md">3.3.1.1</a> の式 (3.16) を使って <span class="math inline">\(s_{\text{pooled}}\)</span> を計算することが可能である。このことから、以下の式が導かれる。</p>
+<p><span class="math display" id="eq:es20">\[\begin{equation}
+\text{SMD}_{\text{within}} = \frac{\bar{x}_{\text{t}_2} - \bar{x}_{\text{t}_1}}{s_{\text{pooled}}}
+\tag{3.20}
+\end{equation}\]</span></p>
+<p>Becker <span class="citation">(<a href="references.html#ref-becker1988synthesizing">1988</a>)</span> は、さらに良い解決策を提案した。すなわち、<span class="math inline">\(\text{MD}_{\text{within}}\)</span> を介入前の得点の標準偏差 (<span class="math inline">\(s_{\text{t}_1}\)</span>) で割ることである。この理由は、<span class="math inline">\(s_{\text{t}_1}\)</span> の方が介入効果の影響を受けにくいことがある<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;分母に &lt;span class="math inline"&gt;\(\sqrt{(s_{\text{t}_1}^2 + s_{\text{t}_2}^2/2)}\)&lt;/span&gt; ではなく、&lt;span class="math inline"&gt;\(s_{\text{t}_1}\)&lt;/span&gt; を使っている理由は、もう一つ「統計的」な理由がある。群内デザインでは、&lt;span class="math inline"&gt;\(s_{\text{t}_1}\)&lt;/span&gt; と &lt;span class="math inline"&gt;\(s_{\text{t}_2}\)&lt;/span&gt; は独立ではない。これは、&lt;span class="math inline"&gt;\(s_{\text{t}_1}^2 + s_{\text{t}_2}^2\)&lt;/span&gt; が &lt;span class="math inline"&gt;\(\chi^2\)&lt;/span&gt; 分布に従わないことを意味し、&lt;span class="math inline"&gt;\(\text{SMD}_{\text{within}}\)&lt;/span&gt; の標準誤差を計算する際に下記の式 (3.23) を適用するために必要なものである。分母に &lt;span class="math inline"&gt;\(\sqrt{(s_{\text{t}_1}^2 + s_{\text{t}_2}^2/2)}\)&lt;/span&gt; を用いたときの &lt;span class="math inline"&gt;\(\text{SMD}_{\text{within}}\)&lt;/span&gt; の近似サンプル分布の「正しい」式が最近記載されている &lt;span class="citation"&gt;(&lt;a href="references.html#ref-cousineau2020approximating"&gt;Cousineau 2020&lt;/a&gt;)&lt;/span&gt;; これも &lt;span class="math inline"&gt;\(r_{\text{t}_1\text{t}_2}\)&lt;/span&gt; が分かっているものと仮定している。&lt;span class="citation"&gt;Cousineau and Goulet-Pelletier (&lt;a href="references.html#ref-cousineau2021ci"&gt;2021&lt;/a&gt;)&lt;/span&gt; は、この新しく「発見された」分布に基づいて信頼区間を計算する方法を議論した。しかし、ここでは、分母に &lt;span class="math inline"&gt;\(s_{\text{t}_1}\)&lt;/span&gt; だけを使ったときの &lt;span class="math inline"&gt;\(\text{SMD}_{\text{within}}\)&lt;/span&gt; とその標準誤差の式に限定する。これは、これらの式が実際に適用するのが比較的簡単で、文献にもよく見られること、また、テスト前の標準偏差 &lt;span class="math inline"&gt;\(s_{\text{t}_1}\)&lt;/span&gt; で標準化するのが一般的に妥当な方法だからである&lt;/p&gt;'><sup>14</sup></a>。</p>
+<p><span class="math display" id="eq:es201">\[\begin{equation}
+\text{SMD}_{\text{within}} = \frac{\bar{x}_{\text{t}_2} - \bar{x}_{\text{t}_1}}{s_{\text{t}_1}}
+\tag{3.21}
+\end{equation}\]</span></p>
+<p>また、<span class="math inline">\(\text{MD}_{\text{within}}\)</span> と <span class="math inline">\(\text{SMD}_{\text{within}}\)</span> の標準誤差はこれらの式を使って計算可能である <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 4</a>; <a href="references.html#ref-becker1988synthesizing">Becker 1988</a>)</span>。</p>
+<p><span class="math display" id="eq:es21">\[\begin{equation}
+SE_{\text{MD}_{\text{within}}}=\sqrt{\dfrac{s^2_{\text{t}_1}+s^2_{\text{t}_2}-(2r_{\text{t}_1\text{t}_2}s_{\text{t}_1}s_{\text{t}_2})}{n}}
+\tag{3.22}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:es22">\[\begin{equation}
+SE_{\text{SMD}_{\text{within}}} = \sqrt{\frac{2(1-r_{\text{t}_1\text{t}_2})}{n}+\frac{\text{SMD}^2_{\text{within}}}{2n}}
+\tag{3.23}
+\end{equation}\]</span></p>
+<p>群内 (標準化) 平均値の差の標準誤差を計算するために、評価点間の相関 <span class="math inline">\(r_{\text{t}_1\text{t}_2}\)</span> が必要であることは、実際には問題となることが多い。変数の前後相関は発表された研究でほとんど報告されていないため、先行研究に基づいて <span class="math inline">\(r_{\text{t}_1\text{t}_2}\)</span> の値を仮定せざるを得ない。</p>
+<p>しかし、相関を正確に把握しないと、結果に誤差が生じる可能性がある。一般的に、メタ分析で群内効果量を計算することは避けた方が良いと言われている <span class="citation">(<a href="references.html#ref-cuijpers2017pre">Pim Cuijpers et al. 2017</a>)</span>。特に、実験群<strong>と</strong>対照群の両方のデータがある場合は、前後比較ではなく、<span class="math inline">\(t_2\)</span> における<strong>群間</strong> (標準化) 平均差を計算して、治療の効果を測定する方がずっと良い。ただし、対照群を含まない研究のみにメタ分析を行う場合は、群内平均差を計算することが可能である。</p>
+<p>群内標準化平均差 (群内 (within-group) Cohen’s <span class="math inline">\(d\)</span> とも呼ばれる) は <em>R</em> でこのように計算できる。</p>
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 効果量計算に必要なデータ例を定義</span></span>
+<span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fl">20</span>    <span class="co"># t1 における平均値</span></span>
+<span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fl">30</span>    <span class="co"># t2 における平均値</span></span>
+<span><span class="va">sd1</span> <span class="op">&lt;-</span> <span class="fl">13</span>   <span class="co"># t1 における標準偏差</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">80</span>     <span class="co"># サンプルサイズ</span></span>
+<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>    <span class="co"># t1 と t2 の相関係数</span></span>
+<span></span>
+<span><span class="co"># 生の平均差を計算</span></span>
+<span><span class="va">md_within</span> <span class="op">&lt;-</span> <span class="va">x2</span> <span class="op">-</span> <span class="va">x1</span></span>
+<span></span>
+<span><span class="co"># smd を計算:</span></span>
+<span><span class="co"># ここで、t1 における標準偏差</span></span>
+<span><span class="co"># を使い、平均差を標準化する</span></span>
+<span><span class="va">smd_within</span> <span class="op">&lt;-</span> <span class="va">md_within</span><span class="op">/</span><span class="va">sd1</span></span>
+<span><span class="va">smd_within</span></span></code></pre></div>
+<pre><code>## [1] 0.7692308</code></pre>
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 標準誤差を計算</span></span>
+<span><span class="va">se_within</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">r</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="va">n</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>              <span class="op">(</span><span class="va">smd_within</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">n</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">se_within</span></span></code></pre></div>
+<pre><code>## [1] 0.1272722</code></pre>
+<p>群内 (標準化) 平均差のメタ分析は、 <em>R</em> では<strong>事前に計算された効果量</strong>を用いてのみ実行可能となる (Chapter <a href="effects.html#es-formats-different">3.5.1</a> 参照)。今回のデータセットでは、以下の列が必要である。</p>
+<ul>
+<li>
+<strong><code>TE</code></strong>: 算出された群内効果量。</li>
+<li>
+<strong><code>seTE</code></strong>: 群内効果量の標準誤差。</li>
+</ul>
+<p><br></p>
+
+<div class="boximportant">
+<p><strong>標準化の限界</strong></p>
+<p>標準化平均差は、間違いなくメタアナリシスで<strong>最も頻繁に使用される</strong>効果量の指標の1つである。Chapter <a href="effects.html#b-group-smd">3.3.1.2</a> で述べたように、標準化により、少なくとも理論的には、異なる研究で観察された効果の強さを比較することができる。</p>
+<p>しかし、標準化は、<strong>「免罪符」</strong>ではない。ある研究の <span class="math inline">\(\text{SMD}\)</span> の大きさは、そのサンプルの<strong>多様性</strong>に大きく依存する <span class="citation">(<a href="references.html#ref-viechtbauer2007approximate">Viechtbauer 2007a</a> も参照)</span>。2 つの同じ研究を行い、アウトカムを測定するために同じ測定器を使用するが、この 2 つの研究は大幅に異なる分散を持つ 2 つの集団で行われたと想像してみよう。この場合、両研究の「生の」平均差が<strong>同じ</strong>であっても、両研究の <span class="math inline">\(\text{SMD}\)</span> 値は<strong>大きく異なる</strong>であろう。</p>
+<p>この場合、一方の研究の効果の「因果」の強さが他方よりはるかに大きいか小さいかを論じることはやや困難である。Jacob Cohen <span class="citation">(<a href="references.html#ref-cohen1994earth">1994</a>)</span> が有名な論文でと述べたように、「私にとっての A の B に対する効果は、私が大きく変動するグループにいるか[…]、まったく変動しない別のグループにいるかには、ほとんど依存しない」(p. 1001)。
+ところで、この問題は、一般に使用されている「標準化された」メタアナリシスにおける効果量の測定、例えば相関関係にも当てはまる。</p>
+<p>さらに、標準化する<strong>単位</strong>は、思ったよりも<strong>明確に定義されていない</strong>ことが多いことも見た。群間と群内の <span class="math inline">\(\text{SMD}\)</span>s には様々な選択肢があり、特定の研究でどのアプローチが選ばれたかを切り分けるのは難しい。メタ分析のための標準化効果量の計算方法については、常に研究間で<strong>可能な限り一貫性を保つ</strong>ことが必要である。それでも、たとえ標準化を行ったとしても、<strong>効果量の一致度</strong>には限界があることを心に留めておく必要がある。</p>
+<p>もちろん、アウトカムが<strong>すべての研究で結果が同じ尺度で測定され</strong>、<strong>生平均差</strong>が利用できれば、最高の解決策になるであろう。しかし、多くの研究分野では、そのような方法論的な調和からはほど遠いところにいるのが現状である。したがって、残念ながら、標準化効果量は、<strong>第二の最良の選択肢</strong>となることもある。</p>
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="ratios" class="section level3" number="3.3.2">
+<h3>
+<span class="header-section-number">3.3.2</span> リスク比とオッズ比<a class="anchor" aria-label="anchor" href="#ratios"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<div id="rr" class="section level4" number="3.3.2.1">
+<h4>
+<span class="header-section-number">3.3.2.1</span> リスク比<a class="anchor" aria-label="anchor" href="#rr"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p></p>
+<p><strong>リスク比</strong> (別名: <strong>相対リスク</strong>) とは、その名の通り、2つの<strong>リスク</strong>の比のことである。リスクとは基本的に<strong>割合</strong> (proportion) のことである (Chapter <a href="effects.html#props">3.2.2</a> 参照)。リスクは、バイナリ (<strong>二値</strong>) データを扱う場合に計算可能である。</p>
+<p>このようなアウトカムは、医学研究において、病気の発症や死亡の<strong>リスク</strong>を調べる場合によく見られるため、「割合」ではなく「リスク」という用語を使用する。このような事象は、<strong>イベント</strong>と呼ばれる。治療群と対照群からなる対照臨床試験を行っているとする。ここで興味があるのは、研究期間中に何人の患者があるイベント <span class="math inline">\(E\)</span> を経験したかである。</p>
+<p>このような研究から得られる結果は、<span class="math inline">\(2 \times 2\)</span> の表に分類できる <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 3.1</a>)</span>。</p>
+<div class="inline-table"><table class="table table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:twobytwo">Table 3.1: </span>二値アウトカムを用いた対照研究の結果。
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Event
+</th>
+<th style="text-align:center;">
+No Event
+</th>
+<th style="text-align:left;">
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;border-right:1px solid;">
+Treatment
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(a\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(b\)</span>
+</td>
+<td style="text-align:left;border-left:1px solid;">
+<span class="math inline">\(n_{\text{treat}}\)</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-right:1px solid;">
+Control
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(c\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(d\)</span>
+</td>
+<td style="text-align:left;border-left:1px solid;">
+<span class="math inline">\(n_{\text{control}}\)</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;border-right:1px solid;">
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(n_E\)</span>
+</td>
+<td style="text-align:center;">
+<span class="math inline">\(n_{\neg E}\)</span>
+</td>
+<td style="text-align:left;border-left:1px solid;">
+</td>
+</tr>
+</tbody>
+</table></div>
+<p>このデータに基づいて、治療群と対照群の両方について、調査期間中にイベント <span class="math inline">\(E\)</span> を経験するリスクを計算することが可能である。<span class="math inline">\(E\)</span> を経験した人の数を、その群の総サンプルサイズで割ればよいのである。</p>
+<p>したがって、治療群のリスクである <span class="math inline">\({p_{E}}_{\text{treat}}\)</span> は、次のように計算される。</p>
+<p><span class="math display" id="eq:es23">\[\begin{equation}
+{p_{E}}_{\text{treat}} = \frac{a}{a+b} = \frac{a}{n_{\text{treat}}}
+\tag{3.24}
+\end{equation}\]</span></p>
+<p>そして、対照群のリスク、<span class="math inline">\({p_{E}}_{\text{control}}\)</span> は、以下のようになる。</p>
+<p><span class="math display" id="eq:es24">\[\begin{equation}
+{p_{E}}_{\text{control}} = \frac{c}{c+d} = \frac{c}{n_{\text{control}}}
+\tag{3.25}
+\end{equation}\]</span></p>
+<p>そして、リスク比は、治療・介入群のリスクを対照群のリスクで割ったものと定義される。</p>
+<p><span class="math display" id="eq:es25">\[\begin{equation}
+\text{RR} = \frac{{p_{E}}_{\text{treat}}}{{p_{E}}_{\text{control}}}
+\tag{3.26}
+\end{equation}\]</span></p>
+<p></p>
+<p><span class="math inline">\({p_{E}}_{\text{treat}}\)</span> と <span class="math inline">\({p_{E}}_{\text{control}}\)</span> はどちらも 0 と 1 の間の値しか持ち得ないので、RR はいくつかの興味深い性質を持っている。まず、リスク比が負になることはない。次に、治療群と対照群の間に差がない場合、RR は (SMD のように 0 ではなく) 1 という値になる。RR が 1 より大きければ、治療群がイベント <span class="math inline">\(E\)</span> のリスクを増加させることを意味し、RR が 1 より小さければ、介入によってリスクが減少することを意味する。</p>
+<p>RR の特徴は、同じ大きさの効果は<strong>等価ではない</strong>ということである。例えば、RR <span class="math inline">\(=\)</span> 0.5 は、介入群でリスクが半分になることを意味する。これはリスク比が正規分布に従わないことを意味し、メタ分析では問題になることがある。</p>
+<p>この問題を避けるために、統合する前にリスク比を <strong>対数リスク比</strong> (log-risk ratio) に変換することもよくある。これにより、漸近正規性、効果量が任意の値になること、値が 0 (効果がないことを意味する) を中心になることが保証される。この変換は、RR の自然対数を取ることによって行われる。</p>
+<p><span class="math display" id="eq:es26">\[\begin{equation}
+\log \text{RR}  = \log_{e}(\text{RR})
+\tag{3.27}
+\end{equation}\]</span></p>
+<p>そして、対数リスク比の標準誤差は、この式を用いて計算することができる。</p>
+<p><span class="math display" id="eq:es27">\[\begin{equation}
+SE_{\log \text{RR}} = \sqrt{\frac{1}{a}+\frac{1}{c} - \frac{1}{a+b} - \frac{1}{c+d}}
+\tag{3.28}
+\end{equation}\]</span></p>
+<p><em>R</em> の (対数) リスク比はこのように計算することができる。</p>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># データを定義</span></span>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">46</span>         <span class="co"># 治療群のイベント数</span></span>
+<span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fl">77</span>         <span class="co"># 対照群のイベント数</span></span>
+<span><span class="va">n_treat</span> <span class="op">&lt;-</span> <span class="fl">248</span>  <span class="co"># 治療群のサンプルサイズ</span></span>
+<span><span class="va">n_contr</span> <span class="op">&lt;-</span> <span class="fl">251</span>  <span class="co"># 対照群のサンプルサイズ</span></span>
+<span></span>
+<span><span class="co"># リスクを計算</span></span>
+<span><span class="va">p_treat</span> <span class="op">&lt;-</span> <span class="va">a</span><span class="op">/</span><span class="va">n_treat</span></span>
+<span><span class="va">p_contr</span> <span class="op">&lt;-</span> <span class="va">c</span><span class="op">/</span><span class="va">n_contr</span></span>
+<span></span>
+<span><span class="co"># リスク比を計算</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="va">p_treat</span><span class="op">/</span><span class="va">p_contr</span></span>
+<span><span class="va">rr</span></span></code></pre></div>
+<pre><code>## [1] 0.6046292</code></pre>
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 対数リスク比と標準誤差を計算</span></span>
+<span><span class="va">log_rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span>
+<span><span class="va">log_rr</span></span></code></pre></div>
+<pre><code>## [1] -0.5031398</code></pre>
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">se_log_rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">a</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">c</span><span class="op">)</span> <span class="op">-</span> <span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">n_treat</span><span class="op">)</span> <span class="op">-</span> <span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">n_contr</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">se_log_rr</span></span></code></pre></div>
+<pre><code>## [1] 0.1634314</code></pre>
+<p>
+</p>
+<p><strong>ゼロセル</strong>があると、リスク比の計算が難しくなる。実際には、<span class="math inline">\(a\)</span> または <span class="math inline">\(c\)</span> (あるいはその両方) がゼロであることがあり、これは治療群でも対照群でもイベントが記録されていないことを意味する。RRの計算式を見ると、なぜこれが問題なのかがよくわかる。<span class="math inline">\(a\)</span> (治療群のイベント) がゼロなら、<span class="math inline">\({p_{E}}_{\text{treat}}\)</span> もゼロで、RR はゼロになる。<span class="math inline">\(c\)</span> がゼロの場合はさらに問題で、<span class="math inline">\({p_{E}}_{\text{control}}\)</span> がゼロということになり、<strong>ゼロで割れない</strong> ということがわかる。</p>
+<p>この問題は、<strong>連続性補正</strong> (continuity correction) を用いて対処されることがよくある。最も一般的な連続性補正の方法は、ゼロになっている全てのセルに0.5の増分を加えることである <span class="citation">(<a href="references.html#ref-gart1967bias">Gart and Zweifel 1967</a>)</span> 。また、対照群と治療群のサンプルサイズが非常に不均等な場合は、<strong>治療群連続性補正</strong> <span class="citation">(<a href="references.html#ref-j2004add">Sweeting, Sutton, and Lambert 2004</a>)</span> を用いることもできる。</p>
+<p>しかし、そのような補正は偏った結果につながるという証拠もある <span class="citation">(<a href="references.html#ref-efthimiou2018practical">Efthimiou 2018</a>)</span>。(固定効果) <strong>Mantel-Haenszel</strong> 法というメタ解析のプール手法は、メタ解析の<strong>すべての研究</strong>にゼロセルが存在しない限り、<strong>補正せずに</strong>扱うことが可能である。したがって、後者のシナリオに当てはまらない限り、連続性補正は避けた方がよいだろう。</p>
+<p><strong>ゼロセル</strong>問題の特殊な形として、<strong>ダブルゼロスタディ</strong>がある。これは、<span class="math inline">\(a\)</span> と <span class="math inline">\(c\)</span> の両方がゼロである研究である。直感的には、このような研究の結果は、介入群と対照群のリスクが同程度であり、RR=1であることを意味していると考えるだろう。</p>
+<p>残念ながら、そう簡単ではない。2つのグループの間に本当の効果があるけれども、その差を検出するにはサンプルサイズが小さすぎたということは大いにあり得る。特に、<span class="math inline">\(E\)</span> が発生する確率が非常に低い場合には、この可能性が高くなる。</p>
+<p>あるマッドサイエンティストが、雷に打たれる危険を減らすとされる薬、<strong>Fulguridone</strong> の効果を評価する無作為化比較試験を行ったとする。彼は100人を薬物投与群と対照群のどちらかに均等に割り振り、3年間観察した。試験の結果は、治療群でも対照群でも雷に打たれた人はいなかったので、残念な結果になった。しかし、私たちは、雷に打たれる可能性がどれほど低いか、<strong>一般的に</strong>知っている。たった100人の観察では、たとえ治療が効くという奇妙な考えを受け入れたとしても、このような稀な出来事における違いを検出するには十分ではない。このため、ダブルゼロ研究は、効果をプールする際に完全に捨てられることが多いのである。</p>
+<p>リスク比は、ある事象が<strong>一般的に</strong>どの程度よく起こるかという情報を与えてはくれないのである。メタ分析でリスク比が0.5と報告された場合、例えば、ある介入によってリスクが半分に減少したことがわかる。しかし、リスクが40%から20%に減少したかどうか、あるいは0.004%から0.002%に減少したかどうかはわからない。リスク比が実用的であるかどうかは、文脈に依存する。リスク比0.5が0.002%のリスク低下に相当する場合、集団レベルでは大きな影響を与えないかもしれないが、対象となる事象が例えば重症で衰弱する病気であれば、それでも重要である可能性がある。</p>
+<p><em>R</em> でメタ分析を行う場合、通常、研究の対数リスク比を手作業で計算する必要はない。また、データをインポートする際にも、ゼロセルについて心配する必要はない。以下の列はデータセットに含まれている必要がある。</p>
+<ul>
+<li>
+<strong><code>event.e</code></strong>. 治療群・実験群におけるイベント数。</li>
+<li>
+<strong><code>n.e</code></strong>. 治療群・実験群のサンプルサイズ。</li>
+<li>
+<strong><code>event.c</code></strong>. 対照群におけるイベント数。</li>
+<li>
+<strong><code>n.c</code></strong>. 対照群のサンプルサイズ。</li>
+</ul>
+<p><br></p>
+</div>
+<div id="or" class="section level4" number="3.3.2.2">
+<h4>
+<span class="header-section-number">3.3.2.2</span> オッズ比<a class="anchor" aria-label="anchor" href="#or"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>
+</p>
+<p>リスク比 (Chapter <a href="effects.html#rr">3.3.2.1</a>) と同様に、<strong>オッズ比</strong>も2群2値のアウトカムデータがある場合に計算することが可能である。前回の割合の章 (Chapter <a href="effects.html#props">3.2.2</a>) で、オッズを「あるカテゴリーに該当する個数を、そのカテゴリーに該当しない個数で割ったもの」と定義したが、今回は「あるカテゴリーに該当する個数を、そのカテゴリーに該当しない個数で割ったもの」と定義する。</p>
+<p>Table <a href="effects.html#tab:twobytwo">3.1</a> の表記を使うと、治療群と対照群のオッズの計算式は次のようになる。</p>
+<p><span class="math display" id="eq:es28">\[\begin{equation}
+\text{Odds}_{\text{treat}} = \frac{a}{b}
+\tag{3.29}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:es29">\[\begin{equation}
+\text{Odds}_{\text{control}} = \frac{c}{d}
+\tag{3.30}
+\end{equation}\]</span></p>
+<p>オッズが実際に何を意味するのかを正しく解釈するのは難しいだろう。オッズは事象と非事象の比率を表すのであって、事象の <strong>確率</strong> を表すのではない。3人の個人を調査したとする。2人は興味のある事象を経験し、1人は経験しなかったとする。このデータから、その事象の確率 (またはリスク) は <span class="math inline">\(p = 2/3 \approx 66\%\)</span> となる。しかし、事象の発生確率は、Odds = <span class="math inline">\(\frac{2}{1}\)</span> = 2となり、1人の非事象に対して2人の事象があることになる。</p>
+<p>そして、オッズ比 (OR) は、治療群でのオッズを対照群でのオッズで割ったものと定義される。</p>
+<p><span class="math display" id="eq:es30">\[\begin{equation}
+\text{OR} = \frac{a/b}{c/d}
+\tag{3.31}
+\end{equation}\]</span></p>
+<p></p>
+<p>リスク比と同様に (Chapter <a href="effects.html#rr">3.3.2.1</a> 参照)、オッズ比もメタ分析には好ましくない統計的性質を持っている。そのため、オッズ比を自然対数を使って<strong>対数オッズ比</strong> (log-odds ratio) に変換することも一般的である。</p>
+<p><span class="math display" id="eq:es31">\[\begin{equation}
+\log \text{OR}  = \log_{e}(\text{OR})
+\tag{3.32}
+\end{equation}\]</span></p>
+<p>対数オッズ比の標準誤差は、この式で計算できる (表記は Table <a href="effects.html#tab:twobytwo">3.1</a> を使用する)。</p>
+<p><span class="math display" id="eq:es32">\[\begin{equation}
+SE_{\log \text{OR}}  = \sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}
+\tag{3.33}
+\end{equation}\]</span></p>
+<p><strong>{esc}</strong> パッケージの <code>esc_2x2</code> 関数は、 <em>R</em> における (対数) オッズ比を簡単に計算する方法を提供する。</p>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># データを定義</span></span>
+<span><span class="va">grp1yes</span> <span class="op">&lt;-</span> <span class="fl">45</span>  <span class="co"># 治療群のイベント数</span></span>
+<span><span class="va">grp1no</span> <span class="op">&lt;-</span> <span class="fl">98</span>   <span class="co"># 治療群の非イベント数</span></span>
+<span><span class="va">grp2yes</span> <span class="op">&lt;-</span> <span class="fl">67</span>  <span class="co"># 対照群のイベント数</span></span>
+<span><span class="va">grp2no</span> <span class="op">&lt;-</span> <span class="fl">76</span>   <span class="co"># 対照群の非イベント数</span></span>
+<span></span>
+<span><span class="co"># es.type に "or" と設定し、OR を計算</span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_2x2.html">esc_2x2</a></span><span class="op">(</span>grp1yes <span class="op">=</span> <span class="va">grp1yes</span>, grp1no <span class="op">=</span> <span class="va">grp1no</span>,</span>
+<span>        grp2yes <span class="op">=</span> <span class="va">grp2yes</span>, grp2no <span class="op">=</span> <span class="va">grp2no</span>,</span>
+<span>        es.type <span class="op">=</span> <span class="st">"or"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: 2x2 table (OR) coefficient to effect size odds ratio
+##     Effect Size:   0.5209
+##  Standard Error:   0.2460
+##        Variance:   0.0605
+##        Lower CI:   0.3216
+##        Upper CI:   0.8435
+##          Weight:  16.5263</code></pre>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># es.type に "logit" と設定し、logOR を計算</span></span>
+<span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_2x2.html">esc_2x2</a></span><span class="op">(</span>grp1yes <span class="op">=</span> <span class="va">grp1yes</span>, grp1no <span class="op">=</span> <span class="va">grp1no</span>,</span>
+<span>              grp2yes <span class="op">=</span> <span class="va">grp2yes</span>, grp2no <span class="op">=</span> <span class="va">grp2no</span>,</span>
+<span>              es.type <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## 
+## Effect Size Calculation for Meta Analysis
+## 
+##      Conversion: 2x2 table (OR) to effect size logits
+##     Effect Size:  -0.6523
+##  Standard Error:   0.2460
+##        Variance:   0.0605
+##        Lower CI:  -1.1344
+##        Upper CI:  -0.1701
+##          Weight:  16.5263</code></pre>
+<p>
+</p>
+<p>リスク比の問題点である<strong>ゼロセル</strong>や<strong>ダブルゼロ研究</strong>はオッズ比を計算するときにも同じように関係する (Chapter <a href="effects.html#rr">3.3.2.1</a> 参照)。しかし、オッズ比は RR に比べて、多くの人が理解しにくく、OR を RR と誤って解釈してしまうという欠点がある。</p>
+<p>したがって、メタ分析ではリスク比のみを用いるか、結果を報告する際にオッズ比をリスク比に変換することが望ましい場合が多い <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 6.4.1.2</a>)</span>。この変換は以下の式で行うことが可能である <span class="citation">(<a href="references.html#ref-zhang1998whats">Zhang and Yu 1998</a>)</span>。(訳注:臨床論文でこれを行なっていることはほとんどない。)</p>
+<p><span class="math display" id="eq:es33">\[\begin{equation}
+\text{RR} = \frac{\text{OR}}{\left(1-\dfrac{c}{n_{\text{control}}}\right)+ \left(\dfrac{c}{n_{\text{control}}}\times \text{OR} \right)}
+\tag{3.34}
+\end{equation}\]</span></p>
+<p><em>R</em> のオッズ比のメタ分析を行うには、以下の列をデータセットに含める必要がある。</p>
+<ul>
+<li>
+<strong><code>event.e</code></strong>. 治療群・実験群におけるイベントの数。</li>
+<li>
+<strong><code>n.e</code></strong>. 治療群・実験群のサンプルサイズ。</li>
+<li>
+<strong><code>event.c</code></strong>. 対照群におけるイベントの数。</li>
+<li>
+<strong><code>n.c</code></strong>. 対照群のサンプルサイズ。</li>
+</ul>
+<p><br></p>
+</div>
+</div>
+<div id="irr" class="section level3" number="3.3.3">
+<h3>
+<span class="header-section-number">3.3.3</span> 発生率比<a class="anchor" aria-label="anchor" href="#irr"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>前に調べた二値アウトカムのデータに対する効果量、リスク比やオッズ比は、２つのグループのイベントの数を比較する方法である。しかし、これらのイベントが発生した<strong>時間</strong>は直接的には符号化されない。リスク比やオッズ比を計算するとき、両群の観察期間が同等であることを暗黙のうちに仮定している。さらに、リスク比とオッズ比は、イベントが発生するまでの<strong>時間</strong>に関する情報を提供しない。</p>
+<p>時間軸がリサーチクエスチョンにそれほど関係しない場合、これでよいだろう。また、二値データが横断的で時間軸が全くない場合もある<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;例えば、横断的な調査データに基づいて、女性と男性の喫煙者の割合の違いを表すためにリスク比やオッズ比を使うことも可能である。この文脈では、RR と OR はそれぞれ&lt;strong&gt;有病率比&lt;/strong&gt; (PR)、&lt;strong&gt;有病率オッズ比&lt;/strong&gt; (POR) と呼ばれることが多い&lt;span class="citation"&gt;(&lt;a href="references.html#ref-tamhane2016prevalence"&gt;Tamhane et al. 2016&lt;/a&gt;)&lt;/span&gt;。&lt;/p&gt;'><sup>15</sup></a>。このような場合、リスク比やオッズ比は通常、適切な効果量の指標となる。</p>
+<p>しかし、ここで、2つのグループの個人の10年間の死亡率を調べる研究を想像してみてみよう。この10年間に起こった出来事 (例えば、死亡) の数は、両群でほぼ同じである可能性がある。しかし、死亡がいつ起こったかを詳しく見てみると、一方の群では最初の数年間に多くのイベントが起こり、他方の群では10年間の観察期間の終わりまでやや多くのイベントが起こっていることがわかる。このデータから計算されるオッズまたはリスク比はおよそ1であり、群間差はないことを示す。しかし、これは重要なことを見逃している。一方のグループの参加者は、たとえ最終的に死亡したとしても、<strong>いくらか長く</strong>生存しているということである。</p>
+<p>
+</p>
+<p>効果量の推定に時間を組み込むために、<strong>発生率比</strong> (incidence rate ratio, IRR) を計算することができる。発生率比は、英語では単に <strong>rate ratio</strong> と呼ばれることもある。発生率比は、2つの<strong>発生率</strong>から構成されている。この発生率を計算するためには、まず<strong>人-時間</strong>の概念を理解する必要がある。</p>
+<p>人-時間とは、研究参加者がイベントを起こす危険性があった時間の総和を表す。人-時間を計算するためには、すべての研究対象者のリスク時間 (日、週、年として表される) を合計する。しかし、リスク時間は人によって異なる。</p>
+<p>例として、6人の被験者で研究を行う場合を考えてみよう。この研究は、ちょうど10年間続く。各年が終わるごとに、参加者にインタビューを行い、彼らがあるイベントを経験したかどうかを調べる。イベントが発生したことが確認された場合、その参加者の研究は終了し、研究が終了するまでその参加者を調査することはない。本研究の結果を図に示す。</p>
+<div class="figure">
+<span style="display:block;" id="fig:incidence"></span>
+<img src="Doing_Meta_Analysis_in_R_files/figure-html/incidence-1.png" alt="時間-イベントデータの例" width="672"><p class="caption">
+Figure 3.4: 時間-イベントデータの例
+</p>
+</div>
+<p>
+</p>
+<p>今回の参加者のうち、最後まで研究に参加したのは、Victoria と Lea の2人だけであることがわかる。これは、彼らが 10 年間の観察期間中、イベントを経験しなかったからである。したがって、両者とも 10 年間は<strong>アットリスク</strong> (訳注: リスクに曝されている状態、追跡中の状態のこと) であった。</p>
+<p>他の参加者は全員、調査期間中にイベントを体験している。例えば、2 年目に Rebecca を調査したとき、彼女がその前の年にイベントを経験したことを発見した。しかし、私たちが知っているのは、その出来事が2年目に起こったという<strong>こと</strong>だけで、正確にはいつ起こったかわからないのである。</p>
+<p>このような研究データは、<strong>区間打ち切り</strong>データと呼ばれ、いわゆる<strong>生存解析</strong>を行う臨床試験で非常によく見受けられる。データが打ち切られているということは、レベッカが最終的にイベントを経験するまでにどれくらいの期間危険にさらされていたかを部分的にしか知らないということである。私たちは、彼女が1年目以降、2年目の終わりまでにイベントを経験したことを知っているが、それ以上のことは知ることはない。他の情報がないので、イベントが中間のどこかで発生したと仮定して、リスク時間を 1.5 年とすることにする。</p>
+<p>打ち切られたデータ全てに同じ方式を適用すれば、この研究における<strong>人-年</strong>のリスクを計算することができる。</p>
+<p><span class="math display">\[10 + 1.5+5.5+4.5+8.5+10 = 40\]</span>
+すなわち、この研究での推定総人-年は40人年ということになる。1年は52週なので、この研究の<strong>人-週</strong>は <span class="math inline">\(40 \times 52 = 2080\)</span> と計算できる。</p>
+<p>実験参加者年数がわかったので、これを <span class="math inline">\(T\)</span> とすると、1年以内の発生率も計算できる。調査期間中に4人の参加者がイベントを経験したことが分かっているので、イベントの数は <span class="math inline">\(E=4\)</span> となる。そして、この式で発生率 IR を計算することができる。</p>
+<p><span class="math display" id="eq:es33">\[\begin{equation}
+\text{IR} = \frac{E}{T}
+\tag{3.34}
+\end{equation}\]</span></p>
+<p>この例では、<span class="math inline">\(4/40 = 0.1\)</span> の発生率になる。この発生率は、1000人を1年間追跡調査した場合、100人がその間にそのイベントを経験することを意味する。</p>
+<p>発生率比 (incidence rate ratio, IRR) を計算するためには、あるグループの発生率を他のグループの発生率で割る必要がある。</p>
+<p><span class="math display" id="eq:es34">\[\begin{equation}
+\text{IRR} = \frac{ E_{\text{treat}}/T_{\text{treat}} }{E_{\text{control}}/T_{\text{control}}}
+\tag{3.35}
+\end{equation}\]</span></p>
+<p>この式で、<span class="math inline">\(E_{\text{treat}}\)</span> と <span class="math inline">\(T_{\text{treat}}\)</span> は治療群のイベント数と人時、<span class="math inline">\(E_{\text{control}}\)</span> と <span class="math inline">\(T_{\text{control}}\)</span> は対照群のイベント数と人時である。もちろん、2つのグループは、例えば、女性と男性、喫煙者と非喫煙者など、関心のある他の二項対立変数を表すこともできる。</p>
+<p>IRR は、リスク比やオッズ比と多くの特性を共有している。つまり、IRR は 1 を中心とし、マイナスになることはない。OR や RR と同様に、発生率比もメタ分析のために対数変換され、対数発生率比が作成される。</p>
+<p></p>
+<p><span class="math display" id="eq:es35">\[\begin{equation}
+\log \text{IRR} = \log_{e}(\text{IRR})
+\tag{3.36}
+\end{equation}\]</span></p>
+<p>これについては、次のように標準誤差を計算することが可能である <span class="citation">(<a href="references.html#ref-rothman2008modern">Rothman, Greenland, and Lash 2008, chap. 14</a>)</span>。</p>
+<p><span class="math display" id="eq:es36">\[\begin{equation}
+SE_{\log \text{IRR}} = \sqrt{\frac{1}{E_{\text{treat}}}+\frac{1}{E_{\text{control}}}}
+\tag{3.37}
+\end{equation}\]</span></p>
+<p>このように (対数) 発生率比と <em>R</em> の標準誤差を計算することができる。</p>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># データを定義</span></span>
+<span><span class="va">e_treat</span> <span class="op">&lt;-</span> <span class="fl">28</span>    <span class="co"># 治療群のイベント数</span></span>
+<span><span class="va">e_contr</span> <span class="op">&lt;-</span> <span class="fl">28</span>    <span class="co"># 対照群のイベント数</span></span>
+<span><span class="va">t_treat</span> <span class="op">&lt;-</span> <span class="fl">3025</span>  <span class="co"># 治療群の Person-time</span></span>
+<span><span class="va">t_contr</span> <span class="op">&lt;-</span> <span class="fl">2380</span>  <span class="co"># 対照群の Person-time</span></span>
+<span></span>
+<span><span class="co"># IRR を計算</span></span>
+<span><span class="va">irr</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">e_treat</span><span class="op">/</span><span class="va">t_treat</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">e_contr</span><span class="op">/</span><span class="va">t_contr</span><span class="op">)</span></span>
+<span><span class="va">irr</span></span></code></pre></div>
+<pre><code>## [1] 0.7867769</code></pre>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># log-IRR を計算</span></span>
+<span><span class="va">log_irr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">irr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 標準誤差を計算</span></span>
+<span><span class="va">se_log_irr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">e_treat</span><span class="op">)</span><span class="op">+</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">e_contr</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>この例では、イベント数 <span class="math inline">\(E_{\text{treat}}\)</span> と <span class="math inline">\(E_{\text{control}}\)</span> が全く等しいが、治療群の方がリスクでの人時時間が長い場合をシミュレーションしている。この時間差は、IRR を計算するときに考慮される。したがって、得られる結果は1ではなく、IRR <span class="math inline">\(\approx\)</span> 0.79 となり、治療群の方が発生率が小さいことがわかる。</p>
+<p>発生率比は、疫学や予防医学の研究でよく使われる。参加者を長期間にわたって追跡調査し、その間に定期的な評価を行う場合に使用することが可能である。しかし、実際には、メタ分析の一部として IRR を計算する際に考慮すべき注意点が1つある。すなわち、含まれる論文で報告された発生率データが十分に細かいことが重要である。論文では研究期間中のイベントの総数のみを報告し、その間の各評価ポイントで記録されたイベントの数は報告しないこともある。また、そもそも中間評価が行われていない可能性もある。</p>
+<p>上記の例 (Figure <a href="effects.html#fig:incidence">3.4</a> 参照) では、参加者の危険にさらされている時間を推定するために、単純に、最後の「イベントのない」評価点とイベントが記録された評価点との間の<strong>中間点</strong>を取ることにする。これは、イベントがいつ起こったかの<strong>最良の推測</strong>に過ぎないということを心に留めておくことが重要である。中間点を取る場合でも、この例では、推定はまだ約半年ずれている可能性がある。</p>
+<p>評価点間の時間をできるだけ小さくすれば、人-時推定値は最適になる。研究の評価間隔が粗すぎるかどうかはメタ分析の文脈に依存する。ただし、そのような感度分析を行うことは常に推奨される <span class="citation">(<a href="references.html#ref-panageas2007you">Panageas et al. 2007</a>)</span>。</p>
+<p>これは、異なる人-時推定値に基づく研究の IRR を再計算することを意味する。</p>
+<ul>
+<li><p>インターバルの<strong>中点</strong>を使用し</p></li>
+<li><p><strong>最後の「イベントのない」評価ポイント</strong>を使用し</p></li>
+<li><p>イベントが<strong>検出された</strong>評価ポイントを使用している。</p></li>
+</ul>
+<p>これらの3つのメタ分析の結果がすべて同じ方向を向いていれば、より確信を持って調査結果を公表することが可能である。また、評価期間が研究間であまりに異ならないことを確認する必要がある (例えば、ある研究では毎日イベントを調査し、他の研究では年１回だけ調査する)。メタ分析での IRR の適用性に疑問がある場合、代わりに (または追加で) リスク比またはオッズ比を計算する可能性が常に存在する。ただし、この場合、評価時点が (1 年後など) 各研究で類似していることを確認する必要がある。</p>
+<p><em>R</em> の発生率比に基づくメタ分析を計算するためには、データセットに以下の列を用意する必要がある。</p>
+<ul>
+<li>
+<strong><code>event.e</code></strong>: 治療群・実験群におけるイベント総数。</li>
+<li>
+<strong><code>time.e</code></strong>: 治療群・実験群における人-時 (person-time)。全ての研究で人-時の単位 (人-日、人-週、人-年) を統一して表記する。</li>
+<li>
+<strong><code>event.c</code></strong>: 対照群におけるイベント総数。</li>
+<li>
+<strong><code>time.c</code></strong>: 対照群における人-時 (person-time)。全ての研究で人-時の単位 (人-日、人-週、人-年) を統一して表記する。</li>
+</ul>
+<p><br></p>
+
+<div class="boximportant">
+<p><strong>ハザード比と発生率比の限界</strong></p>
+<p>発生率や IRR は、事象データやその事象が発生する時間帯を要約する直感的な方法である。しかし、欠点がないわけではない。発生率を計算するためには、母集団における<strong>基礎となるリスク</strong>が時間と共に<strong>一定</strong>であると仮定する (例えば、研究の1年目と2年目の間など)。IRRでは、基礎となるリスクは治療群と対照群で異なるかもしれないが (例えば、治療が事象を経験するリスクを減らすため)、各群<strong>内</strong> (within) のリスクは一定であると仮定する。</p>
+<p>この仮定が非常に単純であることは容易に理解できる。イベントリスクが時間とともに変化しないと仮定することが非常に<strong>非現実的</strong>なシナリオは多い <span class="citation">(<a href="references.html#ref-kraemer2009events">Kraemer 2009</a>, 例: 転移性癌患者の死亡)</span>。Bender and Beckmann <span class="citation">(<a href="references.html#ref-bender2019limitations">2019</a>)</span> は、シミュレーション研究に基づいて、IRRの使用は、両群の平均<strong>観察期間</strong>が大きく<strong>異ならない</strong>とき、および調査対象イベントの<strong>ベースラインリスク</strong>が比較的<strong>低い</strong> (25%未満) 場合にのみ適切であると結論づけている。</p>
+<p>時間-事象データに基づく群間差を表現する代替指標として望ましいのが<strong>ハザード比</strong> (HR) である。ハザード比は、2つの (比例する) <strong>ハザード関数</strong>の比で、ある時点 <span class="math inline">\(t\)</span> である事象を経験することの (変化する) 瞬間的なリスク (これを、「ハザード」と言う) を記述している。</p>
+<p>ハザード比は、一般的に <strong>Cox 回帰</strong>モデルを用いて、個々の参加者データを基に推定される。すべての研究から対数ハザード比 <span class="math inline">\(\log_{\text{e}}(\text{HR})\)</span> とそれに対応する標準誤差を抽出できれば、<strong>逆変量プーリング</strong> を用いたメタアナリシスを行うことができる (Chapter <a href="pooling-es.html#fem">4.1.1</a> 参照)。これは、例えば対数リスクやオッズ比をプールするのと同じように機能する。 <em>R</em> では、対数ハザード比のプーリングは <code>metagen</code> 関数で、<code>sm</code> 引数を <code>"HR"</code> に設定して行う (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a> 参照)。</p>
+<p>すべての研究が (対数) ハザード比とその標準誤差を<strong>報告</strong>しているわけではないので、HR をプールすることは実際には大変な問題になることもある。<span class="citation">Parmar, Torri, and Stewart (<a href="references.html#ref-parmar1998extracting">1998</a>)</span> は、特に <strong>log-rank test</strong> の結果や <strong>生存曲線</strong> から対数ハザード比とその分散を導き出す様々な方法について説明している。この方法は手間がかかるが、報告されたデータから IRR を導出する方法も間違いなく手間がかかる。</p>
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="es-correction" class="section level2" number="3.4">
+<h2>
+<span class="header-section-number">3.4</span> 効果量補正<a class="anchor" aria-label="anchor" href="#es-correction"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>ある研究 <span class="math inline">\(k\)</span> に対して計算した効果量 <span class="math inline">\(\hat\theta_k\)</span> はその研究の真の効果量 <span class="math inline">\(\theta_k\)</span> の推定値であり、サンプル誤差 <span class="math inline">\(\epsilon_k\)</span> により <span class="math inline">\(\hat\theta_k\)</span> は <span class="math inline">\(\theta_k\)</span> から乖離すると、Chapter <a href="effects.html#what-is-es">3.1</a> では取り上げた。残念ながら、多くの場合、これは過度の単純化である。先ほどの式では、推定された効果量と真の効果量を分けるのは、サンプル誤差だけである。式に従えば、サンプル誤差が小さくなれば、効果量の推定値は母集団における真の効果量に「自然に」収束していく。</p>
+<p>しかし、効果量の推定に系統的な誤差、すなわち<strong>バイアス</strong>が加わると、この限りではない。このようなバイアスは、さまざまな理由がある。効果量指標の数学的特性そのものに起因するものもあれば、研究の実施方法によって生じるバイアスもある。</p>
+<p>研究の進め方に起因するバイアスに対しては、バイアスの危険性を評価することで対応可能である (バイアスの危険性評価ツールの紹介は Chapter <a href="intro.html#data-extraction">1.4.5</a>、バイアスの危険性の可視化方法は Chapter <a href="risk-of-bias-plots.html#risk-of-bias-plots">15</a> を参照)。この判断は、例えばサブグループ解析において、バイアスリスクがプールされた効果の違いに関連しているかどうかを判断するためにも使用可能である (Chapter <a href="subgroup.html#subgroup">7</a>)。</p>
+<p>効果量の統計的性質に起因するバイアスに対処するために、メタ解析を始める前に、特定の<strong>効果量補正</strong>手法を用いてデータを調整することが可能である。</p>
+<p>この章では、よく使われる3つの効果量補正の方法と、それらを <em>R</em> でどのように実装するかを説明する。</p>
+<p><br></p>
+<div id="hedges-g" class="section level3" number="3.4.1">
+<h3>
+<span class="header-section-number">3.4.1</span> スモールサンプルバイアス<a class="anchor" aria-label="anchor" href="#hedges-g"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>
+</p>
+<p>標準化平均差 (SMD) は、2群の連続したアウトカムデータがある場合に計算できる効果量である。しかし、標準化平均差は、研究のサンプルサイズが小さいとき、特に <span class="math inline">\(n \leq\)</span> 20 (<span class="citation">L. V. Hedges (<a href="references.html#ref-hedges1981distribution">1981</a>)</span>) のとき、<strong>上方バイアス</strong> (upward bias) を持つことが分かっている。このサンプルサイズが小さいというバイアスは、研究のサンプルサイズが小さい場合、SMD が系統的に真の効果量を過大評価することを意味する。</p>
+<p>そこで、すべての研究の標準化平均差をスモールサンプルバイアスで補正し、Hedges’ <span class="math inline">\(g\)</span> と呼ばれる効果量を算出することが賢明である。Hedges’ <span class="math inline">\(g\)</span> はこの補正の考案者である Larry Hedges にちなんで名づけられた。未補正の SMD/Cohen’s <span class="math inline">\(d\)</span> を Hedges’ <span class="math inline">\(g\)</span> に変換する式は次のようになる。</p>
+<p><span class="math display" id="eq:es37">\[\begin{equation}
+g = \text{SMD} \times (1-\frac{3}{4n-9})
+\tag{3.38}
+\end{equation}\]</span></p>
+<p></p>
+<p>この式で、<span class="math inline">\(n\)</span> は研究の総サンプルサイズを表す。標準化されていない SMD/Cohen’s <span class="math inline">\(d\)</span> を Hedges’ <span class="math inline">\(g\)</span> に変換するには、<strong>{esc}</strong> パッケージの <code>hedges_g</code> 関数を使うと簡単に可能である。</p>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># esc パッケージをロード</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 未補正 SMD とサンプルサイズ n を定義</span></span>
+<span><span class="va">SMD</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
+<span></span>
+<span><span class="co"># Hedges g に変換</span></span>
+<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://strengejacke.github.io/esc/reference/hedges_g.html">hedges_g</a></span><span class="op">(</span><span class="va">SMD</span>, <span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">g</span></span></code></pre></div>
+<pre><code>## [1] 0.4864865</code></pre>
+<p>出力でわかるように、Hedges’ <span class="math inline">\(g\)</span> は未補正の SMD より小さくなっている。Hedges’ <span class="math inline">\(g\)</span> は補正前の SMD より大きくなることはなく、サンプルサイズが小さいほど2つの指標の差は大きくなる (Figure <a href="effects.html#fig:dtog">3.5</a>参照)。</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:dtog"></span>
+<img src="Doing_Meta_Analysis_in_R_files/figure-html/dtog-1.png" alt="サンプルサイズを変化させた時の未補正 SMD 0.2 と補正済み SMD 値" width="384"><p class="caption">
+Figure 3.5: サンプルサイズを変化させた時の未補正 SMD 0.2 と補正済み SMD 値
+</p>
+</div>
+<p>ここで重要なことは、SMD と Hedges’ <span class="math inline">\(g\)</span> という用語が研究報告で同じように使われることがあることである。ある研究が SMD として結果を報告している場合、著者が本当に未補正の標準化平均差を指しているのか、それとも小サンプルバイアス補正が適用されているのか (つまり Hedges’ <span class="math inline">\(g\)</span> が使われているのか) を確認することが適切である。</p>
+<p><br></p>
+</div>
+<div id="unreliable" class="section level3" number="3.4.2">
+<h3>
+<span class="header-section-number">3.4.2</span> 非信頼性<a class="anchor" aria-label="anchor" href="#unreliable"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p><strong>測定誤差</strong>のために効果量の推定値にバイアスがある可能性もある。ほとんどのアンケートやテストは、興味のある結果を完璧に測定することはできない。測定誤差が生じにくい測定器 (訳注: instrument、測定器と訳したが質問紙なども含まれる) ほど、<strong>信頼性が高い</strong>と言える。ある変数 <span class="math inline">\(x\)</span> を測定する測定器の信頼性は、信頼性係数 <span class="math inline">\(r_{xx}\)</span> で表すことができ、0から1の間の値をとることができる。信頼性はしばしば<strong>テスト・再テスト信頼性</strong>と定義され、同一人物を同じような状況で短期間に2回以上測定し、その値の相関を計算することで求められる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;測定器の信頼性を見積もる様々な方法について、よりわかりやすく、より詳しい議論が Hunter and Schmidt &lt;span class="citation"&gt;(&lt;a href="references.html#ref-hunter2004methods"&gt;2004&lt;/a&gt;)&lt;/span&gt;, chapter 3 にある&lt;/p&gt;'><sup>16</sup></a>。</p>
+<p></p>
+<p>2つの連続変数の関係を調べるとき、これらの変数を評価するために使用される調査測定器の一方または両方に信頼性が欠けていると、<strong>減衰</strong> (attenuation) と呼ばれる現象が起こることがある。この問題は、1904年に有名な心理学者 Charles Spearman <span class="citation">(<a href="references.html#ref-spearman1904reprinted">1904</a>)</span> によって早くも記述されている。例えば、相関を計算するときに、片方または両方の変数に誤差があると、真の相関を<strong>過小評価</strong>することになる。相関は<strong>希釈される</strong>のである。しかし、良いニュースもある。もし、測定の (非) 信頼性の推定値があれば、真の効果の大きさをより良く推定するために、この減衰を補正することが可能なのである。</p>
+<p>John Hunter and Frank Schmidt は、メタ分析の分野で重要な貢献者であり、メタ分析の一部として減衰の補正を行う方法を開発し推進している <span class="citation">(<a href="references.html#ref-hunter2004methods">Hunter and Schmidt 2004, chap. 3</a> と Chapter 7)</span>。この補正は他のいくつかの手法の一つであり、これらをまとめて「Hunter and Schmidt techniques」または「Hunter and Schmidt 法」と呼ぶこともある <span class="citation">(<a href="references.html#ref-hough1994comparison">Hough and Hall 1994</a>)</span>。</p>
+<p>Hunter and Schmidt の減衰補正は、(積率) 相関と標準化平均差に適用することができる。まず、メタ解析の一環として研究の積率相関 <span class="math inline">\(r_{xy}\)</span> を計算する際に、変数 <span class="math inline">\(x\)</span> の測定における信頼性の低さを補正したいと仮定する。<span class="math inline">\(r_{xx}\)</span> で示される <span class="math inline">\(x\)</span> の測定の信頼性がわかれば、相関の<strong>補正版</strong>である <span class="math inline">\({r_{xy}}_{c}\)</span> を計算することが可能である。</p>
+<p><span class="math display" id="eq:es38">\[\begin{equation}
+{r_{xy}}_{c} = \frac{r_{xy}}{\sqrt{r_{xx}}}
+\tag{3.39}
+\end{equation}\]</span></p>
+<p>アウトカム <span class="math inline">\(x\)</span> が2群で観測され、その群間の標準化平均差を計算することが目的である場合、同様の方法で補正を行い、<span class="math inline">\(\text{SMD}_c\)</span>を得ることができる。</p>
+<p><span class="math display" id="eq:es39">\[\begin{equation}
+\text{SMD}_c = \frac{\text{SMD}}{\sqrt{r_{xx}}}
+\tag{3.40}
+\end{equation}\]</span></p>
+<p>二つの連続変数 <span class="math inline">\(x\)</span> と <span class="math inline">\(y\)</span> を用いて積率相関を計算するとき、<span class="math inline">\(y\)</span> の信頼性係数 <span class="math inline">\(r_{yy}\)</span> もわかっていれば、<span class="math inline">\(x\)</span> と <span class="math inline">\(y\)</span> の両方の信頼性の低さを補正することも可能である。</p>
+<p><span class="math display" id="eq:es40">\[\begin{equation}
+{r_{xy}}_{c} = \frac{r_{xy}}{\sqrt{r_{xx}}\sqrt{r_{yy}}}
+\tag{3.41}
+\end{equation}\]</span></p>
+<p>最後に、標準誤差の補正も必要である。標準誤差の補正は、効果量そのものと同じ方法で行いる。1つの変数 <span class="math inline">\(x\)</span> を補正する場合は、以下の式で計算可能である。</p>
+<p><span class="math display" id="eq:es41">\[\begin{equation}
+SE_c = \frac{SE}{\sqrt{r_{xx}}}
+\tag{3.42}
+\end{equation}\]</span></p>
+<p><span class="math inline">\(x\)</span> と <span class="math inline">\(y\)</span> の両方について補正 (積率相関) したい場合は、以下の式が使える。</p>
+<p><span class="math display" id="eq:es42">\[\begin{equation}
+SE_c = \frac{SE}{\sqrt{r_{xx}}\sqrt{r_{yy}}}
+\tag{3.43}
+\end{equation}\]</span></p>
+<p>
+</p>
+<p>相関やSMDを補正した後、<span class="math inline">\({r_{xy}}_c\)</span> を Fisher’s <span class="math inline">\(z\)</span> に変換したり(Chapter <a href="effects.html#cors">3.2.3</a>) <span class="math inline">\(\text{SMD}_c\)</span> を Hedges’ <span class="math inline">\(g\)</span> に変換するなど(Chapter <a href="effects.html#hedges-g">3.4.1</a>)、一般的な変換を適用することが可能である。</p>
+<p>ここでは 、 <em>R</em> を使った例で補正方法を試してみよう。</p>
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 未補正の相関と SMD とその標準誤差を定義</span></span>
+<span><span class="va">r_xy</span> <span class="op">&lt;-</span> <span class="fl">0.34</span></span>
+<span><span class="va">se_r_xy</span> <span class="op">&lt;-</span> <span class="fl">0.09</span></span>
+<span><span class="va">smd</span> <span class="op">&lt;-</span> <span class="fl">0.65</span></span>
+<span><span class="va">se_smd</span> <span class="op">&lt;-</span> <span class="fl">0.18</span></span>
+<span></span>
+<span><span class="co"># xとyの信頼性を定義</span></span>
+<span><span class="va">r_xx</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
+<span><span class="va">r_yy</span> <span class="op">&lt;-</span> <span class="fl">0.7</span></span>
+<span></span>
+<span><span class="co"># x の信頼性の低さを考慮して SMD を補正</span></span>
+<span><span class="va">smd_c</span> <span class="op">&lt;-</span> <span class="va">smd</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">r_xx</span><span class="op">)</span></span>
+<span><span class="va">smd_c</span></span></code></pre></div>
+<pre><code>## [1] 0.7267221</code></pre>
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">se_c</span> <span class="op">&lt;-</span> <span class="va">se_smd</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">r_xx</span><span class="op">)</span></span>
+<span><span class="va">se_c</span></span></code></pre></div>
+<pre><code>## [1] 0.2012461</code></pre>
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># x と y の信頼性の低さを考慮して相関を補正</span></span>
+<span><span class="va">r_xy_c</span> <span class="op">&lt;-</span> <span class="va">r_xy</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">r_xx</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">r_yy</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">r_xy_c</span></span></code></pre></div>
+<pre><code>## [1] 0.4543441</code></pre>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">se_c</span> <span class="op">&lt;-</span> <span class="va">se_r_xy</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">r_xx</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">r_yy</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">se_c</span></span></code></pre></div>
+<pre><code>## [1] 0.1202676</code></pre>
+<p>この例の結果を詳しく見ていこう。補正により、相関と SMD が補正前の初期値より大きくなっていることがわかる。しかし、標準誤差が大きくなっていることもわかる。この結果は意図的なもので、標準誤差を補正することで、データに想定される測定誤差を取り込むことができるのである。</p>
+<p>組織心理学など一部の分野では、減衰補正を適用することが一般的である。しかし、生物医学分野を含む他の分野では、この手順はほとんど使用されていない。メタ分析では、各研究で信頼性係数 <span class="math inline">\(r_{xx}\)</span> (および <span class="math inline">\(r_{yy}\)</span>) が報告されている場合のみ、信頼性の低さに対する補正を実行することが可能である。</p>
+<p>信頼性係数が報告されていない場合も非常に多い。このような場合、先行研究に基づく測定器の信頼性の値を仮定することがある。しかし、補正が効果量の値に大きな影響を与えることを考えると、<span class="math inline">\(r_{xx}\)</span> の推定値が不適切だと、結果がかなり歪んでしまう。また、メタ分析において、<strong>一部</strong>の効果量だけを補正し、他の効果量を補正しないようにすることは不可能である。これらの理由により、残念ながら信頼性補正の適用範囲は実際には限定されることが多い。</p>
+<p><br></p>
+</div>
+<div id="range" class="section level3" number="3.4.3">
+<h3>
+<span class="header-section-number">3.4.3</span> 範囲指定<a class="anchor" aria-label="anchor" href="#range"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>Hunter and Schmidt <span class="citation">(<a href="references.html#ref-hunter2004methods">2004, chap. 3</a> と Chapter 7)</span> によって提案されたもう一つの効果量調整は、範囲制限の問題を扱うものである。範囲制限とは、ある変数 <span class="math inline">\(x\)</span> の変動が、興味のある実際の母集団よりも研究で小さいときに起こる現象である。これは、母集団全体を代表していない可能性のある個体から非常に選択的にサンプルを採取した場合によく起こる。</p>
+<p>例えば、ある研究で、被験者の年齢と認知機能の相関が報告された場合を考えてみよう。直感的には、これらの変数には確かに相関があると考えるだろう。しかし、65歳から69歳の参加者だけを対象とした研究であれば、この2つの変数の間に (高い) 相関が見られる可能性は極めて低い。これは、調査サンプルの年齢が非常に限定されているためである。年齢には実際の変動がないため、この変数は認知能力の良い予測因子にはなり得ないということである。</p>
+<p>測定器の信頼性の低さ (前章参照) と同様、これは研究の効果を人為的に減衰させることにつながる。実際には重要な関連がある場合でも、それを検出することができない。</p>
+<p>SMD や相関 <span class="math inline">\(r_{xy}\)</span> の範囲制限を補正することは可能である。ただし、そのためには、対象母集団の無制限標準偏差 <span class="math inline">\(s_{\text{unrestricted}}\)</span> を知っている (または推定している) ことが必要である。興味のある母集団は、メタ分析のリサーチクエスチョンによって決定される。</p>
+<p>例えば、<strong>高齢者</strong>における年齢と認知機能の関係を調べたい場合、65歳以上の高齢者 (一般的に研究において「高齢者」はこのように定義される) の大規模代表サンプルにおける標準偏差の推定値を検索することが考えられる。もちろん、これは範囲限定であるが、メタ分析で扱う研究集団を反映しているため、年齢を<strong>重要な</strong>範囲に限定している。</p>
+<p>範囲制限を補正するためには、制限されていない母集団の標準偏差 <span class="math inline">\(s_{\text{unrestricted}}\)</span> と、本研究で制限した変数の標準偏差 <span class="math inline">\(s_{\text{restricted}}\)</span> の比である <span class="math inline">\(U\)</span> を計算する必要がある。</p>
+<p><span class="math display" id="eq:es43">\[\begin{equation}
+U =  \frac{s_{\text{unrestricted}}}{s_{\text{restricted}}}
+\tag{3.44}
+\end{equation}\]</span></p>
+<p><span class="math inline">\(s_{\text{unrestricted}}\)</span> の値は、例えば、興味のある変数を評価した過去の代表的な研究から得ることができる。そして、<span class="math inline">\(U\)</span> を用いて、この式で相関の値 <span class="math inline">\(r_{xy}\)</span> を補正することができる。</p>
+<p><span class="math display" id="eq:es44">\[\begin{equation}
+{r_{xy}}_c = \frac{U\times r_{xy}}{\sqrt{(U^2-1)r_{xy}^2+1}}
+\tag{3.45}
+\end{equation}\]</span></p>
+<p>これにより、補正後の相関 <span class="math inline">\({r_{xy}}_c\)</span> を求めることができる。また、同じ式で SMD の補正版も計算できる。</p>
+<p><span class="math display" id="eq:es45">\[\begin{equation}
+\text{SMD}_c = \frac{U\times \text{SMD}}{\sqrt{(U^2-1)\text{SMD}^2+1}}
+\tag{3.46}
+\end{equation}\]</span></p>
+<p>また、<span class="math inline">\(r_{xy}\)</span>とSMDの標準誤差も、それぞれこれらの式で補正する必要がある。</p>
+<p><span class="math display" id="eq:es46">\[\begin{equation}
+SE_{{r_{xy}}_c} = \frac{{r_{xy}}_c}{r_{xy}}SE_{r_{xy}}
+\tag{3.47}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:es47">\[\begin{equation}
+SE_{{\text{SMD}}_c} = \frac{{\text{SMD}}_c}{\text{SMD}}SE_{\text{SMD}}
+\tag{3.48}
+\end{equation}\]</span></p>
+<p>
+</p>
+<p>相関やSMDを補正した後、<span class="math inline">\({r_{xy}}_c\)</span> を Fisher’s <span class="math inline">\(z\)</span> に変換したり (Chapter <a href="effects.html#pearson-cors">3.2.3.1</a> )、<span class="math inline">\(\text{SMD}_c\)</span> を Hedges’ <span class="math inline">\(g\)</span> に変換するなど (Chapter <a href="effects.html#hedges-g">3.4.1</a> )、よくある変換を行うことができるようになっている。では、 <em>R</em> を使った補正を試してみよう。</p>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 補正するための相関関係を定義</span></span>
+<span><span class="va">r_xy</span> <span class="op">&lt;-</span> <span class="fl">0.34</span></span>
+<span><span class="va">se_r_xy</span> <span class="op">&lt;-</span> <span class="fl">0.09</span></span>
+<span></span>
+<span><span class="co"># 指定 SD と非制限 SD を定義</span></span>
+<span><span class="va">sd_restricted</span> <span class="op">&lt;-</span> <span class="fl">11</span></span>
+<span><span class="va">sd_unrestricted</span> <span class="op">&lt;-</span> <span class="fl">18</span></span>
+<span></span>
+<span><span class="co"># U を計算</span></span>
+<span><span class="va">U</span> <span class="op">&lt;-</span> <span class="va">sd_unrestricted</span><span class="op">/</span><span class="va">sd_restricted</span></span>
+<span></span>
+<span><span class="co"># 相関を補正</span></span>
+<span><span class="va">r_xy_c</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">U</span><span class="op">*</span><span class="va">r_xy</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="va">U</span><span class="op">^</span><span class="fl">2</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">r_xy</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">r_xy_c</span></span></code></pre></div>
+<pre><code>## [1] 0.5091754</code></pre>
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 標準誤差を補正</span></span>
+<span><span class="va">se_r_xy_c</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">r_xy_c</span><span class="op">/</span><span class="va">r_xy</span><span class="op">)</span><span class="op">*</span><span class="va">se_r_xy</span></span>
+<span><span class="va">se_r_xy_c</span></span></code></pre></div>
+<pre><code>## [1] 0.1347817</code></pre>
+<p>他の Hunter and Schmidt の調整と同様に、範囲制限の補正は、他の研究分野よりもある研究分野でより一般的に見られるものである。範囲制限の補正を適用する場合、メタ分析における<strong>すべての</strong>効果量に対して補正を実行することが重要である。技術的には、すべてのメタ分析で範囲制限の補正を行うことは可能であるが、多くの場合、これは必要ではない。</p>
+<p>実際には、各研究がメタ分析の範囲を完全に表現していることはほとんどない。実際、メタ分析の目的は、個々の研究の結果を<strong>超える</strong>ことである。したがって、範囲制限の補正は、いくつかの研究の範囲が大きく制限されている場合にのみ必要となる場合がある。</p>
+<p></p>
+<div class="boxinfo">
+<p>
+<strong>更なる学習</strong>
+</p>
+<p>
+このガイドでは、信頼性の低さと範囲制限に関する補正のみを取り上げる。なぜなら、これらの問題は実際に最もよく見られるからである。しかし、Hunter
+and Schmidt
+は、他にも様々な種類の誤差補正を提案している。いくつかの追加手法とともに、この手法は、<strong>心理測定メタ分析</strong>
+(psychometric meta-analysis) と呼ばれることもある。
+</p>
+<p>
+Hunter and Schmidt の方法について詳しく知りたい方は、彼らの著書である
+<strong>Methods of Meta-Analysis</strong> <span class="citation"><span class="citation">(<a href="references.html#ref-hunter2004methods">Hunter and Schmidt 2004</a>)</span></span>
+がわかりやすく、包括的な概要を提供しているので、参照されたい。Borenstein
+et al. <span class="citation"><span class="citation">(<a href="references.html#ref-borenstein2011introduction">2011</a>)</span></span>
+の38章にも、短い紹介がある。
+</p>
+<p>
+Hunter and Schmidt の手法の多くは、<a href="https://psychmeta.com/"><strong>{psychmeta}</strong></a> <span class="citation"><span class="citation">(<a href="references.html#ref-psychmeta">Dahlke and Wiernik 2019</a>)</span></span> と呼ばれる <em>R</em>
+パッケージにも実装されている。
+</p>
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="よくある問題" class="section level2" number="3.5">
+<h2>
+<span class="header-section-number">3.5</span> よくある問題<a class="anchor" aria-label="anchor" href="#%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E5%95%8F%E9%A1%8C"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>この章では、効果量を計算する際に、実際によく直面する問題にもう少し時間を割きたいと思いる。まず、効果量のデータが異なる形式で報告されている場合にどうすればよいかを説明する。その後、後のステップでメタ解析のプーリングに影響を与える解析単位の問題を検討する。</p>
+<p><br></p>
+<div id="es-formats-different" class="section level3" number="3.5.1">
+<h3>
+<span class="header-section-number">3.5.1</span> 効果量のデータ形式が異なる<a class="anchor" aria-label="anchor" href="#es-formats-different"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>前の章で効果量の計測方法について説明したとき、データセットの列として必要な変数の種類についても触れた。これらの変数は、 <em>R</em> 関数が効果量を計算し、メタ分析を実行するために必要である。例えば、群間標準化平均差のメタ分析を計算するためには、両群の平均値、標準偏差、サンプルサイズを準備する必要がある。</p>
+<p>すべての研究からこの情報を抽出することができれば、すべてがうまくいく。しかし、実際には、すべての研究が適切な形式で結果を報告しているわけではないことにすぐに気がつくだろう。例えば、2群の生データを報告せず、標準化平均差の計算値とその信頼区間だけを報告する研究もある。また、2群間の差を調べる<span class="math inline">\(t\)</span>-検定や<strong>分散分析</strong> (ANOVA) の結果のみを報告する研究もある。</p>
+<p>このような場合、メタ分析に生の効果量データを使うことができなくなることがよくある。その代わりに、各研究の効果量をあらかじめ計算して、それをプールする必要がある。メタ分析に最低限必要な情報は、研究の効果量と標準誤差であることは、Chapter <a href="effects.html#what-is-es">3.1</a> ですでに確認した。したがって、結果を効果量と標準誤差の推定値に変換することができれば、その研究を取り入れることができるのである。Chapter <a href="es-calc.html#es-calc">17</a> では、他のタイプの報告データから効果量を導き出すのに役立つ効果量コンバータをいくつか紹介している。</p>
+<p>しかし、これらのツールを使っても、効果量が算出できない研究がある可能性がある。そのような場合に残された方法としては、「研究選択」の章で述べたように、それぞれの論文の著者に何度も連絡を取り、効果量を算出するために必要なデータを提供してもらえないかお願いすることである。それでもダメなら、その研究は除外するしかない。</p>
+<p>Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a> では、 <em>R</em> の特殊な関数である <code>metagen</code> について学ぶ。この関数を使うと、事前に計算された効果量のデータをメタ分析することが可能である。この関数を使うには、データセットに以下の列を用意する必要がある。</p>
+<ul>
+<li>
+<strong><code>TE</code></strong>. 各研究の効果量の計算値。</li>
+<li>
+<strong><code>seTE</code></strong>. 各効果量の標準誤差。</li>
+</ul>
+<p><br></p>
+</div>
+<div id="unit-of-analysis" class="section level3" number="3.5.2">
+<h3>
+<span class="header-section-number">3.5.2</span> 分析単位問題<a class="anchor" aria-label="anchor" href="#unit-of-analysis"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>メタ分析において、1つの研究が2つ以上の効果量に寄与することは珍しいことではない。特に、(1)ある研究が2つ以上のグループを含んでいる、(2)ある研究が2つ以上の道具を使って結果を測定している、などの場合がある。どちらの場合も問題がある。メタ分析において、研究が複数の効果量に寄与する場合、メタ分析における各効果量は<strong>独立</strong>であるという中核的な仮定の1つに違反することになる <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 6.2</a> と Chapter 23; <a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 25</a>)</span>。この仮定が満たされない場合、<strong>分析単位</strong> (unit of analysis) の問題を扱っていることになる。</p>
+<p></p>
+<p>例えば、治療 A を検査する群、治療 B を投与する群、そして対照群 C がある。この研究では、<strong>2</strong>個の効果量を計算することが可能である。結果のデータによって、これらはリスク比、オッズ比、または発生率比、あるいは標準化平均差になる。治療 A と対照を比較する効果量 <span class="math inline">\(\hat\theta_{\text{A-C}}\)</span> と、治療 B と対照を比較する効果量 <span class="math inline">\(\hat\theta_{\text{B-C}}\)</span> の2つがある。<span class="math inline">\(\hat\theta_{\text{A-C}}\)</span> と <span class="math inline">\(\hat\theta_{\text{B-C}}\)</span> の両方を同じメタ分析に含めると、C の情報が2回含まれているため、これらの効果量は独立したものではない。この問題は、<strong>二重カウント</strong>とも呼ばれる。</p>
+<p>C を二重カウントしたため、2つの効果量は<strong>相関</strong>がある。サンプルサイズが全群で等しい場合、この相関は <span class="math inline">\(r =\)</span> 0.5 であることがわかる <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 25</a>)</span>。これは、A と B が独立した群であるため、相関がないためである。しかし、両方の効果量における対照群は同一であるため、完全な相関は1となり、その中点は 0.5 となる。群の二重カウントは、影響を受ける効果量の精度 (すなわち、標準誤差) を過大評価することになる。これは、メタ分析でこれらの効果に与える重みを増大させ、最終的に結果を歪めることになる。この問題に対処するために、3つの方法がある。</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>共有群のサンプルサイズを分割する</strong>。これは、効果量を計算するときに、C 群のサンプルサイズ (例えば <span class="math inline">\(n =\)</span> 200) を A との比較と C との比較で均等に分けることを意味する。二値結果のデータを扱う場合は、イベントの数も均等に分割する。この例では、先ほどと同じように2つの効果量を計算したが、今度は C が両方の計算で100人のみで構成されているように見せかける。このアプローチにより、効果量の精度がダブルカウントのために人為的に高くなるという問題が解決される。しかし、効果量が相関したままなので、まだ最適とは言えない <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, 23.3.4</a>)</span>。</p></li>
+<li><p><strong>群を削除する</strong>。非常に腕力を使う手法は、単純に1つの比較、例えば <span class="math inline">\(\hat\theta_{\text{B-C}}\)</span> をメタ分析から完全に削除することである。これは分析単位の問題を解決するものの、新たな問題を引き起こす。効果量を1つ捨てるだけだと、関連する可能性のある情報を失ってしまうのである。</p></li>
+<li><p><strong>群を合体する</strong>。この手法は、2つの群の結果を組み合わせて、1つの比較しか残らないようにするものである。この例では、A と B のデータを組み合わせて、プールした結果を C と比較することを意味する。これは、両群の参加者数とイベント数を合計すればよい二値アウトカムデータでは比較的簡単なことである。しかし、平均値や標準偏差のような連続的なデータでは、少し複雑になる。「各種ツール」の Chapter <a href="es-calc.html#pool-groups">17.9</a> には、このようなデータを結合するための <em>R</em> 関数がある。群を合体することで、二重カウントや効果量の相関を回避することが可能である。そのため、この方法はコクランでも推奨されている <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 23.3.4</a>)</span>。とはいえ、この方法にも欠点がある。2群があまりにも異なり、実際には比較できないものを一緒にしてしまう可能性があるのである。A は最先端の介入、B はエビデンスベースの乏しい時代遅れのアプローチでなど、A 群と B 群の治療がまったく異なることもある。この2つの治療を組み合わせても効果が見られない場合、これが両方のタイプの介入に当てはまるのか、B の効果のなさが単に A の効果を希釈したのかを切り分けるのはほぼ不可能である。したがって、アプローチ (1) と (2) は、2群があまりにも異質な場合に使用される。</p></li>
+</ol>
+<p></p>
+<p>分析単位の問題は、ある研究が複数の測定器を用いて結果を測定した場合にも発生する。これは、解析したい変数をどのように選ぶべきかを決定する明確な「ゴールド・スタンダード」がない場合によくあることである。これらの測定のそれぞれについて効果量を計算しメタ分析に含めると、二重カウントになってしまう。さらに、効果の測定に同じサンプルが使用されるため、効果量には相関がある。この状況に対処するためには、3つのアプローチがある。</p>
+<ul>
+<li><p>まず、単純に1つの研究につき1つの測定器を選択する方法である。この選択は、体系的かつ再現可能な方法で行うことが重要である。できることといえば、解析計画書 (Chapter <a href="intro.html#analysis-plan">1.4.2</a>) において、メタ解析のための測定器の階層を定義しておくくらいである。この階層は、特定の測定器の信頼性に関する過去の証拠に基づくことも、どのタイプの測定器が研究課題の内容を最もよく反映しているかに基づくこともできる。そして、この階層によって、複数の測定器が利用可能な場合に、どの測定器を選択するかを明確に決定する。</p></li>
+<li><p>また、計算された効果量を用いてそれらを集約し、各研究が1つの効果量 (集約されたもの) しか提供しないようにすることも可能である。これはやや「総当り」的なアプローチである。この場合、効果量が研究内でどの程度強く相関しているかを特定する必要があるが、この値は通常知られていない。Chapter <a href="es-calc.html#aggregate-es">17.10</a> では、あらかじめ計算された効果量を、各研究について1つの推定値に集約できる関数を紹介する。</p></li>
+<li><p>第三のアプローチは、利用可能なすべての測定器からのデータを含み、メタ分析において研究が1つ以上の効果量に寄与するという事実を説明できるメタ分析モデルを使用することである。これは<strong>「３レベル」</strong>メタ分析モデルによって実現されるもので、Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で検討する。</p></li>
+</ul>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+</div>
+<div id="演習問題-2" class="section level2" number="3.6">
+<h2>
+<span class="header-section-number">3.6</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-2"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+効果量という言葉に明確な定義はあるか？人々は、効果量という言葉で何を指すか？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+観測された効果量が母集団の真の効果量から乖離する主な理由を挙げなさい。それはどのように定量化できるのか。
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+なぜ大規模な研究は小規模な研究よりも真の効果の推定に優れているのか？
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+効果量の指標は、どのような基準を満たせばメタ分析に使えるのか？
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+標準化平均差 (Standardized Mean Difference, SMD)
+が1であることは何を表しているのか？
+</li>
+</ol>
+<ol start="6" style="list-style-type: decimal">
+<li>
+比 (オッズ比など)
+に基づく効果量をプールするためには、どのような変換が必要か。
+</li>
+</ol>
+<ol start="7" style="list-style-type: decimal">
+<li>
+効果量補正の種類を3つ挙げよ。
+</li>
+</ol>
+<ol start="8" style="list-style-type: decimal">
+<li>
+分析単位の問題はどのような場合に発生するか？どうすれば回避できるか？
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda3">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="概要-2" class="section level2" number="3.7">
+<h2>
+<span class="header-section-number">3.7</span> 概要<a class="anchor" aria-label="anchor" href="#%E6%A6%82%E8%A6%81-2"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>効果量は、メタ分析の構成要素である。メタ分析を行うには、少なくとも効果量とその標準誤差の推定値が必要である。</p></li>
+<li><p>効果量の標準誤差は、その研究による効果量の推定がどれだけ正確であるかを表している。メタ分析では、精度の高い効果量は、真の効果をより良く推定できるため、より高い重みが与えられる。</p></li>
+<li><p>メタ分析で使用する効果量には様々なものがある。一般的なものは、「1変数」の関係尺度 (平均や割合など)、相関、(標準化) 平均差、そしてリスク比、オッズ比、発生率比などである。</p></li>
+<li><p>効果量には、測定誤差や範囲制限などによるバイアスが生じることがある。標準化平均差の小サンプルバイアス、信頼性の低さによる減衰、範囲制限の問題など、いくつかのバイアスを補正する公式がある。</p></li>
+<li><p>その他のよくある問題としては、効果量を計算するために必要なデータを異なる形式で報告している研究、また、複数の効果量を報告している研究で生じる分析単位の問題などがある。</p></li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></div>
+<div class="next"><a href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#effects"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="nav-link" href="#what-is-es"><span class="header-section-number">3.1</span> 効果量とは何か？</a></li>
+<li>
+<a class="nav-link" href="#single-group-es"><span class="header-section-number">3.2</span> 単群デザインにおける測定値と効果量</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#means"><span class="header-section-number">3.2.1</span> 平均値</a></li>
+<li><a class="nav-link" href="#props"><span class="header-section-number">3.2.2</span> 割合</a></li>
+<li><a class="nav-link" href="#cors"><span class="header-section-number">3.2.3</span> 相関関係</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E5%AF%BE%E7%85%A7%E7%BE%A4%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%8A%B9%E6%9E%9C%E9%87%8F"><span class="header-section-number">3.3</span> 対照群デザインにおける効果量</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#s-md"><span class="header-section-number">3.3.1</span> (標準化) 平均差</a></li>
+<li><a class="nav-link" href="#ratios"><span class="header-section-number">3.3.2</span> リスク比とオッズ比</a></li>
+<li><a class="nav-link" href="#irr"><span class="header-section-number">3.3.3</span> 発生率比</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#es-correction"><span class="header-section-number">3.4</span> 効果量補正</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#hedges-g"><span class="header-section-number">3.4.1</span> スモールサンプルバイアス</a></li>
+<li><a class="nav-link" href="#unreliable"><span class="header-section-number">3.4.2</span> 非信頼性</a></li>
+<li><a class="nav-link" href="#range"><span class="header-section-number">3.4.3</span> 範囲指定</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E5%95%8F%E9%A1%8C"><span class="header-section-number">3.5</span> よくある問題</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#es-formats-different"><span class="header-section-number">3.5.1</span> 効果量のデータ形式が異なる</a></li>
+<li><a class="nav-link" href="#unit-of-analysis"><span class="header-section-number">3.5.2</span> 分析単位問題</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-2"><span class="header-section-number">3.6</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E6%A6%82%E8%A6%81-2"><span class="header-section-number">3.7</span> 概要</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

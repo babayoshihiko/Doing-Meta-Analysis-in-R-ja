@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>12 ネットワークメタ分析 | Doing Meta-Analysis in R</title>
+<meta name="author" content="Mathias Harrer">
+<meta name="author" content="Pim Cuijpers">
+<meta name="author" content="Toshi A. Furukawa">
+<meta name="author" content="David D. Ebert">
+<meta name="description" content="臨 床試験や他の種類の介入研究のメタ分析を行う場合、通常、1個の特定の治療の真の効果の大きさを推定する。我々は、同じ種類の介入を同様の対照群、例えばプラセボと比較した研究を含める。他の条件がすべて同じであれば、これは特定の種類の治療が効果的かどうかを評価することを可能にする。...">
+<meta name="generator" content="bookdown 0.36 with bs4_book()">
+<meta property="og:title" content="12 ネットワークメタ分析 | Doing Meta-Analysis in R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="臨 床試験や他の種類の介入研究のメタ分析を行う場合、通常、1個の特定の治療の真の効果の大きさを推定する。我々は、同じ種類の介入を同様の対照群、例えばプラセボと比較した研究を含める。他の条件がすべて同じであれば、これは特定の種類の治療が効果的かどうかを評価することを可能にする。...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="12 ネットワークメタ分析 | Doing Meta-Analysis in R">
+<meta name="twitter:site" content="@MathiasHarrer">
+<meta name="twitter:description" content="臨 床試験や他の種類の介入研究のメタ分析を行う場合、通常、1個の特定の治療の真の効果の大きさを推定する。我々は、同じ種類の介入を同様の対照群、例えばプラセボと比較した研究を含める。他の条件がすべて同じであれば、これは特定の種類の治療が効果的かどうかを評価することを可能にする。...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Fira_Sans-0.4.7/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.7/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.5.1/transition.js"></script><script src="libs/bs3compat-0.5.1/tabs.js"></script><script src="libs/bs3compat-0.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+<style>
+
+    :root {
+      --background-color: #FFFEFA;
+      --text-color: #000;
+      --highlight-color: #277DB0;
+      --border-color: #999896;
+      --grey-color: #6C6C6C;
+      --line-color: #eee;
+      --bg-box: #f5f5f5;
+      --box-border-color: #eeeeee;
+      --code-bg: #f8f8f8;
+      --code-chunk-bg: linear-gradient(160deg,#f8f8f8 0, #f1f1f1 100%);
+      --code-text-color: #212529;
+      --hr-border-top: 1px solid rgba(0,0,0,0.1);
+      --table-text-color: #000;
+      --toc-active: #eee;
+      --form-color: #4D4C4B;
+      --form-background-color: #FFFEFA;
+      --form-border: 1px solid #999896;
+      --aa-cursor-background-color: #B2D7FF;
+    }
+
+
+    [data-theme="dark"] {
+      --background-color: #2b2b2b;
+      --text-color: #ffffff;
+      --highlight-color: #34a8ed;
+      --border-color: yellow;
+      --grey-color: #cfcfcf;
+      --line-color: #575757;
+      --bg-box: #474747;
+      --box-border-color: #474747;
+      --code-bg: #474747;
+      --code-chunk-bg: linear-gradient(160deg,#CDCDCD 0,#f1f1f1 100%);
+      --code-text-color: #ffffff;
+      --hr-border-top: 1px solid #575757;
+      --table-text-color: #ffffff;
+      --toc-active: #474747;
+      --form-color: #cfcfcf;
+      --form-background-color: #474747;
+      --form-border: 1px solid #575757;
+      --aa-cursor-background-color: #2b2b2b;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      color: var(--form-color);
+      border-bottom: 1px var(--form-border) solid;
+      background-color: var(--form-background-color);
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: var(--aa-cursor-background-color);
+    }
+
+    strong {
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-weight: bolder;
+    }
+
+    .form-control {
+      color: var(--form-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--form-background-color);
+      border: var(--form-border);
+    }
+
+
+    nav[data-toggle="toc"] .nav a.nav-link.active, nav[data-toggle="toc"] .nav .nav-link.active > li > a {
+        background-color: var(--toc-active);
+    }
+
+    .btn-circle.btn-md {
+      width: 50px;
+      height: 50px;
+      padding: 7px 10px;
+      border-radius: 25px;
+      font-size: 10px;
+      text-align: center;
+    }
+
+
+    .lightable-classic td {
+      color: var(--text-color);
+    }
+
+
+    .table {
+      color: var(--table-text-color);
+    }
+
+    hr {
+      border-top: var(--hr-border-top);
+    }
+
+    code {
+      background-color: var(--code-bg);
+      color: var(--code-text-color);
+    }
+
+    pre {
+      background-image: var(--code-chunk-bg);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--highlight-color);
+    }
+
+    .header-section-number {
+      color: var(--grey-color);
+    }
+
+    small.text-muted {
+      color: var(--grey-color) !important;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+    }
+
+    p.caption {
+      color: var(--grey-color);
+    }
+
+    .figure {
+      border-top: 2px solid var(--line-color);
+      border-bottom: 2px solid var(--line-color);
+    }
+
+
+    .inline-figure {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .boxinfo {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxinfo:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:20px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxempty {
+      padding: 1em 1em 1em 1.1em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxempty:before {
+        content: '\f0eb';
+        font-family: FontAwesome;
+        left:0px;
+        position:absolute;
+        font-size: 30px;
+        color: transparent;
+     }
+
+    .boximportant {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boximportant:before {
+        content: '\f06a';
+        font-family: FontAwesome;
+        left:13px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxreport {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxreport:before {
+        content: '\f570';
+        font-family: FontAwesome;
+        left:15px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxdmetar {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .csl-entry {
+      margin-bottom: 20px;
+      padding-left: 1.5em;
+      text-indent:-1.5em;
+    }
+
+    .boxdmetar:before {
+        content: '\f4f7';
+        font-family: FontAwesome;
+        left:10px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .boxquestion {
+      padding: 1em 1em 1em 3em;
+      margin-bottom: 10px;
+      background: var(--bg-box);
+      position:relative;
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--box-border-color);
+      border-radius: .25rem;
+    }
+
+    .boxquestion:before {
+        content: '\f059';
+        font-family: FontAwesome;
+        left:12px;
+        position:absolute;
+        font-size: 30px;
+        color: var(--highlight-color);
+     }
+
+    .mode-switch {
+      font-size: 0.9rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+    }
+
+
+    .firstcharacter {
+      color: var(--highlight-color);
+      float: left;
+      font-size: 40px;
+      line-height: 50px;
+      padding-bottom: 2px;
+      padding-right: 8px;
+      padding-left: 2px;
+    }
+
+
+    .btn-circle.btn-sm {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-md {
+        width: 50px;
+        height: 50px;
+        padding: 7px 10px;
+        border-radius: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .btn-circle.btn-xl {
+        width: 60px;
+        height: 60px;
+        padding: 7px 7px;
+        border-radius: 35px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    #critical-btn.btn-secondary {
+      background-color: var(--grey-color);
+      border-color: var(--grey-color);
+    }
+
+    .sticky-item {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+    }
+
+
+
+    </style>
+<link rel="shortcut icon" href="favicon.ico">
+<script type="text/x-mathjax-config">
+    const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+    for (let popover of popovers){
+      const div = document.createElement('div');
+      div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+      div.innerHTML = popover.getAttribute('data-content');
+
+      // Will this work with TeX on its own line?
+      var has_math = div.querySelector("span.math");
+      if (has_math) {
+        document.body.appendChild(div);
+      	MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+      	MathJax.Hub.Queue(function(){
+          popover.setAttribute('data-content', div.innerHTML);
+      	})
+      }
+    }
+    </script><link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script><script type="text/javascript">
+      // Add switch element
+      document.addEventListener('DOMContentLoaded', function(event){
+        let darkSwitch = document.createElement('div');
+        darkSwitch.innerHTML = "<div class='sticky-item'><button type='button' id='critical-btn' class='btn btn-dark btn-circle btn-xl'>🌓</button></div>"
+        document.body.appendChild(darkSwitch);
+      })
+
+    $(document).ready(function() {
+
+        $("#critical-btn").click(function () {
+
+            if ($(this).hasClass('btn-dark')){
+                $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+                $(this).addClass('btn-secondary').removeClass('btn-dark');
+            }
+
+            else if ($(this).hasClass('btn-secondary')){
+                $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+                $(this).addClass('btn-dark').removeClass('btn-secondary');
+            }
+
+        })
+    })
+    </script><script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Get our button switcher
+        var themeSwitcher = document.getElementById("critical-btn");
+
+        // When our button gets clicked
+        themeSwitcher.onclick = function() {
+          // Get the current selected theme, on the first run
+          // it should be `light`
+          var currentTheme = document.documentElement.getAttribute("data-theme");
+
+          // Switch between `dark` and `light`
+          var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+
+          // Set our currenet theme to the new one
+          document.documentElement.setAttribute("data-theme", switchToTheme);
+
+          // Save current selection
+          localStorage.setItem('themeMode', switchToTheme);
+
+        }
+      });
+
+      // keep selection across pages
+      document.addEventListener('DOMContentLoaded', function(event){
+        const currentTheme = localStorage.getItem('themeMode')
+        if (currentTheme === 'dark'){
+        document.documentElement.setAttribute("data-theme", 'dark');
+          if ($("#critical-btn").hasClass('btn-dark')) {
+            $('#critical-btn').removeClass('btn-dark').addClass('btn-secondary');
+            $('#critical-btn').addClass('btn-secondary').removeClass('btn-dark');
+          }
+        } else {
+        document.documentElement.setAttribute("data-theme", 'light');
+          if ($("#critical-btn").hasClass('btn-secondary')) {
+            $('#critical-btn').removeClass('btn-secondary').addClass('btn-dark');
+            $('#critical-btn').addClass('btn-dark').removeClass('btn-secondary');
+          }
+      }})
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="A Hands-on Guide">Doing Meta-Analysis in R</a>:
+        <small class="text-muted">A Hands-on Guide</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">ようこそ！</a></li>
+<li><a class="" href="preface.html">序章</a></li>
+<li><a class="" href="about-the-authors.html">著者について</a></li>
+<li class="book-part">はじめに</li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> はじめに</a></li>
+<li><a class="" href="discovering-R.html"><span class="header-section-number">2</span> R の発見</a></li>
+<li class="book-part">Rでメタ分析</li>
+<li><a class="" href="effects.html"><span class="header-section-number">3</span> 効果量</a></li>
+<li><a class="" href="pooling-es.html"><span class="header-section-number">4</span> 効果量のプール</a></li>
+<li><a class="" href="heterogeneity.html"><span class="header-section-number">5</span> 研究間異質性</a></li>
+<li><a class="" href="forest.html"><span class="header-section-number">6</span> フォレストプロット</a></li>
+<li><a class="" href="subgroup.html"><span class="header-section-number">7</span> サブグループ解析</a></li>
+<li><a class="" href="metareg.html"><span class="header-section-number">8</span> メタ回帰</a></li>
+<li><a class="" href="pub-bias.html"><span class="header-section-number">9</span> 出版バイアス</a></li>
+<li class="book-part">高度な分析</li>
+<li><a class="" href="multilevel-ma.html"><span class="header-section-number">10</span> 「マルチレベル」メタ分析</a></li>
+<li><a class="" href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></li>
+<li><a class="active" href="netwma.html"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li><a class="" href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></li>
+<li class="book-part">各種ツール</li>
+<li><a class="" href="power.html"><span class="header-section-number">14</span> 検出力分析</a></li>
+<li><a class="" href="risk-of-bias-plots.html"><span class="header-section-number">15</span> バイアスリスクのプロット</a></li>
+<li><a class="" href="reporting-reproducibility.html"><span class="header-section-number">16</span> 報告と再現性</a></li>
+<li><a class="" href="es-calc.html"><span class="header-section-number">17</span> 効果量の計算と換算</a></li>
+<li class="book-part">付録</li>
+<li><a class="" href="qanda.html"><span class="header-section-number">A</span> Q&amp;A</a></li>
+<li><a class="" href="formula.html"><span class="header-section-number">B</span> 効果量の計算式</a></li>
+<li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
+<li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
+<li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
+<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="netwma" class="section level1" number="12">
+<h1>
+<span class="header-section-number">12</span> ネットワークメタ分析<a class="anchor" aria-label="anchor" href="#netwma"><i class="fas fa-link"></i></a>
+</h1>
+<hr>
+<div class="inline-figure"><img src="_figs/network.jpg"></div>
+<p><br></p>
+<p><span class="firstcharacter">臨</span>
+床試験や他の種類の介入研究のメタ分析を行う場合、通常、<strong>1</strong>個の特定の治療の真の効果の大きさを推定する。我々は、同じ種類の介入を同様の対照群、例えばプラセボと比較した研究を含める。他の条件がすべて同じであれば、これは<strong>特定の</strong>種類の治療が効果的かどうかを評価することを可能にする。</p>
+<p>しかし、多くの研究分野では、「決定的な」治療法は一つだけではなく、いくつもあるのである。例えば、片頭痛はいろいろな薬物療法があるし、非薬物療法の選択肢もある。特に「成熟した」研究分野では、ある種の治療が有効であることを示すことは、あまり意味がないことが多いのである。むしろ、ある特定の適応症に対して、どの治療法が<strong>最も</strong>効果的であるかを調べたいのである。</p>
+<p>これは新たな問題を引き起こす。従来のメタ分析で複数の治療の比較有効性を評価するためには、2つの治療間の直接比較が十分存在していることが必要である。しかし、残念なことに、そうではないこともよくある。多くの研究分野では、「弱い」対照群の代わりに、2つの治療の効果を<strong>直接</strong>比較した臨床試験は、一般にあったとしても少ない。このことは、従来のメタ分析では、複数の治療法の<strong>相対的</strong>な有効性に関する確かな証拠を確立できないことを意味することが多い。</p>
+<p>しかし、2つ以上の治療法を直接比較することはできなくとも、<strong>間接的</strong>な証拠は通常利用可能である。異なる治療法が<strong>別々の</strong>試験で評価されたとしても、これらの試験はすべて<strong>同じ</strong>対照群を用いている可能性がある。例えば、直接比較されたことはない2種類の薬があるとしても、それぞれの効果がプラセボと比較して研究されている可能性がある。</p>
+<p></p>
+<p><strong>ネットワークメタ分析</strong> (network meta-analysis) では、このような間接的な比較を取り入れ、複数の介入の効果を同時に比較することがが可能である <span class="citation">(<a href="references.html#ref-dias2013evidence">Dias et al. 2013</a>)</span>。ネットワークメタ分析は、<strong>混合治療比較メタ分析</strong> (mixed-treatment comparison meta-analysis) としても知られている <span class="citation">(<a href="references.html#ref-van2012automating">Valkenhoef et al. 2012</a>)</span>。これは、複数の直接的・間接的な治療比較を1つのモデルに統合し、比較の「ネットワーク」として形式化することができるからである。</p>
+<p></p>
+<p>ネットワークメタ分析は「ホット」な研究トピックである。この10年間で、バイオ分野・メディカル分野やその他の分野の応用研究者によって取り上げられることが増えてきた。しかし、この方法には、異質性やいわゆる<strong>ネットワークの非一貫性</strong> (network inconsistency) に関する、通常のメタ分析以上に課題や落とし穴もある <span class="citation">(<a href="references.html#ref-salanti2014evaluating">Salanti et al. 2014</a>)</span>。</p>
+<p>したがって、まずネットワークメタ分析モデルの中核的な構成要素と前提について議論することが重要である。ネットワークメタ分析の基礎は、少し抽象的になることがある。そこで、この手法の理解を深めるために、本質的な内容を少しずつ見ていこう。</p>
+<p><br></p>
+<div id="what-is-net-ma" class="section level2" number="12.1">
+<h2>
+<span class="header-section-number">12.1</span> ネットワークメタ分析とは何か?<a class="anchor" aria-label="anchor" href="#what-is-net-ma"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<div id="direct-indirect-evidence" class="section level3" number="12.1.1">
+<h3>
+<span class="header-section-number">12.1.1</span> 直接証拠と間接証拠<a class="anchor" aria-label="anchor" href="#direct-indirect-evidence"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>まず、治療の「ネットワーク」とは何を意味するのかを理解する必要がある。ある無作為化比較試験 <span class="math inline">\(i\)</span> からデータを抽出し、治療Aの効果を他の条件B (例えば、待機リスト対照群) と比較したとする。この比較を図式化することができる。</p>
+<div class="inline-figure"><img src="images/graph1_col_sep.png" width="75%" style="display: block; margin: auto;"></div>
+<p></p>
+<p>このように治療法の比較を視覚的に表現したものを<strong>グラフ</strong>と呼ぶ。グラフは、異なるオブジェクトが互いにどのように関連しているかをモデル化するために使用される構造であり、このトピックに関する数学の分野として、<strong>グラフ理論</strong>が存在する。</p>
+<p>このグラフには２つの主要な構成要素がある。まず、試行 <span class="math inline">\(i\)</span> における二つの条件AとBを表す二つの円(いわゆる<strong>ノード</strong>)である。次に、この2つのノードを結ぶ線である。この線は<strong>エッジ</strong>と呼ばれる。エッジは、A と B がどのように関係するかを表す。ここでは、この線は非常に簡単に解釈できる。A と B を比較したときに観測される効果の大きさ <span class="math inline">\(\theta_{i\text{,A,B}}\)</span> で A と B の関係を表すことができる。この効果の大きさは、例えば、結果の指標によって標準化平均差 (SMD) やオッズ比などで表現することが可能である。</p>
+<p>さて、別の試験 <span class="math inline">\(j\)</span> からもデータを得たとする。この試験でも対照条件Bを用いたが、Aを投与する代わりに別の治療法Cを用いた。</p>
+<div class="inline-figure"><img src="images/graph2_col_sep.png" width="75%" style="display: block; margin: auto;"></div>
+<p>これで最初の小さなネットワークができあがる。グラフに2つの効果量推定値が含まれていることがよくわかる。A と B を比較した <span class="math inline">\(\hat\theta_{i\text{,A,B}}\)</span> と、C と B を比較した <span class="math inline">\(\hat\theta_{j\text{,C,B}}\)</span> である。これらの効果量は両方とも「実際の」試験で直接観察されているので、我々はその情報を<strong>直接的証拠</strong>と呼んでいる。したがって、これらの効果量を <span class="math inline">\(\hat\theta^{\text{direct}}_{\text{B,A}}\)</span> と <span class="math inline">\(\hat\theta^{\text{direct}}_{\text{B,C}}\)</span> で表記する。この表記で条件 B が最初に来るのは、<strong>基準</strong>グループと決めたからである。B を参照条件としたのは、両試験で対照群として用いられていたからである。</p>
+<p>新しいグラフでは、すべてのノード (条件) は、<strong>直接的</strong>か、<strong>間接的</strong>に接続されている。B 条件 (対照群) は、他のすべてのノードに直接接続されている。B から他の2つのノード A、C に行くには、グラフ上で1つの「ステップ」しか必要ない: B <span class="math inline">\(\rightarrow\)</span> A, B <span class="math inline">\(\rightarrow\)</span> C。一方、A と C は1つの直接接続しかなく、両方とも B に接続する: A <span class="math inline">\(\rightarrow\)</span> B と C <span class="math inline">\(\rightarrow\)</span> B。</p>
+<p>しかし、A と C の間には間接的なつながりがある。このつながりは、B が2つの条件 A <span class="math inline">\(\rightarrow\)</span> B と C <span class="math inline">\(\rightarrow\)</span> B の間のリンク、すなわち<strong>ブリッジ</strong>として機能するために存在する。その結果、ネットワークの構造から導き出される A と C の関係の<strong>間接的な証拠</strong>が存在する。</p>
+<div class="inline-figure"><img src="images/graph3_col_sep.png" width="75%" style="display: block; margin: auto;"></div>
+<p>直接観測されたエッジの情報を使って、<strong>間接的に</strong>観測されたAとCの比較の効果を計算することが可能である。この非観測、間接効果量を <span class="math inline">\(\hat\theta^{\text{indirect}}_{\text{A,C}}\)</span> と表記する。効果推定値は、次の式を用いて導出できる。 <span class="citation">(<a href="references.html#ref-dias2018network">Dias et al. 2018, chap. 1</a>)</span>:</p>
+<p><span class="math display" id="eq:networkes">\[\begin{equation}
+\hat\theta_{\text{A,C}}^{\text{indirect}} = \hat\theta_{\text{B,A}}^{\text{direct}} - \hat\theta_{\text{B,C}}^{\text{direct}}
+\tag{12.1}
+\end{equation}\]</span></p>
+<p>このステップは、ネットワークメタ分析の重要な要素である。上記の式は、たとえそれが試験で直接評価されなかったとしても、比較の効果量を推定することが可能である。</p>
+<p>ネットワークメタ分析では、1つのモデルで直接および間接的なエビデンスを組み合わせる。この情報に基づいて、含まれる各治療の (相対) 効果を推定することが可能である。間接的な証拠を追加することで、その特定の比較に直接的な証拠がある場合でも、効果量推定の精度を上げることが可能である。全体として、ネットワークメタ分析にはいくつかの利点がある。</p>
+<ul>
+<li><p>関連する一連の研究から入手可能なすべての情報を1つの分析にプールすることができる。従来のメタ分析で、例えばプラセボと異なる治療法を比較する試験をどのように扱うかを考えてみてみよう。それぞれの比較 (例えば、治療Aとプラセボの比較、治療Bとプラセボの比較、治療Aと治療Bの比較など) を別々のメタ分析でプールしなければならないだろう。</p></li>
+<li><p>ネットワークメタ分析では、従来のメタ分析では不可能であった間接的なエビデンスをネットワークに取り込むことが可能である。ペアワイズメタ分析では、実際に試験に含まれた比較のうち、直接的な証拠のみをプールすることができる。</p></li>
+<li><p>すべての仮定が満たされ、結果が十分に決定的であれば、ネットワークメタ分析によって、研究対象集団に対してどのタイプの治療が望ましいかを推論することができる。</p></li>
+</ul>
+<p>これらはすべて興味深いものであるが、考慮すべき重要な限界がいくつかある。まず、間接効果量の推定値の分散がどのように計算されるかを見てみよう。</p>
+<p><span class="math display" id="eq:nw2">\[\begin{equation}
+\text{Var} \left(\hat\theta_{\text{A,C}}^{\text{indirect}} \right) = \text{Var} \left(\hat\theta_{\text{B,A}}^{\text{direct}} \right) + \text{Var} \left(\hat\theta_{\text{B,C}}^{\text{direct}} \right)
+\tag{12.2}
+\end{equation}\]</span></p>
+<p>間接比較の分散を計算するために、直接比較の分散を <strong>足し算</strong> した。つまり、間接的な証拠から推定される効果量は、直接的な証拠に基づくものよりも常に大きな分散を持ち、したがって精度も低くなる <span class="citation">(<a href="references.html#ref-dias2018network">Dias et al. 2018, chap. 1</a>)</span>。これは極めて論理的である。数学的に推測しなければならない結果に比べ、観測データから推定された効果量には、はるかに高い信頼性を持つことができるのである。</p>
+<p>
+</p>
+<p>さらにもう1つの問題がある。直接比較から間接的な証拠を推定することができる先ほどの式 <a href="netwma.html#eq:networkes">(12.1)</a> は、重要な前提条件である<strong>推移性 (transitivity)</strong> の仮定が満たされた場合にのみ成立する (船尾と黒田は transitivity の訳に「類似性」をあてている)。統計学的な観点からは、この仮定はネットワークの<strong>一貫性 (consistency)</strong> と訳される (訳注: Minds では「一貫性」、神田と船尾と黒田は「一致性」と訳している。このほか「整合性」と訳されることもある) <span class="citation">(<a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>)</span>。以下では、この2つの用語の意味と、それらがなぜ重要であるかを説明する。</p>
+<p><br></p>
+</div>
+<div id="transitivity-consistency" class="section level3" number="12.1.2">
+<h3>
+<span class="header-section-number">12.1.2</span> 推移性と一貫性<a class="anchor" aria-label="anchor" href="#transitivity-consistency"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>ネットワークメタ分析は、標準的なメタ分析手法の延長線上にある貴重な手法であるのは間違いない。しかし、その有効性には疑問が残る。ネットワークメタ分析に対する批判の多くは、推察される通り、間接的な証拠の利用を中心に展開されている <span class="citation">(<a href="references.html#ref-edwards2009indirect">Edwards et al. 2009</a>; <a href="references.html#ref-ioannidis2006indirect">Ioannidis 2006</a>)</span>。これは特に、比較のために直接証拠が実際に利用可能である場合を含んでいる。</p>
+<p>(ランダム化) 試験の参加者は治療条件 (例えば A と B) のいずれかに<strong>偶然</strong>割り当てられるが、私たちのネットワークでは試験条件そのものはランダムに選択されていないという点は重要である。もちろん、これはすべて論理的なことである。通常、被験者をいくつかの試験条件のうちの1つにランダムに割り当てることは問題ない。しかし、研究者がサイコロを振って治験の治療条件を決めてから研究を展開することは考えにくい。ネットワークメタ分析では、選択された試験条件の構成がランダムなパターンになることはほとんどない。</p>
+<p>これはネットワークメタ分析モデル自体の問題ではない <span class="citation">(<a href="references.html#ref-dias2018network">Dias et al. 2018, chap. 1</a>)</span>。ネットワークメタ分析モデルが偏るのは、試験内の特定の比較の選択、または非選択が、その比較の真の効果に依存する場合のみである <span class="citation">(<a href="references.html#ref-dias2013evidence">Dias et al. 2013</a>)</span>。この表現はかなり抽象的なので、少し詳しく説明しよう。</p>
+<p>
+</p>
+<p>今述べた要件は、ネットワークメタ分析の<strong>推移性</strong> (transitivity) という仮定から導かれたものである。これがネットワークメタ分析に特有の仮定なのか、それとも従来の pairwise メタ分析の仮定を単に拡張したものなのかについては、文献上でも意見が分かれているようである。また、この意見の相違は、文献における用語の一貫性のない使い方にも一部起因している可能性がある <span class="citation">(<a href="references.html#ref-dias2018network">Dias et al. 2018</a>; <a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>; <a href="references.html#ref-song2009methodological">Song et al. 2009</a>; <a href="references.html#ref-lu2009modeling">Lu and Ades 2009</a>)</span>。</p>
+<p>推移性の仮定の核となる考え方は、以前、式 <a href="netwma.html#eq:networkes">(12.1)</a> <span class="citation">(<a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>)</span> を用いて行ったように、(例えば比較 A <span class="math inline">\(-\)</span> B と C <span class="math inline">\(-\)</span> Bから) 直接証拠を組み合わせて、関連する比較 (例えば A <span class="math inline">\(-\)</span> C) について間接証拠を作り出せることである。</p>
+<p></p>
+<p>推移性の仮定は<strong>交換性</strong> (exchangeability) の概念と関係している。この前提条件については、ランダム効果モデルについて説明した Chapter <a href="pooling-es.html#rem">4.1.2</a> で既に述べた。交換可能性の仮定は、ある比較 <span class="math inline">\(i\)</span> のそれぞれの真の効果量 <span class="math inline">\(\theta_i\)</span> は、真の効果量の「包括的」分布からランダムに、<strong>独立</strong>に引き出された結果であることを言う。</p>
+<p>この仮定を私たちのシナリオに置き換えると、ネットワークメタ分析は、<span class="math inline">\(K\)</span> 件の臨床試験のセットと考える。ここで、このモデルの各試験は、<span class="math inline">\(M\)</span> で示されるネットワークでの<strong>すべての</strong>治療比較を含むと仮定する (たとえば、A <span class="math inline">\(-\)</span> B、A <span class="math inline">\(-\)</span> C、B <span class="math inline">\(-\)</span> C など)。しかし、いくつかの臨床試験では、治療比較が<strong>「削除」</strong>され、<strong>「欠落」</strong>しているものがある。その理由は、実際には、研究はすべての可能な治療法の選択肢を評価することはできないからである <span class="citation">(<a href="references.html#ref-dias2013evidence">Dias et al. 2013</a>)</span>。</p>
+<p>重要な前提としては、ある比較、例えば A <span class="math inline">\(-\)</span> B の効果は、試験間で<strong>交換可能</strong>であり、ある試験が実際にこの比較を評価したか、それが 「欠落」しているかは関係ない、ということである。ネットワークメタ分析では、ある比較 <span class="math inline">\(i\)</span> の効果 <span class="math inline">\(\hat\theta_i\)</span> が、効果量が直接または間接的な証拠によって得られたとしても、真の効果の包括的な分布からのランダムで独立した抽選に基づくとき、交換性が満たされる。</p>
+<p>共変量や他の効果修飾因子 (調査集団の年齢層や治療強度など) が、例えば、条件 A 対 B、C 対 B を評価する試験間で均等に分布していない場合、推移性の仮定が破られる可能性がある <span class="citation">(<a href="references.html#ref-song2009methodological">Song et al. 2009</a>)</span>。推移性を統計的に検証することはできないが、母集団、方法論、対象条件ができるだけ類似している試験のみを含めることで、この仮定に違反するリスクを軽減することがが可能である <span class="citation">(<a href="references.html#ref-salanti2014evaluating">Salanti et al. 2014</a>)</span>。</p>
+<p>統計的な推移性の現れ方を<strong>一貫</strong> (consistency) と言い、その欠如を<strong>非一貫</strong> (inconsistency) と言う <span class="citation">(<a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>; <a href="references.html#ref-cipriani2013conceptual">Cipriani et al. 2013</a>)</span>。一貫とは、直接証拠に基づく比較 (例: A <span class="math inline">\(-\)</span> B) と間接証拠に基づく比較の相対的効果が異ならないことを意味する <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 8</a>)</span>。</p>
+<p><span class="math display" id="eq:nw3">\[\begin{equation}
+\theta_{\text{A,B}}^{\text{indirect}} = \theta_{\text{A,B}}^{\text{direct}}
+\tag{12.3}
+\end{equation}\]</span></p>
+<p></p>
+<p>ネットワークメタ分析モデルの非一貫を診断する方法として、<strong>net heat plots</strong> <span class="citation">(<a href="references.html#ref-krahn2013graphical">Krahn, Binder, and König 2013</a>)</span> や <strong>node splitting</strong> method <span class="citation">(<a href="references.html#ref-dias2010checking">Dias et al. 2010</a>)</span> など、いくつかの方法が提案されている。これらの方法については、以下のセクションで詳しく説明する。</p>
+<p><br></p>
+</div>
+<div id="netw-which-model" class="section level3" number="12.1.3">
+<h3>
+<span class="header-section-number">12.1.3</span> ネットワークメタ分析のモデル<a class="anchor" aria-label="anchor" href="#netw-which-model"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>以上で、ネットワークメタ分析モデルの基本的な理論と前提条件についての説明を終える。以前は、3つのノードとエッジを持つ単純なネットワークを説明として使用していた。しかし、実際には、ネットワークメタ分析に含まれる治療法の数は、通常、はるかに多くなる。そのため、すぐにかなり複雑なネットワークになり、例えば次のようなネットワークになる。</p>
+<div class="inline-figure"><img src="images/graph4_col_sep.png" width="75%" style="display: block; margin: auto;"></div>
+<p>しかし、ネットワーク内の治療法 <span class="math inline">\(S\)</span> の数が増えれば、推定しなければならない (直接・間接) 一対比較 <span class="math inline">\(C\)</span> の数は急増する。</p>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-349-1.png" width="45%" style="display: block; margin: auto;"></div>
+<p>
+</p>
+<p>したがって、効率的かつ内部的に一貫性のある方法で、利用可能なすべてのネットワークデータをプールできる計算モデルが必要である。ネットワークメタ分析のために、いくつかの統計的アプローチが開発されている <span class="citation">(<a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>)</span>。以下の章では、<strong>頻度論的階層モデル</strong> (frequentist hierarchical model) と<strong>ベイズ階層モデル</strong> (Bayesian hierarchical model) について説明し、それらがどのように <em>R</em> に実装され得るかを説明する。</p>
+<div class="boxinfo">
+<p>
+<strong>どのモデル手法を使うべきか？</strong>
+</p>
+<p>
+複数のネットワークメタ分析モデルがある場合、それぞれの統計手法が異なることもありうる。良いことにサンプルサイズが十分であれば、どれも同じ結果を出すはずである
+<span class="citation"><span class="citation">(<a href="references.html#ref-shim2019network">Shim et al. 2019</a>)</span></span>。一般的に、ネットワークメタ分析の方法は、他の方法よりも有効であるとか、有効でなかったりすることはない。そのため、直感的に選ぶか、またはそれを実装している
+<em>R</em>
+パッケージの機能に基づいて、どちらかの方法を安全に選択することがが可能である
+<span class="citation"><span class="citation">(<a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>)</span></span>。
+</p>
+<p>
+ほとんどの分野では、ベイズ的アプローチよりも頻度論的推論に基づく手法の方が
+(今でも)
+ずっと一般的である。これは、人によっては、頻度論的モデルが生み出す結果をより簡単に理解することができるためかもしれない。頻度論的モデルのデメリットとしては、
+<em>R</em> における頻度論的ネットワークメタ分析の実装 (次に取り上げる)
+では、ベイズモデルで可能なメタ回帰がまだサポートされていないことが挙げられる。
+</p>
+<p>
+実際には、メインの分析に1つのアプローチを選択し、感度分析でもう1つのアプローチを採用するのが有効な戦略である。2つの手法が同じ結論に至れば、その知見が信頼に足るものであるという確信が得られる。
+</p>
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="frequentist-ma" class="section level2" number="12.2">
+<h2>
+<span class="header-section-number">12.2</span> 頻度論的ネットワークメタ分析<a class="anchor" aria-label="anchor" href="#frequentist-ma"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>
+</p>
+<p>以下では、<strong>{netmeta}</strong> パッケージ <span class="citation">(<a href="references.html#ref-nemeta">Rücker et al. 2020</a>)</span> を用いたネットワークメタ分析の実行方法を説明する。このパッケージは、<strong>頻度論的</strong> (frequentist) 枠組みでネットワークメタ分析モデルを推定することが可能である。<strong>{netmeta}</strong> で使用されている手法は、もともと電気ネットワーク用に開発されたグラフ理論的手法から派生したものである <span class="citation">(<a href="references.html#ref-rucker2012network">Rücker 2012</a>)</span>。</p>
+<div class="boxinfo">
+<p>
+<strong>確率の頻度論的解釈</strong>
+</p>
+<p>
+頻度論的とは、ある事象 <span class="math inline"><span class="math inline">\(E\)</span></span>
+の確率を解釈するための一般的な理論的アプローチである。頻出論的アプローチは、あるプロセス
+(例えば実験) を<strong>何度も何度も</strong>繰り返した場合に<span class="math inline"><span class="math inline">\(E\)</span></span> が発生すると予想される頻度で <span class="math inline"><span class="math inline">\(E\)</span></span> の確率を定義する <span class="citation"><span class="citation">(<a href="references.html#ref-aronow2019foundations">Aronow and Miller 2019, chap. 1.1.1</a>)</span></span>。
+</p>
+<p>
+頻度論的な考え方は、定量的な研究者が日常的に使う多くの統計処理、例えば有意性検定、信頼区間の計算、<span class="math inline"><span class="math inline">\(p\)</span></span>
+値の計算などの核心となるものである。
+</p>
+</div>
+<p><br></p>
+<div id="グラフ理論モデル" class="section level3" number="12.2.1">
+<h3>
+<span class="header-section-number">12.2.1</span> グラフ理論モデル<a class="anchor" aria-label="anchor" href="#%E3%82%B0%E3%83%A9%E3%83%95%E7%90%86%E8%AB%96%E3%83%A2%E3%83%87%E3%83%AB"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>ここで、<strong>{netmeta}</strong> パッケージで実装されているネットワークメタ分析モデルがどのように定式化されるかを説明しよう。いくつかの臨床試験から効果量のデータを集めたとする。そして、<span class="math inline">\(K\)</span> 件すべての試験を調べて、試験に含まれる治療比較の総数を数える。この対の比較の数を <span class="math inline">\(M\)</span> 件とする。</p>
+<p>そして、各比較 <span class="math inline">\(m\)</span> に対する効果量 <span class="math inline">\(\hat\theta_m\)</span> を計算し、全ての効果量をベクトル <span class="math inline">\(\boldsymbol{\hat\theta} = (\hat\theta_1, \hat\theta_2, \dots, \hat\theta_M)\)</span> に集める。ネットワークメタ分析を行うには、この観測された効果量のベクトル <span class="math inline">\(\boldsymbol{\hat\theta}\)</span> がどのように生成されたかを記述するモデルが必要である。<strong>{netmeta}</strong>では、以下のようなモデルを用いる <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 8</a>)</span>。</p>
+<p><span class="math display" id="eq:nw4">\[\begin{equation}
+\boldsymbol{\hat\theta} =\boldsymbol{X} \boldsymbol{\theta}_{\text{treat}} + \boldsymbol{\epsilon}
+\tag{12.4}
+\end{equation}\]</span></p>
+<p>観測された効果の大きさのベクトル <span class="math inline">\(\boldsymbol{\hat\theta}\)</span> は、式の右辺 (私たちのモデル) によって生成されたと仮定する。前段の <span class="math inline">\(\boldsymbol{X}\)</span> は <span class="math inline">\(m \times n\)</span> <strong>デザイン行列</strong>で、列は異なる治療法 <span class="math inline">\(n\)</span>、行は治療比較 <span class="math inline">\(m\)</span> を表している。この行列では、治療比較は同じ行の1と-1で定義され、列の位置は比較される治療と対応する。</p>
+<p>式の最も重要な部分は、ベクトル <span class="math inline">\(\boldsymbol{\theta}_{\text{treat}}\)</span> である。このベクトルは、ネットワーク内の <span class="math inline">\(n\)</span> 個のユニークな治療の<strong>真の</strong> 効果を含みる。このベクトルは、ネットワークメタ分析モデルが推定する必要があるもので、ネットワーク内のどの治療が最も効果的であるかを決定することを可能にするからである。</p>
+<p>パラメータ <span class="math inline">\(\boldsymbol{\epsilon}\)</span> は、すべての比較のサンプリング誤差<span class="math inline">\(\epsilon_m\)</span>を含むベクトルである。各比較のサンプリング誤差は、平均0、分散<span class="math inline">\(\sigma^2_m\)</span>のガウス正規分布から無作為抽出であると仮定する。</p>
+<p><span class="math display" id="eq:nw4">\[\begin{equation}
+\epsilon_m \sim \mathcal{N}(0,\sigma_m^2)
+\tag{12.4}
+\end{equation}\]</span></p>
+<p>モデル式を説明するために <span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, 189参照</a>)</span>、私たちのネットワークメタ分析が <span class="math inline">\(K=\)</span> 5 件の研究から構成されていると想像する。各研究は、ユニークな治療比較を含む (すなわち、<span class="math inline">\(K=M\)</span>)。これらの比較は、A <span class="math inline">\(-\)</span> B, A <span class="math inline">\(-\)</span> C, A <span class="math inline">\(-\)</span> D, B <span class="math inline">\(-\)</span> C, および B <span class="math inline">\(-\)</span> Dである。この結果、(観測された) 比較のベクトルは <span class="math inline">\(\boldsymbol{\hat\theta} = (\hat\theta_{1\text{,A,B}}, \hat\theta_{2\text{,A,C}}, \hat\theta_{4\text{,A,D}}, \hat\theta_{4\text{,B,C}}, \hat\theta_{5\text{,B,D}})^\top\)</span>。 私たちの目的は、ネットワークに含まれる4つの条件全ての真の効果量、<span class="math inline">\(\boldsymbol{\theta}_{\text{treat}} = (\theta_{\text{A}}, \theta_{\text{B}}, \theta_{\text{C}}, \theta_{\text{D}})^\top\)</span> を推定することである。これらのパラメータをモデルの式に代入すると、次のような式が得られる。</p>
+<p><span class="math display" id="eq:nw5">\[\begin{align}
+  \boldsymbol{\hat\theta} &amp;= \boldsymbol{X} \boldsymbol{\theta}_{\text{treat}} + \boldsymbol{\epsilon} \notag \\
+\begin{bmatrix}
+\hat\theta_{1\text{,A,B}} \\
+\hat\theta_{2\text{,A,C}} \\
+\hat\theta_{3\text{,A,D}} \\
+\hat\theta_{4\text{,B,C}} \\
+\hat\theta_{5\text{,B,D}} \\
+\end{bmatrix}
+&amp;=
+\begin{bmatrix}
+1 &amp; -1 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; -1 &amp; 0 \\
+1 &amp; 0 &amp; 0 &amp; -1 \\
+0 &amp; 1 &amp; -1 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; -1 \\
+\end{bmatrix}
+\begin{bmatrix}
+\theta_{\text{A}} \\
+\theta_{\text{B}} \\
+\theta_{\text{C}} \\
+\theta_{\text{D}} \\
+\end{bmatrix}
++
+\begin{bmatrix}
+\epsilon_{1} \\
+\epsilon_{2} \\
+\epsilon_{3} \\
+\epsilon_{4} \\
+\epsilon_{5} \\
+\end{bmatrix}
+\tag{12.5}
+\end{align}\]</span></p>
+<p>なお、このモデル式は、現在のままでは数学的な観点から問題がある。今のところ、このモデルは<strong>overparameterized</strong>である。手元の情報に基づいて推定するには、私たちのモデルにはあまりにも多くのパラメータ <span class="math inline">\(\boldsymbol{\theta}_{\text{treat}}\)</span> が存在する。</p>
+<p>これは、デザイン行列 <span class="math inline">\(\boldsymbol{X}\)</span> が<strong>フルランク</strong>でないことと関係がある。ここでは、行列は、その列がすべて<strong>独立</strong>でないとき、フルランクを持たない。または、別の言い方をすると、<strong>独立</strong>列の数が列の<strong>総数</strong> <span class="math inline">\(n\)</span> より小さいとき、フルランクを持たない <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;行列の行数が列数より少ない場合 (&lt;span class="math inline"&gt;\(m &amp;lt; n\)&lt;/span&gt;)、独立した&lt;strong&gt;行&lt;/strong&gt;の数が行の総数 &lt;span class="math inline"&gt;\(m\)&lt;/span&gt; より小さいと、行列はフルランクではない。&lt;/p&gt;'><sup>61</sup></a> 。治療の<strong>ネットワーク</strong>を扱っているので、治療の組み合わせが互いに完全に独立でないことは明らかである。例えば、治療Dの列 (4列目) は、最初の3列の<strong>線形結合</strong>として記述することができる <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;最初の3列 (治療法 A、B、C) に-1を掛けて足すと、4列目の値が得られる &lt;span class="math inline"&gt;\((-\boldsymbol{x}_1) + (-\boldsymbol{x}_2) + (-\boldsymbol{x}_3) = \boldsymbol{x}_4\)&lt;/span&gt;。&lt;/p&gt;'><sup>62</sup></a> 。</p>
+<p>全体として、たかだか <span class="math inline">\(n-1\)</span> 個の独立した治療比較が存在することになるが、ここでのモデルは常に <span class="math inline">\(\boldsymbol{\theta}_{\text{treat}}\)</span> の <span class="math inline">\(n\)</span> 個の治療の真の効果を推定しなければならない。したがって、この行列はフルランクではない。このように <span class="math inline">\(\boldsymbol{X}\)</span> がフルランクを持たないということは、<strong>invertible</strong>ではないということである。したがって、<span class="math inline">\(\boldsymbol{\theta}_{\text{treat}}\)</span> は (加重) 最小二乗法を使って直接推定することができないのである。</p>
+<p></p>
+<p>そこで、<strong>{netmeta}</strong> に実装されている<strong>グラフ理論</strong>のアプローチが解決策を提供する。このアプローチの背後にある退屈な数学的詳細については、<strong>{netmeta}</strong> パッケージが作業してくれるので、ここでは割愛する。この方法は、いわゆる <strong>Moore-Penrose 擬似逆行列</strong>を構築し、重み付き最小二乗法を用いてネットワークモデルの適合値を計算することができる、ということだけを述べておく。</p>
+<p>この手順では、2つ以上のペアワイズ比較 (つまり、2つ以上の条件が比較された研究) を行う<strong>マルチアーム</strong> (訳注: arm は群と同じ意味) 研究についても考慮する。マルチアーム比較は、少なくとも1つの条件が2回以上比較されるため、<strong>相関</strong>がある (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a>)。このことは、このモデルで説明しない限り、マルチアーム試験の比較の精度が人為的に高くなることを意味する。</p>
+<p>また、このモデルでは、試験間の異質性 (heterogeneity) の推定値を組み込むことができる。「従来の」ランダム効果モデル (Chapter <a href="pooling-es.html#rem">4.1.2</a>) と同様に、比較 <span class="math inline">\(m\)</span> の分散に推定異質性分散 <span class="math inline">\(\hat\tau^2\)</span> を追加することで実現する。すなわち <span class="math inline">\(s^2_m + \hat\tau^2\)</span> である。<strong>{netmeta}</strong>パッケージでは、DerSimonian-Laird estimator 法 <span class="citation">(<a href="references.html#ref-jackson2013matrix">Jackson, White, and Riley 2013</a>, Chapter <a href="pooling-es.html#tau-estimators">4.1.2.1</a> も参照)</span> を適応して<span class="math inline">\(\tau^2\)</span>値を推定している。</p>
+<p></p>
+<p><span class="math inline">\(I^2\)</span> に相当するものも計算でき、これでネットワーク内の<strong>非一貫</strong> (inconsistency) の量を表すことができる。この <span class="math inline">\(I^2\)</span> は、Higgins and Thompson の式と同様に、<span class="math inline">\(Q\)</span> から導かれる。ただし、ネットワークメタ分析では、<span class="math inline">\(Q\)</span> は<strong>ネットワーク</strong>の総異質性に変換される (<span class="math inline">\(Q_{\text{total}}\)</span>とも表記される)。したがって、以下の式が使われる。</p>
+<p><span class="math display" id="eq:nw6">\[\begin{equation}
+I^2 = \text{max} \left(\frac{Q_{\text{total}}-\text{d.f.}} {Q_{\text{total}}}, 0 \right)
+\tag{12.6}
+\end{equation}\]</span></p>
+<p>ここで、ネットワークの自由度は:</p>
+<p><span class="math display" id="eq:nw7">\[\begin{equation}
+\text{d.f.} = \left( \sum^K_{k=1}p_k-1 \right)- (n-1)
+\tag{12.7}
+\end{equation}\]</span></p>
+<p>とし、<span class="math inline">\(K\)</span> を研究の総数、<span class="math inline">\(p\)</span> をある研究 <span class="math inline">\(k\)</span> における条件の数、<span class="math inline">\(n\)</span> をネットワークモデルにおける治療の総数とする。</p>
+<p><br></p>
+</div>
+<div id="r-での頻度論的ネットワークメタ分析" class="section level3" number="12.2.2">
+<h3>
+<span class="header-section-number">12.2.2</span> <em>R</em> での頻度論的ネットワークメタ分析<a class="anchor" aria-label="anchor" href="#r-%E3%81%A7%E3%81%AE%E9%A0%BB%E5%BA%A6%E8%AB%96%E7%9A%84%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>ここまでインプットしたら、いよいよ実践的な例題である。以下では、<strong>{netmeta}</strong> を使って、独自のネットワークメタ分析を行う。いつものように、まずパッケージをインストールし、それからライブラリからロードする。</p>
+<div class="sourceCode" id="cb380"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/guido-s/netmeta">netmeta</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<div id="データを準備" class="section level4" number="12.2.2.1">
+<h4>
+<span class="header-section-number">12.2.2.1</span> データを準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E6%BA%96%E5%82%99"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>この図では、<code>TherapyFormats</code> データを使用している。このデータセットは、うつ病に対する認知行動療法の異なる提供形式の有効性を評価する実際のネットワークメタ分析 <span class="citation">(<a href="references.html#ref-cuijpers2019effectiveness">P. Cuijpers, Noma, et al. 2019</a>)</span> をモデルとしている。含まれるすべての研究は、うつ病の症状に対する効果がテスト後に測定されたランダム化比較試験である。含まれる比較の効果量は、分析された2つの条件間の標準化平均差 (SMD) として表現されている。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“TherapyFormats” データセット</strong>
+</p>
+<p>
+<code>TherapyFormats</code> データセットは <strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(TherapyFormats)</code> を実行すると、自動的に <em>R</em>
+環境にデータセットが保存される。これでデータセットが使用できるようになる。
+</p>
+<p>
+<strong>{dmetar}</strong> がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/TherapyFormats.rda">インターネット</a>
+から <em>.rda</em>
+ファイルとしてデータセットをダウンロードし、作業ディレクトリに保存してから、R
+Studio ウィンドウでクリックしてインポートすることが可能である。
+</p>
+</div>
+<p>データを見てみよう。</p>
+<div class="sourceCode" id="cb381"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">TherapyFormats</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">TherapyFormats</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##          author     TE  seTE treat1 treat2
+## 1  Ausbun, 1997  0.092 0.195    ind    grp
+## 2  Crable, 1986 -0.675 0.350    ind    grp
+## 3  Thiede, 2011 -0.107 0.198    ind    grp
+## 4 Bonertz, 2015 -0.090 0.324    ind    grp
+## 5     Joy, 2002 -0.135 0.453    ind    grp
+## 6   Jones, 2013 -0.217 0.289    ind    grp</code></pre>
+<ul>
+<li><p>2列目の <code>TE</code> には、すべての比較の効果量、そして <code>seTE</code> にはそれぞれの標準誤差が格納される。<strong>{netmeta}</strong> を使用するには、データセット内の全ての効果量が既に計算されている必要がある。効果量の計算方法については、Chapter <a href="effects.html#effects">3</a> で説明したが、Chapter <a href="es-calc.html#es-calc">17</a> の章では、さらに詳しい計算方法を紹介している。</p></li>
+<li><p>このデータセットには、さらに2つの列がある。このデータセットには、さらに2つの列が含まれているが、ここでは示していない。これらの列には、単純に条件のフルネームが格納されている。</p></li>
+<li><p><code>studlab</code> 列は、特定の治療比較がどの研究から抽出されたかを示す、ユニークな研究ラベルを含んでいる。この列は、マルチアーム研究 (すなわち、複数の比較対象がある研究) をチェックするのに便利である。これは、 <code>table</code> と <code>as.matrix</code> 関数を使用して行うことが可能である。</p></li>
+</ul>
+<div class="sourceCode" id="cb383"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">TherapyFormats</span><span class="op">$</span><span class="va">author</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [...]
+## Bengston, 2004              1
+## Blevins, 2003               1
+## Bond, 1988                  1
+## Bonertz, 2015               1
+## Breiman, 2001               3
+## [...]</code></pre>
+<p><code>TherapyFormats</code>のデータセットには、Breiman によるマルチアーム研究1件しか含まれていない。この研究には3つの比較が含まれているが、他の研究は1つしか含まれていない。</p>
+<p>ネットワークメタ分析のデータを作成する際には、(1) データセットに研究ラベルの列を含めること、(2) その列で個々の研究に固有の名前を付けること、(3) 2つ以上の比較に貢献する研究には<strong>正確に</strong>同じ名前を付けることが不可欠となる。</p>
+<p><br></p>
+</div>
+<div id="モデルを適合" class="section level4" number="12.2.2.2">
+<h4>
+<span class="header-section-number">12.2.2.2</span> モデルを適合<a class="anchor" aria-label="anchor" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E9%81%A9%E5%90%88"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p><code>netmeta</code> 関数を使って、最初のネットワークメタ分析モデルを適合させることが可能である。最も重要な引数は以下の通りである。</p>
+<ul>
+<li><p><strong><code>TE</code></strong>. 各比較の効果量を含むデータセットの列の名前である。</p></li>
+<li><p><strong><code>seTE</code></strong>. 各比較の標準誤差を格納する列の名前。</p></li>
+<li><p><strong><code>treat1</code></strong>. データセット中の <strong>最初の</strong> 処置の名前を格納する列。</p></li>
+<li><p><strong><code>treat2</code></strong>. データセット中の <strong><code>treat2</code></strong> の列には、<strong>2番目の</strong> 処置の名前が含まれている。</p></li>
+<li><p><strong><code>studlab</code></strong>. 比較対象が抽出された研究。この引数はオプションであるが、常に指定することを勧める。この引数は任意であるが、常に指定することを推奨する。これは、私たちのネットワークにマルチアーム試験がある場合に、この関数に知らせる唯一の方法である。</p></li>
+<li><p><strong><code>data</code></strong>. データセットの名前である。</p></li>
+<li><p><strong><code>sm</code></strong>. 使用する効果量の種類。<code>"RD"</code> (リスク差)、<code>"RR"</code> (リスク比)、<code>"OR"</code> (オッズ比)、<code>"HR"</code> (ハザード比)、<code>"MD"</code> (平均差)、 <code>"SMD"</code> (標準化平均差) などとすることができる。その他の利用可能な指標については、関数ドキュメント (<code><a href="https://rdrr.io/pkg/netmeta/man/netmeta.html">?netmeta</a></code>) を参照。</p></li>
+<li><p><strong><code>fixed</code></strong>. 固定効果ネットワークメタ分析を行うかどうか？<code>TRUE</code> または <code>FALSE</code> を指定する必要がある。</p></li>
+<li><p><strong><code>random</code></strong>. ランダム効果モデルを用いるか？<code>TRUE</code> または <code>FALSE</code>。</p></li>
+<li><p><strong><code>reference.group</code></strong>. 他の全ての治療に対して、どの治療を参照治療とするか (例: <code>reference.group = "grp"</code> ) を指定することが可能である。</p></li>
+<li><p><strong><code>tol.multiarm</code></strong>. マルチアーム研究の比較の効果量は、デザイン上、一貫している。しかし、原著論文では、各比較でわずかにずれた結果が報告されていることがあり、その結果、一貫性が損なわれていることがある。この引数で、効果量とその標準誤差の非一貫性に対する<strong>許容閾値</strong> (数値) を指定することで、モデルで許容される。</p></li>
+<li><p><strong><code>details.chkmultiarm</code></strong>. 効果量の不一致があるマルチアーム比較の推定値を表示するかどうか (<code>TRUE</code> または <code>FALSE</code>).</p></li>
+<li><p><strong><code>sep.trts</code></strong>. 比較ラベルのセパレーターとして使用する文字 (例: <code>" vs. "</code>)。</p></li>
+</ul>
+<p>最初のネットワークメタ分析の結果は、<code>m.netmeta</code>という名前で保存される。参照グループとして、“care as usual” (<code>"cau"</code>) 条件を使用する。今は、固定効果モデルが適切であると仮定しよう。この場合、次のようなコードになる。</p>
+<div class="sourceCode" id="cb385"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m.netmeta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netmeta.html">netmeta</a></span><span class="op">(</span>TE <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>                     seTE <span class="op">=</span> <span class="va">seTE</span>,</span>
+<span>                     treat1 <span class="op">=</span> <span class="va">treat1</span>,</span>
+<span>                     treat2 <span class="op">=</span> <span class="va">treat2</span>,</span>
+<span>                     studlab <span class="op">=</span> <span class="va">author</span>,</span>
+<span>                     data <span class="op">=</span> <span class="va">TherapyFormats</span>,</span>
+<span>                     sm <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     fixed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     random <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                     reference.group <span class="op">=</span> <span class="st">"cau"</span>,</span>
+<span>                     details.chkmultiarm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     sep.trts <span class="op">=</span> <span class="st">" vs "</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m.netmeta</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Original data (with adjusted standard errors for multi-arm studies):
+## 
+##                    treat1 treat2    TE seTE seTE.adj narms multiarm
+## [...]
+## Burgan, 2012          ind    tel -0.31 0.13   0.1390     2         
+## Belk, 1986            ind    tel -0.17 0.08   0.0830     2         
+## Ledbetter, 1984       ind    tel -0.00 0.23   0.2310     2         
+## Narum, 1986           ind    tel  0.03 0.33   0.3380     2         
+## Breiman, 2001         ind    wlc -0.75 0.51   0.6267     3        *
+## [...]
+## 
+## Number of treatment arms (by study):
+##                          narms
+## Ausbun, 1997                 2
+## Crable, 1986                 2
+## Thiede, 2011                 2
+## Bonertz, 2015                2
+## Joy, 2002                    2
+## [...]
+## 
+## Results (fixed effects model):
+## 
+##                treat1 treat2   SMD         95%-CI      Q leverage
+## Ausbun, 1997      grp    ind  0.06 [ 0.00;  0.12]   0.64     0.03
+## Crable, 1986      grp    ind  0.06 [ 0.00;  0.12]   3.05     0.01
+## Thiede, 2011      grp    ind  0.06 [ 0.00;  0.12]   0.05     0.03
+## Bonertz, 2015     grp    ind  0.06 [ 0.00;  0.12]   0.01     0.01
+## Joy, 2002         grp    ind  0.06 [ 0.00;  0.12]   0.02     0.00
+## [....]
+## 
+## Number of studies: k = 182
+## Number of treatments: n = 7
+## Number of pairwise comparisons: m = 184
+## Number of designs: d = 17
+## 
+## Fixed effects model
+## 
+## Treatment estimate (sm = 'SMD', comparison: other treatments vs 'cau'):
+##         SMD             95%-CI      z  p-value
+## cau       .                  .      .        .
+## grp -0.5767 [-0.6310; -0.5224] -20.81 &lt; 0.0001
+## gsh -0.3940 [-0.4588; -0.3292] -11.92 &lt; 0.0001
+## ind -0.6403 [-0.6890; -0.5915] -25.74 &lt; 0.0001
+## tel -0.5134 [-0.6078; -0.4190] -10.65 &lt; 0.0001
+## ush -0.1294 [-0.2149; -0.0439]  -2.97   0.0030
+## wlc  0.2584 [ 0.2011;  0.3157]   8.84 &lt; 0.0001
+##
+## 
+## Quantifying heterogeneity / inconsistency:
+## tau^2 = 0.26; tau = 0.51; I^2 = 89.6% [88.3%; 90.7%]
+## 
+## Tests of heterogeneity (within designs) and inconsistency (between designs):
+##                       Q d.f.  p-value
+## Total           1696.84  177 &lt; 0.0001
+## Within designs  1595.02  165 &lt; 0.0001
+## Between designs  101.83   12 &lt; 0.0001</code></pre>
+<p>この出力には見るべきものがたくさんあるので、順を追って見ていこう。最初に見るのは、各比較の計算された効果量である。アスタリスク記号 (*) は、標準誤差が (効果量の依存性を考慮し) 修正された私たちのマルチアーム研究を示している。その下には、各研究の治療群の数の概要が示されている。</p>
+<p>次の表は、私たちの (固定効果) ネットワーク・メタ分析モデルにおける各比較の適合値を示している。この表の <span class="math inline">\(Q\)</span> 列は、どの比較がネットワーク全体の非一貫性に大きく寄与しているかを示しており、とても興味深い。例えば、Crable, 1986 の <span class="math inline">\(Q\)</span> 値は <span class="math inline">\(Q=\)</span> 3.05 で、かなり高いことがわかる。</p>
+<p>そして、ネットワークメタ分析の核心である「治療推定値」にたどり着く。指定されたように、すべての治療の効果は、通常通りのケアとの比較で表示されているが、それが <code>cau</code> の効果が表示されていない理由である。その下に、このネットワークモデルにおける異質性/非一貫性が非常に高く、<span class="math inline">\(I^2=\)</span> 89.6%であることを見ることができる。これは、固定効果モデルの選択がおそらく適切では<strong>なかった</strong>ことを示している (この点については後ほど触れる)。</p>
+<p>
+</p>
+<p>出力の最後の部分 (<code>Tests of heterogeneity</code>) は、ネットワークにおける総異質性を、2つのコンポーネントに分解している。すなわち、<strong>デザイン内</strong>の異質性、および<strong>デザイン間</strong>の不一致である。「デザイン」とは、例えばA <span class="math inline">\(-\)</span> B、A <span class="math inline">\(-\)</span> B <span class="math inline">\(-\)</span> Cのように、1つの試験に含まれる条件の選択と定義される。全く同じ条件を含む試験間で真の効果量の差がある場合、デザイン内異質性と呼ぶことができる。一方、デザイン間のばらつきは、このネットワークの非一貫性を反映している。デザイン内異質性、デザイン間非一貫性ともに非常に有意である (<span class="math inline">\(p\)</span>s &lt; 0.001)。</p>
+<p>これは、ランダム効果モデルが指示されている可能性を示すもう一つの兆候である。これをさらに裏付けるために、<strong>full design-by-treatment interaction random-effects model</strong> <span class="citation">(<a href="references.html#ref-higgins2012consistency">J. Higgins et al. 2012</a>)</span> に基づく全体の非一貫性 (total inconsistency) を算出しよう。これを行うには、<code>m.netmeta</code> オブジェクトを <code>decomp.design</code> 関数に当てはめればよい。</p>
+<div class="sourceCode" id="cb387"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/decomp.design.html">decomp.design</a></span><span class="op">(</span><span class="va">m.netmeta</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Q statistics to assess homogeneity / consistency
+##  [...]
+## Design-specific decomposition of within-designs Q statistic
+## 
+##      Design      Q df  p-value
+##  cau vs grp   82.5 20 &lt; 0.0001
+##  cau vs gsh    0.7  7   0.9982
+##  cau vs ind  100.0 29 &lt; 0.0001
+##  cau vs tel   11.4  5   0.0440
+##  [...]
+## 
+## Between-designs Q statistic after detaching of single designs
+## 
+##    Detached design      Q df  p-value
+##  [...]
+##         ind vs wlc  77.23 11 &lt; 0.0001
+##         tel vs wlc  95.45 11 &lt; 0.0001
+##         ush vs wlc  95.81 11 &lt; 0.0001
+##  gsh vs ind vs wlc 101.78 10 &lt; 0.0001
+##
+## Q statistic to assess consistency under the assumption of
+## a full design-by-treatment interaction random effects model
+## 
+##                    Q df p-value tau.within tau2.within
+## Between designs 3.82 12  0.9865     0.5403      0.2919</code></pre>
+<p></p>
+<p>出力では、まず、このモデルにおけるデザイン内およびデザイン間の異質性/非一貫性に対する各デザインの個々の寄与を示す <span class="math inline">\(Q\)</span> 値が示される。出力の重要な部分は、最後の部分 (<code>Q statistic to assess consistency under the assumption of a full design-by-treatment interaction random effects model</code>) である。完全な design-by-treatment のランダム効果モデルを仮定すると、<span class="math inline">\(Q\)</span> の値がかなり減少し (以前は <span class="math inline">\(Q=\)</span> 101.83、今は <span class="math inline">\(Q=\)</span> 3.83)、デザイン間の非一貫性が有意でなくなったことがわかる (<span class="math inline">\(p=\)</span> 0.9865)。</p>
+<p>このことは、私たちのネットワークモデルにおける非一貫性や異質性を説明するために、少なくとも部分的にランダム効果モデルが示される可能性をも示唆している。</p>
+<p><br></p>
+</div>
+<div id="ネットワークモデルのさらなる検証" class="section level4" number="12.2.2.3">
+<h4>
+<span class="header-section-number">12.2.2.3</span> ネットワークモデルのさらなる検証<a class="anchor" aria-label="anchor" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E3%81%95%E3%82%89%E3%81%AA%E3%82%8B%E6%A4%9C%E8%A8%BC"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<div id="ネットワークグラフ" class="section level5" number="12.2.2.3.1">
+<h5>
+<span class="header-section-number">12.2.2.3.1</span> ネットワークグラフ<a class="anchor" aria-label="anchor" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B0%E3%83%A9%E3%83%95"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p></p>
+<p><code>netmeta</code> を使ってネットワークメタ分析モデルをフィットさせた後、<strong>ネットワークグラフ</strong> を作成することができる。これは <code>netgraph</code> 関数を用いて行うことが可能である。<code>netgraph</code> 関数には多くの引数があり、コンソールで <code><a href="https://rdrr.io/pkg/netmeta/man/netgraph.html">?netgraph</a></code> を実行すれば調べることができる。しかし、これらの引数のほとんどは、非常に賢明なデフォルト値を持っているので、あまり多くのことを指定する必要はない。</p>
+<p>最初のステップとして、フィットしたモデル <code>m.netmeta</code> を関数に与えてみる。モデルでは短縮ラベルを使用しているので、プロットでは長いラベル (<code>treat1.long</code> と <code>treat2.long</code> に格納) に置き換える必要がある。これは、 <code>labels</code> 引数を用いて行うことができ、すべての治療法の完全な名前を指定する必要がある。治療ラベルは、 <code>m.netmeta$trts</code> に格納されているものと同じ順序である必要がある。</p>
+<div class="sourceCode" id="cb389"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 治療順序を表示 (短いラベル) </span></span>
+<span><span class="va">m.netmeta</span><span class="op">$</span><span class="va">trts</span></span></code></pre></div>
+<pre><code>## [1] "cau" "grp" "gsh" "ind" "tel" "ush" "wlc"</code></pre>
+<div class="sourceCode" id="cb391"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># フルネームを置き換え (see treat1.long と treat2.long を参照) </span></span>
+<span><span class="va">long.labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Care As Usual"</span>, <span class="st">"Group"</span>, </span>
+<span>                 <span class="st">"Guided Self-Help"</span>, </span>
+<span>                 <span class="st">"Individual"</span>, <span class="st">"Telephone"</span>, </span>
+<span>                 <span class="st">"Unguided Self-Help"</span>, </span>
+<span>                 <span class="st">"Waitlist"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netgraph.html">netgraph</a></span><span class="op">(</span><span class="va">m.netmeta</span>, </span>
+<span>         labels <span class="op">=</span> <span class="va">long.labels</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-361-1.png" width="55%" style="display: block; margin: auto;"></div>
+<p>このネットワークグラフはいくつかの種類の情報を提示している。まず、ネットワークにおける比較の全体的な構造を見ることが可能である。これは、元のデータでどの治療が互いに比較されたかをよりよく理解することが可能である。</p>
+<p>さらに、プロット中のエッジが異なる<strong>幅</strong>を持っていることがわかる。幅の大きさは、ネットワークで特定の比較を見つける頻度を表している。例えば、ガイド付きセルフヘルプのフォーマットは、多くの試験で待機リストと比較されていることがわかる。また、網掛けされた三角形で表現されたマルチアーム試験も見られる。これはBreimanによる研究で、ガイド付き自己啓発、個人セラピー、待機者リストの3つを比較したものである。</p>
+<p><code>netgraph</code>関数は、<strong>3Dグラフ</strong>を描くこともでき、複雑なネットワーク構造をよりよく把握するのに便利である。この関数は、<strong>{rgl}</strong> パッケージがインストールされ、ロードされていることが必要である。3Dグラフを作成するためには、<code>dim</code> 引数を <code>"3d"</code> に設定するだけである。</p>
+<div class="sourceCode" id="cb392"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmurdoch/rgl">rgl</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netgraph.html">netgraph</a></span><span class="op">(</span><span class="va">m.netmeta</span>, dim <span class="op">=</span> <span class="st">"3d"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="直接証拠と間接証拠の可視化" class="section level5" number="12.2.2.3.2">
+<h5>
+<span class="header-section-number">12.2.2.3.2</span> 直接証拠と間接証拠の可視化<a class="anchor" aria-label="anchor" href="#%E7%9B%B4%E6%8E%A5%E8%A8%BC%E6%8B%A0%E3%81%A8%E9%96%93%E6%8E%A5%E8%A8%BC%E6%8B%A0%E3%81%AE%E5%8F%AF%E8%A6%96%E5%8C%96"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p>次のステップでは、各比較を推定するために使用される<strong>direct</strong>と<strong>indirect</strong>の証拠の比率を見よう。<strong>{dmetar}</strong> の <code>direct.evidence.plot</code> 関数は、この目的のために開発された関数である。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“direct.evidence.plot” 関数</strong>
+</p>
+<p>
+<code>direct.evidence.plot</code> 関数は、<strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+がインストールされ、コンピュータに読み込まれると、この関数を使用できるようになる。もし、<strong>{dmetar}</strong>
+をインストールして<strong>いない</strong>場合は、以下の手順でインストールできる。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+関数のソースコードにアクセスする <a href="https://raw.githubusercontent.com/MathiasHarrer/dmetar/master/R/power.analysis.subgroup.R">オンライン</a>.
+</li>
+<li>
+ソースコード全体をコンソール (R Studio の左下ペイン)
+にコピー＆ペーストし、Enterキーを押して、 <em>R</em>
+に関数を「学習」させる。
+</li>
+<li>
+<strong>{ggplot2}</strong> と <strong>{gridExtra}</strong>
+パッケージがインストールされ、ロードされていることを確認する。
+</li>
+</ol>
+</div>
+<p>この関数は、各推定比較に使用された直接証拠と間接証拠のパーセンテージを示すプロットを提供する。<code>direct.evidence.plot</code>関数が入力として必要とするのは、フィットしたネットワークメタ分析モデル <code>m.netmeta</code>のみである。</p>
+<div class="sourceCode" id="cb393"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">d.evidence</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://dmetar.protectlab.org/reference/direct.evidence.plot.html">direct.evidence.plot</a></span><span class="op">(</span><span class="va">m.netmeta</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">d.evidence</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-365-1.png" width="75%" style="display: block; margin: auto;"></div>
+<p>
+</p>
+<p>見てわかるように、このネットワークモデルには、間接的な証拠だけで推論しなければならない推定値がいくつかあることがわかる。また、このプロットでは、各推定比較の<strong>最小並列度</strong> (Minimal Parallelism) と<strong>平均パス長</strong> (Mean Path Length) という2つの追加指標を得ることが可能である。König, Krahn, and Binder <span class="citation">(<a href="references.html#ref-konig2013visualizing">2013</a>)</span> によると、平均パス長 &gt; 2 であるとは、比較推定が特に注意して解釈されるべきことを意味する。</p>
+<p><br></p>
+</div>
+<div id="効果推計表" class="section level5" number="12.2.2.3.3">
+<h5>
+<span class="header-section-number">12.2.2.3.3</span> 効果推計表<a class="anchor" aria-label="anchor" href="#%E5%8A%B9%E6%9E%9C%E6%8E%A8%E8%A8%88%E8%A1%A8"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p>次に、すべての可能な治療比較について、このネットワークの推定値を見ることができる。これを行うには、 <code>m.netmeta$TE.fixed</code> (固定効果モデルを使用した場合) または <code>m.netmeta$TE.random</code> (ランダム効果モデルを使用した場合) に保存された行列を使用することで可能である。行列を読みやすくするために、いくつかの前処理をしておこう。まず、<code>m.netmeta</code>オブジェクトからデータを抽出し、行列の数値を小数点以下２桁に丸める。</p>
+<div class="sourceCode" id="cb394"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result.matrix</span> <span class="op">&lt;-</span> <span class="va">m.netmeta</span><span class="op">$</span><span class="va">TE.fixed</span></span>
+<span><span class="va">result.matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">result.matrix</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p>行列の1つの「三角形」が冗長な情報を持つことを考慮して、このコードを使って下の三角形を空の値に置き換える。</p>
+<div class="sourceCode" id="cb395"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result.matrix</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html">lower.tri</a></span><span class="op">(</span><span class="va">result.matrix</span>, diag <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></code></pre></div>
+<p>これにより、次のような結果が得られる。</p>
+<div class="sourceCode" id="cb396"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result.matrix</span></span></code></pre></div>
+<pre><code>##     cau  grp   gsh  ind   tel   ush   wlc
+## cau   0 0.58  0.39 0.64  0.51  0.13 -0.26
+## grp  NA 0.00 -0.18 0.06 -0.06 -0.45 -0.84
+## gsh  NA   NA  0.00 0.25  0.12 -0.26 -0.65
+## ind  NA   NA    NA 0.00 -0.13 -0.51 -0.90
+## tel  NA   NA    NA   NA  0.00 -0.38 -0.77
+## ush  NA   NA    NA   NA    NA  0.00 -0.39
+## wlc  NA   NA    NA   NA    NA    NA  0.00</code></pre>
+<p>これらの結果を研究論文で報告する場合、各効果量の推定値の信頼区間を含める方がよいだろう。これは、 <code>m.netmeta</code> の <code>lower.fixed</code> と <code>upper.fixed</code> (または <code>lower.random</code> と <code>upper.random</code> ) 行列を使用して、以前と同じ方法で取得することが可能である。</p>
+<p>さらに便利な方法は、<code>netleague</code> 関数を使用して、すべての推定効果量をエクスポートすることである。この関数は、上で作成したものと同じような表を作成する。しかし、<code>netleague</code> によって生成された行列では、上部の三角形は、このネットワークで利用可能な<strong>直接比較</strong>のプール効果量のみを表示し、我々がそれぞれの比較について従来のメタ分析を行った場合のようなものを達成することが可能である。我々はすべての比較について直接の証拠を持っているわけではないので、上側の三角形のいくつかのフィールドは空のままである。<code>netleague</code> が生成する行列の下側の三角形には、<strong>それぞれ</strong>比較の推定効果量が含まれる (間接的な証拠しか得られないものも含まれる)。</p>
+<p><code>netleague</code> の出力は、簡単に.csv ファイルにエクスポートすることができる。これは、ネットワークメタ分析の包括的な結果を1つの表で報告するために使用することが可能になる。この関数を使用するもう一つの大きな利点は、効果量推定値と信頼区間が各セルに一緒に表示されることである。このような治療推定表を作成して、“netleague.csv” という名前の .csv ファイルとして保存したい。これは、以下のコードを用いて実現しよう。</p>
+<div class="sourceCode" id="cb398"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 効果量テーブルを生成</span></span>
+<span><span class="va">netleague</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netleague.html">netleague</a></span><span class="op">(</span><span class="va">m.netmeta</span>, </span>
+<span>                       bracket <span class="op">=</span> <span class="st">"("</span>, <span class="co"># use round brackets</span></span>
+<span>                       digits<span class="op">=</span><span class="fl">2</span><span class="op">)</span>      <span class="co"># round to two digits</span></span>
+<span></span>
+<span><span class="co"># 結果を保存 (ここでは固定効果モデル) </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.csv</a></span><span class="op">(</span><span class="va">netleague</span><span class="op">$</span><span class="va">fixed</span>, <span class="st">"netleague.csv"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="治療法のランキング" class="section level5" number="12.2.2.3.4">
+<h5>
+<span class="header-section-number">12.2.2.3.4</span> 治療法のランキング<a class="anchor" aria-label="anchor" href="#%E6%B2%BB%E7%99%82%E6%B3%95%E3%81%AE%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p>
+</p>
+<p>ネットワークメタ分析で答えられる最も興味深い問題は、どの治療が最も高い効果を持つかということである。<strong>{netmeta}</strong> に実装された <code>netrank</code> 関数は、この点で役に立つ。これは、治療の<strong>ランキング</strong>を生成することができ、どの治療が最大の効果をもたらす可能性が高いか低いかを示す。</p>
+<p><code>netrank</code> 関数は、<code>netmeta</code> 自体で使われているモデルと同様に、頻度論的アプローチに基づいている。この頻度論的手法は、治療の順位付けに <strong>P-score</strong> を使用している。これは、ある治療が他の治療よりも優れているという確実性を、すべての競合する治療に対して平均して測定するものである。P-スコアは、ベイズネットワークメタ分析の章で説明する <strong>SUCRA</strong> スコア<span class="citation">(<a href="references.html#ref-rucker2015ranking">Rücker and Schwarzer 2015</a>)</span>と同等であることが示されている。</p>
+<p><code>netrank</code> 関数は入力として <code>m.netmeta</code> というモデルを必要とする。さらに、<code>small.values</code> パラメータを指定する必要がある。これは、比較において小さい (つまり、負の) 効果量が有益 (<code>"good"</code>) または有害 (<code>"bad"</code>) の効果を示しているかを定義するものである。ここでは、<code>small.values = "good"</code>を使用する。つまり、効果量が負であるとき、ある治療法が<strong>うつ病を減少させる</strong>のに有効であることを意味する。</p>
+<div class="sourceCode" id="cb399"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netrank.html">netrank</a></span><span class="op">(</span><span class="va">m.netmeta</span>, small.values <span class="op">=</span> <span class="st">"good"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     P-score
+## ind  0.9958
+## grp  0.8184
+## tel  0.6837
+## gsh  0.5022
+## ush  0.3331
+## cau  0.1669
+## wlc  0.0000</code></pre>
+<p>個人セラピー (<code>ind</code>) のPスコアが最も高く、この治療形式が特に有用であることを示している。逆に、待機者リスト (<code>wlc</code>) のPスコアはゼロである。これは、単に治療を待たせることは最良の選択肢ではないという直感と一致しているようである。</p>
+<p>とはいえ、ランキンで最高スコアだからといって、ある治療法が「最善」であると自動的に結論づけるべきでは決してないだろう グ<span class="citation">(<a href="references.html#ref-mbuagbaw2017approaches">Mbuagbaw et al. 2017</a>)</span>。このネットワークにおける<strong>不確実性</strong>をよりよく可視化する方法は、ある条件を比較群として使用したフォレストプロットを作成することである。</p>
+<p></p>
+<p><strong>{netmeta}</strong> では、<code>forest</code> 関数を使用してこれを実現することができる。<strong>{netmeta}</strong>の <code>forest</code> 関数の動作は、Chapter <a href="forest.html#forest">6</a> で説明した <strong>{meta}</strong> パッケージの <code>forest</code> 関数と非常によく似ている。主な違いは、forestプロットで参照グループを <code>reference.group</code> 引数で指定する必要があることである。また、care us usual (<code>"cau"</code>) を使用する。</p>
+<div class="sourceCode" id="cb401"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://wviechtb.github.io/metafor/reference/forest.html">forest</a></span><span class="op">(</span><span class="va">m.netmeta</span>, </span>
+<span>       reference.group <span class="op">=</span> <span class="st">"cau"</span>,</span>
+<span>       sortvar <span class="op">=</span> <span class="va">TE</span>,</span>
+<span>       xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.3</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>       smlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Therapy Formats vs. Care As Usual \n"</span>,</span>
+<span>                     <span class="st">"(Depressive Symptoms)"</span><span class="op">)</span>,</span>
+<span>       drop.reference.group <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>       label.left <span class="op">=</span> <span class="st">"Favors Intervention"</span>,</span>
+<span>       label.right <span class="op">=</span> <span class="st">"Favors Care As Usual"</span>,</span>
+<span>       labels <span class="op">=</span> <span class="va">long.labels</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-371-1.png" width="80%" style="display: block; margin: auto;"></div>
+<p>フォレストプロットでは、個人療法以外にも高いパフォーマンスを示す治療形式があることがわかる。また、信頼区間の一部が重なっていることもわかる。このため、明確な判断は容易ではない。個別治療が最も良い結果を出しているように見えるが、いくつかの治療法も通常のケアと比較して大きな効果を上げている。</p>
+<p><br></p>
+</div>
+</div>
+<div id="結果の妥当性を評価" class="section level4" number="12.2.2.4">
+<h4>
+<span class="header-section-number">12.2.2.4</span> 結果の妥当性を評価<a class="anchor" aria-label="anchor" href="#%E7%B5%90%E6%9E%9C%E3%81%AE%E5%A6%A5%E5%BD%93%E6%80%A7%E3%82%92%E8%A9%95%E4%BE%A1"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<div id="net-heat-plot" class="section level5" number="12.2.2.4.1">
+<h5>
+<span class="header-section-number">12.2.2.4.1</span> ネットヒートプロット<a class="anchor" aria-label="anchor" href="#net-heat-plot"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p><strong>{netmeta}</strong> パッケージは <code>netheat</code> という関数を内蔵しており、これにより <strong>ネットヒートプロット</strong> を作成することが可能である。ネットヒートプロットは、ネットワークモデルの非一貫性や、どのようなデザインが非一貫性に寄与しているかを評価するのに非常に有効である。</p>
+<p><code>netheat</code> 関数は、フィットしたネットワークメタ分析オブジェクトを必要とするだけで、プロットを生成する。</p>
+<div class="sourceCode" id="cb402"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netheat.html">netheat</a></span><span class="op">(</span><span class="va">m.netmeta</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/heat_fixed_col_sep.png" width="60%" style="display: block; margin: auto;"></div>
+<p>この関数は、行の各デザインが他のデザイン (列) と比較される2次ヒートマップを生成する。重要な点は、行と列が、このネットワークにおける個々の治療<strong>比較</strong>ではなく、特定の<strong>デザイン</strong>を意味することである。したがって、このプロットは、マルチアーム研究で使用されたデザイン (ガイド付き自助、個人療法、待機者リストの比較) の行と列も特徴としている。ネットヒートプロットには2つの重要な特徴がある<span class="citation">(<a href="references.html#ref-schwarzer2015meta">Schwarzer, Carpenter, and Rücker 2015, chap. 8</a>)</span>。</p>
+<p></p>
+<ul>
+<li><p><strong>灰色のボックス</strong>。灰色のボックスは、ある治療比較が他の治療比較の推定にどれだけ重要であるかを示すものである。ボックスが大きければ大きいほど、その比較はより重要である。これを分析する簡単な方法は、プロットの行を次々に見ていき、各行でどのボックスが最も大きいかをチェックすることである。よくある発見は、ヒートマップの対角線上にあるボックスが大きいことである。これは、直接証拠が使われたことを意味するからである。例えば、特に大きなボックスは、 “cau vs grp” 行と “cau vs grp” 列の交点で見ることが可能である。</p></li>
+<li><p><strong>色のついた背景</strong>。色のついた背景は、<strong>行</strong>のデザインが<strong>列</strong>のデザインに起因する<strong>非一貫性</strong>の量を意味する。フィールドの色は、深い赤 (強い非一貫性を示す) から青 (このデザインからの証拠が行の証拠をサポートすることを示す) までの範囲となる。<code>netheat</code> 関数は、アルゴリズムを使用して、行と列を非一貫性が大きいクラスタと小さいクラスタにソートする。このプロットでは、いくつかの非一貫なフィールドが左上隅に表示されている。例えば、“ind vs wlc” の行では、“cau vs grp” の列のエントリーが赤く表示されていることが分かる。これは、“ind vs wlc” の推定に対して “cau vs grp” が寄与しているエビデンスが非一貫であることを意味する。一方、“gsh vs wlc” 列のフィールドは濃い青色で表示されており、これはこのデザインの証拠が行デザイン “ind vs wlc” の証拠を<strong>支持</strong>していることを表している。</p></li>
+</ul>
+<p>この結果は、固定効果モデルを用いてネットワークメタ分析モデルを適合させたため、固定効果モデルに基づいていることを再認識する必要がある。しかし、これまでの研究から、固定効果モデルの使用は適切ではないことが次第に明らかになってきた–異質性とデザインの非一貫性が多すぎるのである。</p>
+<p>そこで、ランダム効果モデルを仮定したときに、ネットヒートプロットがどのように変化するかを確認してみよう。<code>netheat</code> の <code>random</code> 引数を <code>TRUE</code> に設定することにより、これを行うことが可能である。</p>
+<div class="sourceCode" id="cb403"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netheat.html">netheat</a></span><span class="op">(</span><span class="va">m.netmeta</span>, random <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/heat_random_col_sep.png" width="60%" style="display: block; margin: auto;"></div>
+<p>この結果、ネットワーク内の非一貫性が大幅に減少していることがわかる。暗赤色の背景を持つフィールドはなくなった。これは、ランダム効果モデルが使用されると、このモデルの全体的な一貫性がかなり改善されることを示している。</p>
+<p>したがって、このデータには、ランダム効果モデルが望ましいと結論づけることが可能である。実際には、<code>netmeta</code>を使用して <code>comb.random</code> を <code>TRUE</code> に設定しながら (そして <code>comb.fixed</code> を <code>FALSE</code> に設定して) モデルを再実行し、ランダム効果モデルに基づく分析結果のみを報告することになる。また、ランダム効果モデルに基づく分析結果のみを報告する。</p>
+<p><br></p>
+</div>
+<div id="net-splitting" class="section level5" number="12.2.2.4.2">
+<h5>
+<span class="header-section-number">12.2.2.4.2</span> ネットワークの分割<a class="anchor" aria-label="anchor" href="#net-splitting"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p></p>
+<p>ネットワークの一貫性をチェックするもう1つの方法は、<strong>ネットワークの分割</strong>である。この方法は、このネットワーク推定を直接証拠と間接証拠に分割し、このネットワーク内の個々の比較の推定における非一貫性をコントロールすることを可能にするものである。ネットワーク分割手法を適用するには、適合したモデルを <code>netsplit</code> 関数に提供するだけでよい。</p>
+<div class="sourceCode" id="cb404"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netsplit.html">netsplit</a></span><span class="op">(</span><span class="va">m.netmeta</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Separate indirect from direct evidence using back-calculation method
+## 
+## Fixed effects model: 
+## 
+##  comparison  k prop     nma  direct  indir.    Diff     z  p-value
+##  grp vs cau 21 0.58 -0.5767 -0.3727 -0.8628  0.4901  8.72 &lt; 0.0001
+##  gsh vs cau  8 0.22 -0.3940 -0.5684 -0.3442 -0.2243 -2.82   0.0048
+##  ind vs cau 30 0.71 -0.6403 -0.7037 -0.4863 -0.2174 -3.97 &lt; 0.0001
+##  tel vs cau  6 0.35 -0.5134 -0.7471 -0.3867 -0.3604 -3.57   0.0004
+##  ush vs cau  9 0.35 -0.1294 -0.1919 -0.0953 -0.0966 -1.06   0.2903
+##  [...]
+## 
+## Legend:
+##  [...]
+##  Diff       - Difference between direct and indirect estimates
+##  z          - z-value of test for disagreement (direct vs. indirect)
+##  p-value    - p-value of test for disagreement (direct vs. indirect)</code></pre>
+<p>出力で示される最も重要な情報は、直接的証拠と間接的証拠に基づく効果推定値の差 (<code>Diff</code>) と、この差が有意であるかどうか (<code>p-value</code>列で示される) である。差が <span class="math inline">\(p&lt;\)</span> 0.05のとき、直接推定と間接推定の間に有意な不一致 (非一貫性) があることになる。</p>
+<p>出力では、(固定効果モデルを使用した場合) 直接証拠と間接証拠の間に有意な不一致を示す比較が確かにたくさんあることがわかる。正味の分割結果を可視化する良い方法は、フォレストプロットである。</p>
+<div class="sourceCode" id="cb406"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/netmeta/man/netsplit.html">netsplit</a></span><span class="op">(</span><span class="va">m.netmeta</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/forest.html">forest</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-377-1.png" width="79%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="比較調整済みファネルプロット" class="section level5" number="12.2.2.4.3">
+<h5>
+<span class="header-section-number">12.2.2.4.3</span> 比較調整済みファネルプロット<a class="anchor" aria-label="anchor" href="#%E6%AF%94%E8%BC%83%E8%AA%BF%E6%95%B4%E6%B8%88%E3%81%BF%E3%83%95%E3%82%A1%E3%83%8D%E3%83%AB%E3%83%97%E3%83%AD%E3%83%83%E3%83%88"><i class="fas fa-link"></i></a>
+</h5>
+<hr>
+<p></p>
+<p>ネットワークメタ分析モデルで出版バイアスを評価することは困難である。Chapter <a href="pub-bias.html#pub-bias">9</a> で紹介した手法の多くは、従来のメタ分析からネットワークメタ分析へ移行すると、そのまま適用することはできない。しかし、ネットワークメタ分析における出版バイアスのリスクを評価するために、<strong>比較調整ファンネルプロット</strong>が提案されており、特定の条件下では使用することがが可能である <span class="citation">(<a href="references.html#ref-salanti2014evaluating">Salanti et al. 2014</a>)</span>。このファンネルプロットは、出版バイアスがネットワークモデルにどのような影響を与えたかに関する<strong>特定の</strong>仮説がある場合に適用される。</p>
+<p>例えば、サンプルサイズが小さくても、「新規」の知見を持つ研究は出版される可能性が高いので、出版バイアスが生じる可能性がある。科学には、「画期的な」結果を出そうとする自然な動機がある。例えば、新しいタイプの治療法が現在の技術水準よりも優れていることを示すためである。</p>
+<p>ということは、今回のデータには small-study effect (Chapter <a href="pub-bias.html#small-study-effects">9.2.1</a> 参照) のようなものが存在することになる。新しい治療法と古い治療法を比較した場合の効果は、ファネルプロットにおいて<strong>非対称</strong>に分布していることが予想される。これは、「期待はずれ」の結果 (つまり、新しい治療法が古い治療法より優れていない) が、ファイルの引き出しに入るからである。サンプルサイズが小さくなるにつれて、新しい治療法の有益性は、有意になるためにますます大きくなり、したがって、出版に値するようになる必要がある。理論的には、これは標準的なメタ分析で見られる特徴的な非対称のファンネルプロットを作成することになる。</p>
+<p>もちろん、このようなパターンは、プロット内の効果量がある方法でコード化されている場合にのみ現れる。例えば、「新旧仮説」を検証するためには、プロットで使用される各効果量が同じように解釈できることを確認する必要がある。例えば、正の効果量は常に「新しい」治療が優れていたことを示し、負の符号はその反対を意味することを確認する必要がある。これは、古い治療法から新しい治療法への「ランキング」を定義し、このランキングを使用して各効果の符号を定義することで実現が可能である。</p>
+<p><strong>{netmeta}</strong>の <code>funnel</code> 関数は、このような比較調整されたファネルプロットを生成するために使用することが可能である。以下は最も重要な引数である。</p>
+<ul>
+<li><p><strong><code>order</code></strong>. この引数は、仮説とされる出版バイアスメカニズムの順序を指定する。単純に、ネットワーク内のすべての治療名を提供し、仮説に従ってそれらをソートする必要がある。たとえば、出版バイアスが「新しい」治療を好むかどうかを検証したい場合、すべての治療名を挿入し、最も古い治療から始めて、最も新しいタイプの介入で終了する。</p></li>
+<li><p><strong><code>pch</code></strong>. これは、ファネルプロットで使用する研究のシンボルを指定するものである。<code>19</code>に設定すると、例えば単純なドットが表示される。</p></li>
+<li><p><strong><code>col</code></strong>. この引数を使用すると、異なる比較を区別するために使用する色を指定することが可能である。ここで指定する色の数は、ファネルプロットにおける <strong>ユニーク</strong> な比較の数と同じでなければならない。実際には、これは多くの異なる色が必要であることを意味する。 <em>R</em> がプロットに使用できる色の完全なリストは、<a href="http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf">オンライン</a>で見ることが可能である。</p></li>
+<li><p><strong><code>linreg</code></strong>. TRUE` に設定すると、ファネルプロットの非対称性に対する Egger の検定 (Chapter <a href="pub-bias.html#eggers-test">9.2.1.2</a>) が行われ、その <span class="math inline">\(p\)</span> 値がプロット内に表示される。</p></li>
+</ul>
+<p>引数は <strong>{meta}</strong> の <code>funnel</code> 関数に定義されているものを追加で使用することも可能である。</p>
+<div class="sourceCode" id="cb407"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://wviechtb.github.io/metafor/reference/funnel.html">funnel</a></span><span class="op">(</span><span class="va">m.netmeta</span>, </span>
+<span>      order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"wlc"</span>, <span class="st">"cau"</span>, <span class="st">"ind"</span>, <span class="st">"grp"</span>, <span class="co"># from old to new</span></span>
+<span>                <span class="st">"tel"</span>, <span class="st">"ush"</span>, <span class="st">"gsh"</span><span class="op">)</span>, </span>
+<span>      pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">15</span><span class="op">:</span><span class="fl">19</span>, <span class="fl">21</span><span class="op">:</span><span class="fl">24</span><span class="op">)</span>, </span>
+<span>      col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span>, <span class="st">"purple"</span>, <span class="st">"forestgreen"</span>, <span class="st">"grey"</span>, </span>
+<span>              <span class="st">"green"</span>, <span class="st">"black"</span>, <span class="st">"brown"</span>, <span class="st">"orange"</span>, <span class="st">"pink"</span>, </span>
+<span>              <span class="st">"khaki"</span>, <span class="st">"plum"</span>, <span class="st">"aquamarine"</span>, <span class="st">"sandybrown"</span>, </span>
+<span>              <span class="st">"coral"</span>, <span class="st">"gold4"</span><span class="op">)</span>, </span>
+<span>      linreg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-379-1.png" width="78%" style="display: block; margin: auto;"></div>
+<p>もし仮説が正しければ、サンプルサイズが小さい (つまり標準誤差が大きい) 研究は、プロットのゼロ線付近に非対称に分布すると予想される。これは、新しい治療法と古い治療法を比較し、新しい治療法が優れていないことを発見した小規模の研究は、出版される可能性が低いからである。したがって、これらの研究は漏斗の片側で系統的に欠落しているのである。</p>
+<p>しかし、このプロットは極めて対称的に見える。これは Egger の検定で確認したが、有意ではなかった (<span class="math inline">\(p=\)</span> 0.402)。全体として、これはこのネットワークに小規模研究の効果があることを示すものではない。少なくとも、優れた効果を持つ「革新的な」治療法は、発表された文献の中に見つかる可能性が高いからである。</p>
+<div class="boxinfo">
+<p>
+<strong>{netmeta} を使ったネットワークメタ分析:
+最後の要点</strong>
+</p>
+<p>
+この章は長い章となり、新しいトピックを大量にカバーしてきた。<strong>{netmeta}</strong>
+で使われている統計モデルの背後にあるコアなアイデアを示し、このアプローチでネットワークメタ分析モデルを適合させる方法、結果を可視化し解釈する方法、そして発見の妥当性を評価する方法について説明した。ネットワークメタ分析における
+(臨床)
+意思決定は、1つのテストやメトリックに基づくべきでないことは、どれほど強調しても十分とはいえない。
+</p>
+<p>
+その代わりに、私たちは素直な目でモデルとその結果を探求し、見つけたパターンの一貫性をチェックし、推定値に関連する大きな不確実性を考慮に入れなければならないのである。
+</p>
+<p>
+次章では、ベイズの観点からネットワークメタ分析を (再び)
+考えてみる。このアプローチの背後にある哲学は、ここで説明したものとかなり異なるが、どちらの手法も本質的に同じことを達成しようとするものである。実際、解析の「パイプライン」も驚くほど似ている。さあ、ベイズ解析の時間だ。
+</p>
+</div>
+<p><br></p>
+</div>
+</div>
+</div>
+</div>
+<div id="bayesian-net-ma" class="section level2" number="12.3">
+<h2>
+<span class="header-section-number">12.3</span> ベイズ的ネットワークメタ分析<a class="anchor" aria-label="anchor" href="#bayesian-net-ma"><i class="fas fa-link"></i></a>
+</h2>
+<hr>
+<p>以下では、ベイズ型階層構造フレームワークに基づくネットワークメタ分析の実行方法を説明する。このために使用する <em>R</em> パッケージは、<strong>{gemtc}</strong> <span class="citation">(<a href="references.html#ref-van2012automating">Valkenhoef et al. 2012</a>)</span> と呼ばれるものである。しかし、その前に、一般的なベイズ推論の考え方と、ネットワークメタ分析に使用できるベイズモデルの種類を考えてみよう。</p>
+<p><br></p>
+<div id="bayesian-inference" class="section level3" number="12.3.1">
+<h3>
+<span class="header-section-number">12.3.1</span> ベイズ推論<a class="anchor" aria-label="anchor" href="#bayesian-inference"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>
+</p>
+<p>ベイズ推定は、頻度論的 (frequentist) 統計学とは別に、重要な統計学である。頻度論的統計学は、ほとんどの研究分野でより頻繁に使用されていると言ってよいでしょう。しかし、ベイズアプローチの方が実は古く、近年は研究者に取り上げられることが多くなっており <span class="citation">(<a href="references.html#ref-marsman2017bayesian">Marsman et al. 2017</a>)</span>、決して「無くなった」わけではない <span class="citation">(<a href="references.html#ref-mcgrayne2011theory">McGrayne 2011</a>)</span>。</p>
+<p>ベイズ統計学の基礎となるのは、トーマス・ベイズ牧師 <span class="citation">(1701-1761、 <a href="references.html#ref-bellhouse2004reverend">Bellhouse et al. 2004</a>)</span> が最初に定式化した<strong>ベイズの定理</strong>である。ベイズ統計学が頻出主義と異なるのは、「主観的」な<strong>事前</strong>知識も取り入れて推論を行う点である。ベイズの定理は、ある事象Aが発生する確率を、別の事象Bが発生したことを既に知っていると仮定して推定することを可能にする。これは、<strong>条件付き確率</strong>と呼ばれ、<span class="math inline">\(P(\text{A}|\text{B})\)</span> のように表現される。この定理は、この条件付き確率の計算方法を説明する公式に基づいている。</p>
+<p><span class="math display" id="eq:nw8">\[\begin{equation}
+P(\text{A}|\text{B})=\frac{P(\text{B}|\text{A})\times
+P(\text{A})}{P(\text{B})}
+\tag{12.8}
+\end{equation}\]</span></p>
+<p>
+</p>
+<p>この式では、分数の分子にある2つの確率にそれぞれ名前がついている。<span class="math inline">\(P(\text{B}|\text{A})\)</span> の部分は、<strong>尤度</strong> (ゆうど) と呼ばれる。Aがある場合に事象Bが発生する確率である <span class="citation">(<a href="references.html#ref-etz2018introduction">Etz 2018</a>)</span>。<span class="math inline">\(P(\text{A})\)</span> は、<span class="math inline">\(A\)</span> が発生する<strong>先行</strong>確率である。<span class="math inline">\(P(\text{A}|\text{B})\)</span> は、<strong>posterior</strong> 確率で、B が与えられたときの A の確率である。</p>
+<p><span class="math display" id="eq:nw9">\[\begin{equation}
+P(\text{A}|\text{B}) \propto P(\text{B}|\text{A})\times P(\text{A})
+\tag{12.9}
+\end{equation}\]</span></p>
+<p>ここで、<span class="math inline">\(\propto\)</span> という記号は、分数の分母を捨てたので、値が変化しても、左側の確率は右側の部分と少なくとも<strong>比例</strong>していることを意味している。</p>
+<p>ベイズの定理は、上の式の右辺から順に考えていくと理解しやすい。Aの確率に関する事前情報と、Aが起こる場合のBの可能性を組み合わせて、Aの事後確率 (適応確率) <span class="math inline">\(P(\text{A}|\text{B})\)</span> を出すだけなのである。ここで重要なのは、前の知識を考慮すると、Aの確率の「より良い」 (事後) 推定値が得られるということである。この知識は、Aの確率を仮定したもの (事前確率) である。</p>
+<p>ベイズの定理は、A や B を特定の事象に見立てて、先ほどの方法で説明されることが多いようである。しかし、A や B を2つの変数の<strong>確率分布</strong>と考えることもが可能である。A を正規分布に従う確率変数とする。この分布は、パラメータの集合で特徴付けることができ、それを <span class="math inline">\(\boldsymbol{\theta}\)</span> で表す。A は正規分布なので、 <span class="math inline">\(\boldsymbol{\theta}\)</span> には A の真の平均 <span class="math inline">\(\mu\)</span> と分散 <span class="math inline">\(\sigma^2\)</span> の2つの要素が含まれている。</p>
+<p>さらに、B について、<span class="math inline">\(\boldsymbol{\theta}\)</span> の推定に使いたい<strong>実測データ</strong>を集めたとする。観測されたデータをベクトル <span class="math inline">\(\boldsymbol{Y}\)</span> に格納する。また、観測データは正規分布に従うので、<span class="math inline">\(P({Y})\)</span> で表される。このことから、次のような式が成り立つ。</p>
+<p><span class="math display" id="eq:bayes">\[\begin{equation}
+P(\boldsymbol{\theta} | {\boldsymbol{Y}} ) \propto P( {\boldsymbol{Y}} | \boldsymbol{\theta} )\times P( \boldsymbol{\theta})
+\tag{12.10}
+\end{equation}\]</span></p>
+<p></p>
+<p>この式には、<span class="math inline">\(P(\boldsymbol{\theta})\)</span> という <span class="math inline">\(\boldsymbol{\theta}\)</span> の事前分布を仮定している。この事前分布は、これまでの知識に基づいて、あるいは直感的に <span class="math inline">\(\boldsymbol{\theta}\)</span> がどのようなものであるかを、 <em>a priori</em> に定義することが可能である。尤度分布 <span class="math inline">\(P({\boldsymbol{Y}}|\boldsymbol{\theta})\)</span> と、パラメータ <span class="math inline">\(\boldsymbol{\theta}\)</span> が与えられたときのデータの確率 <span class="math inline">\(P(\boldsymbol{\theta}|{\boldsymbol{Y}})\)</span> から、事後分布を推定することができる。この事後分布は、観測データと事前知識の両方を考慮した場合の <span class="math inline">\(\boldsymbol{\theta}\)</span> の推定値を表している。</p>
+<p></p>
+<p>重要なのは、事後分布はあくまでも<strong>分布</strong>であって、1つの推定「真」値ではないことである。つまり、ベイズ推論の結果であっても<strong>確率的</strong>であることに変わりはない。また、実際のパラメータ値に対する私たちの<strong>信念</strong>を表すという意味で、<strong>主観的</strong>なものでもある。したがって、ベイズ統計学では、推定値の信頼区間を計算するのではなく、<strong>信用 (確信) 区間</strong> (Credible Interval, CrI) を計算するのである。</p>
+<p>ここで、先ほど説明した3つの分布が、具体的な例ではどのように見えるかを可視化してみよう。</p>
+<div class="inline-figure"><img src="images/prior_col_sep.png" width="93%" style="display: block; margin: auto;"></div>
+<p>
+</p>
+<p>ベイズアプローチのもう一つの利点は、パラメータが可視化されたようなベルカーブ分布に従う必要がないことである。他の種類の (より複雑な) 分布もモデル化することができる。しかし、ベイズ推定の欠点は、収集したデータから (結合) 分布を生成するのに、非常に計算コストがかかることである。事後分布を生成するために、<strong>Gibbs サンプリング法</strong>などの特殊な<strong>マルコフ連鎖モンテカルロ</strong>シミュレーション手法が開発された。マルコフ連鎖モンテカルロは、ベイジアンネットワークメタ分析モデルを実行するための <strong>{gemtc}</strong> パッケージでも使用されている <span class="citation">(<a href="references.html#ref-van2012automating">Valkenhoef et al. 2012</a>)</span>。</p>
+<p><br></p>
+</div>
+<div id="bayesian-net-ma-model" class="section level3" number="12.3.2">
+<h3>
+<span class="header-section-number">12.3.2</span> ベイズ的ネットワークメタ分析モデル<a class="anchor" aria-label="anchor" href="#bayesian-net-ma-model"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<div id="ペアワイズメタ分析" class="section level4" number="12.3.2.1">
+<h4>
+<span class="header-section-number">12.3.2.1</span> ペアワイズメタ分析<a class="anchor" aria-label="anchor" href="#%E3%83%9A%E3%82%A2%E3%83%AF%E3%82%A4%E3%82%BA%E3%83%A1%E3%82%BF%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>ここでは、<strong>{gemtc}</strong> がネットワークメタ分析に用いるベイズ型階層モデルを定式化する。まず、従来のペアワイズメタ分析のモデルを最初に定義することから始めましょう。</p>
+<p></p>
+<p>この定義は、「標準的な」ランダム効果モデルについて説明した Chapter <a href="pooling-es.html#rem">4.1.2</a> の定義と同等である。以下に述べるのは、メタ分析を概念化するための「ベイズ的な方法」に過ぎない。一方、このベイズ的なペアワイズメタ分析の定義は、これ以上拡張しなくても、ネットワークメタ分析に直接適用できるので、すでに非常に有益なものとなっている <span class="citation">(<a href="references.html#ref-dias2013evidence">Dias et al. 2013</a>)</span>。</p>
+<p>このモデルをベイズ型<strong>階層</strong>モデルと呼んでいる <span class="citation">(<a href="references.html#ref-efthimiou2016getreal">Efthimiou et al. 2016</a>、より詳細な議論は Chapter <a href="bayesian-ma.html#bayes-hierarchical-model">13.1</a> を参照)</span>。ここで言う「階層的」というのは、何も不思議なことではない。実際、メタ分析・モデルは階層構造、つまり「多階層」を前提としていることは、既に Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で説明した。</p>
+<p>例えば、従来のメタ分析を実施するとしよう。<span class="math inline">\(K\)</span> 件の研究が含まれ、各研究の観測された効果量 <span class="math inline">\(\hat\theta_k\)</span> を計算する。そして、固定効果モデルを次のように定義する。</p>
+<p><span class="math display" id="eq:nw11">\[\begin{equation}
+\hat\theta_k \sim \mathcal{N}(\theta,\sigma_k^2)
+\tag{12.11}
+\end{equation}\]</span></p>
+<p>この式は、効果量が正規分布に従うと仮定して、効果量の<strong>尤度</strong>式中の <span class="math inline">\(P(\boldsymbol{Y}|\boldsymbol{\theta})\)</span> 部分を表現したものである。各効果量は同じ分布からの抽選であり、その平均が真の効果量 <span class="math inline">\(\theta\)</span>、分散が <span class="math inline">\(\sigma^2_k\)</span> であると仮定する。固定効果モデルでは、真の効果量は全ての研究で同一であると仮定するので、異なる研究 <span class="math inline">\(k\)</span> とその観測された効果量 <span class="math inline">\(\hat\theta_k\)</span> に対して、<span class="math inline">\(\theta\)</span> は変わらない。</p>
+<p>
+</p>
+<p>ベイズモデルの面白いところは、本当の効果 <span class="math inline">\(\theta\)</span> が未知でも、その事前分布を定義できることである。この事前分布は、<span class="math inline">\(\theta\)</span> がどのように見えると考えるかを近似する。例えば、平均が0の正規分布に基づく事前分布を <span class="math inline">\(\theta \sim \mathcal{N}(0, \sigma^2)\)</span> (ここで <span class="math inline">\(\sigma^2\)</span> を指定)と仮定することが可能である。</p>
+<p><strong>{gemtc}</strong> パッケージでは、デフォルトで <strong>uninformative priors</strong> と呼ばれる、分散が非常に大きな事前分布を使用する。これは、事前の「信念」が事後結果に大きな影響を与えないようにするためで、主に実際に観測されたデータに「語らせる」ようにする。この式は、ランダム効果モデルに簡単に拡張することができる。</p>
+<p><span class="math display" id="eq:nw12">\[\begin{equation}
+\hat\theta_k \sim \mathcal{N}(\theta_k,\sigma_k^2)
+\tag{12.12}
+\end{equation}\]</span></p>
+<p>この式は、各研究が同じ真の効果量 <span class="math inline">\(\theta\)</span> の推定量であると仮定しないことを除けば、あまり変わらない。その代わりに、各観測効果量 <span class="math inline">\(\hat\theta_k\)</span> によって推定される “試験固有”の真の効果量 <span class="math inline">\(\theta_k\)</span> が存在すると仮定する。さらに、これらの研究固有の真の効果は、真の効果量の包括的な分布の一部である。この真の効果量分布は、その平均値 <span class="math inline">\(\mu\)</span> と分散 <span class="math inline">\(\tau^2\)</span> (ここでの研究間異質性) によって定義される。</p>
+<p><span class="math display" id="eq:nw13">\[\begin{equation}
+\theta_k \sim \mathcal{N}(\mu,\tau^2)
+\tag{12.13}
+\end{equation}\]</span></p>
+<p>また、ベイズモデルでは、<span class="math inline">\(\mu\)</span> と <span class="math inline">\(\tau^2\)</span> の両方に (非情報的な) 事前分布を与える。</p>
+<p><br></p>
+</div>
+<div id="ネットワークメタ分析への拡張" class="section level4" number="12.3.2.2">
+<h4>
+<span class="header-section-number">12.3.2.2</span> ネットワークメタ分析への拡張<a class="anchor" aria-label="anchor" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%88%86%E6%9E%90%E3%81%B8%E3%81%AE%E6%8B%A1%E5%BC%B5"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>さて、ベイズメタ分析モデルが1対比較のためにどのように定式化されるかをカバーしたので、それをネットワークメタ分析に拡張することを始めましょう。前のランダム効果モデルの2つの公式は、このために再利用することが可能である。我々は、モデル・パラメータを少し違った形で概念化するだけである。ネットワークメタ分析では、比較対象が様々な治療法からなることがあるので、ある研究 <span class="math inline">\(k\)</span> で見つかった効果量を <span class="math inline">\(\hat\theta_{k \text{,A,B}}\)</span> で表す。これは、治療Aと治療Bを比較した研究 <span class="math inline">\(k\)</span> における効果量を意味する。この新しい表記法を適用すると、以下の式が得られる。</p>
+<p><span class="math display" id="eq:nw14">\[\begin{align}
+\hat\theta_{k \text{,A,B}} &amp;\sim \mathcal{N}(\theta_{k \text{,A,B}},\sigma_k^2) \notag \\
+\theta_{k \text{,A,B}} &amp;\sim \mathcal{N}(\theta_{\text{A,B}},\tau^2) \tag{12.14}
+\end{align}\]</span></p>
+<p>式で表される一般的な考え方は変わらないことがわかる。ここで、A <span class="math inline">\(-\)</span> B比較の (研究固有の) 真の効果、<span class="math inline">\(\theta_{k \text{,A,B}}\)</span> は、平均 <span class="math inline">\(\theta_{text{A,B}}\)</span> を持つ真の効果の包括的分布の一部であると仮定する。この平均真の効果量 <span class="math inline">\(\theta_{1\text{,A,B}}\)</span> は、<span class="math inline">\(\theta_{1\text{,B}}\)</span> から <span class="math inline">\(\theta_{1\text{,A}}\)</span> を減算した結果であり、<span class="math inline">\(\theta_{1\text{,A}}\)</span> はある定義済みの参照治療 <span class="math inline">\(1\)</span> と比べた治療Aの効果である。同様に、<span class="math inline">\(\theta_{1\text{,B}}\)</span>は、同じ参照治療と比較した治療Bの効果として定義されている。ベイズモデルでは、参照群と比較したこれらの効果も事前分布を与えられる。</p>
+<p>前章の頻度論的ネットワークメタ分析ですでに述べたように、マルチアーム研究をネットワークモデルに含めることは、効果量が相関してしまうので問題がある。ベイズネットワークメタ分析では、この問題は、マルチアーム研究の効果が<strong>多変量</strong> (正規) 分布に由来すると仮定することによって解決することが可能である。</p>
+<p>マルチアーム試験 <span class="math inline">\(k\)</span> が、合計 <span class="math inline">\(n=\)</span> 5 の治療法を調べたとする。E を参照治療とすると、<span class="math inline">\(n\)</span> - 1 = 4 の治療効果があることになる。ベイズ階層モデルを用いて、これらの観測された治療効果が次の形式の多変量正規分布からのドローであると仮定する<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;実際には、多群試験における試験間不均一性分散は、通常それぞれの比較間で&lt;strong&gt;同質&lt;/strong&gt; (つまり、同一)であると仮定される。これにより、行列内のすべての共分散を &lt;span class="math inline"&gt;\(\tau^2/2\)&lt;/span&gt; として定義することがが可能である&lt;/p&gt;'><sup>63</sup></a>。</p>
+<p><span class="math display" id="eq:nw15">\[\begin{align}
+\begin{bmatrix}
+\hat\theta_{k\text{,A,E}} \\
+\hat\theta_{k\text{,B,E}} \\
+\hat\theta_{k\text{,C,E}} \\
+\hat\theta_{k\text{,D,E}}
+\end{bmatrix}
+&amp;=
+\mathcal{N}\left(
+\begin{bmatrix}
+\theta_{\text{A,E}} \\
+\theta_{\text{B,E}} \\
+\theta_{\text{C,E}} \\
+\theta_{\text{D,E}}
+\end{bmatrix}
+,
+\begin{bmatrix}
+\tau^2 &amp; \tau^2/2 &amp; \tau^2/2 &amp; \tau^2/2 \\
+\tau^2/2 &amp; \tau^2 &amp; \tau^2/2 &amp; \tau^2/2 \\
+\tau^2/2 &amp; \tau^2/2 &amp; \tau^2 &amp; \tau^2/2 \\
+\tau^2/2 &amp; \tau^2/2 &amp; \tau^2/2 &amp; \tau^2
+\end{bmatrix}
+\right).
+\tag{12.15}
+\end{align}\]</span></p>
+<p><br></p>
+</div>
+</div>
+<div id="r-におけるベイズ的ネットワークメタ分析" class="section level3" number="12.3.3">
+<h3>
+<span class="header-section-number">12.3.3</span> <em>R</em> におけるベイズ的ネットワークメタ分析<a class="anchor" aria-label="anchor" href="#r-%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%83%99%E3%82%A4%E3%82%BA%E7%9A%84%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p></p>
+<p>それでは、最初のベイジアンネットワークメタ分析を行うために、<strong>{gemtc}</strong> パッケージを使用してみよう。いつものように、まずパッケージをインストールし、ライブラリからロードする必要がある。</p>
+<div class="sourceCode" id="cb408"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gertvv/gemtc">gemtc</a></span><span class="op">)</span></span></code></pre></div>
+<p>
+</p>
+<p><strong>{gemtc}</strong> パッケージは、以前説明した Gibbs サンプリング手順で使用する <strong>{rjags}</strong> <span class="citation">(<a href="references.html#ref-rjags">Plummer 2019</a>)</span> に依存している (Chapter <a href="netwma.html#bayesian-inference">12.3.1</a> 参照)。ただし、このパッケージをインストールして読み込む前に、まず <strong>JAGS</strong> (Just Another Gibbs Sampler の略) という別のソフトをインストールする必要がある。このソフトは Windows と Mac の両方に対応しており、<a href="https://sourceforge.net/projects/mcmc-jags/files/">インターネット</a>から無料でダウンロード可能。これが完了したら、<strong>{rjags}</strong> パッケージをインストールして読み込むことができる<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;技術的には、&lt;strong&gt;JAGS&lt;/strong&gt;はコンピュータプログラムであるだけでなく、&lt;strong&gt;{gemtc}&lt;/strong&gt;がバックグラウンドで使用しているベイズモデリングのためのプログラミング言語でもある (マニュアルは &lt;a href="https://people.stat.sc.edu/hansont/stat740/jags_user_manual.pdf"&gt;こちら&lt;/a&gt; から見ることがが可能である)。JAGS自体は、1980年代後半から存在する&lt;strong&gt;BUGS&lt;/strong&gt; (「Bayesian inference Using Gibbs Sampling」の略) 言語に大きく依存している &lt;span class="citation"&gt;(&lt;a href="references.html#ref-lunn2012bugs"&gt;Lunn et al. 2012, chap. 2.2.1&lt;/a&gt;)&lt;/span&gt;&lt;/p&gt;'><sup>64</sup></a>。</p>
+<div class="sourceCode" id="cb409"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rjags"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mcmc-jags.sourceforge.io">rjags</a></span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<div id="データを準備-1" class="section level4" number="12.3.3.1">
+<h4>
+<span class="header-section-number">12.3.3.1</span> データを準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E6%BA%96%E5%82%99-1"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>この例では、すでに頻出ネットワークメタ分析に使用した <code>TherapyFormats</code> データセットを再び使用する。しかし、<strong>{gemtc}</strong> で使用できるように、データの構造を少し調整する必要がある。</p>
+<p>元の <code>TherapyFormats</code> データセットには <code>TE</code> と <code>seTE</code> という列があり、各行が1つの比較を表す標準化平均値と標準誤差が格納されている。このような相対効果データを <strong>{gemtc}</strong> で使用したい場合、各行が1つの<strong>治療群</strong>を表すようにデータフレームの形を変更する必要がある。さらに、効果量の列に<code>NA</code>を記入して、比較でどの治療が参照群として使われたかを指定する必要がある。このように整形したデータセットを “TherapyFormatsGeMTC” という名前で保存している<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;また、「より広い」&lt;strong&gt;{netmeta}&lt;/strong&gt; 形式のネットワークメタ分析データを、&lt;strong&gt;{gemtc}&lt;/strong&gt;の相対効果量データに必要な「Long」形式に変換する方法を説明する &lt;em&gt;R&lt;/em&gt; vignette を用意する。この vignette は、 &lt;a href="https://www.protectlab.org/vignettes/reshape-gemtc/" class="uri"&gt;https://www.protectlab.org/vignettes/reshape-gemtc/&lt;/a&gt; で見ることが可能である&lt;/p&gt;'><sup>65</sup></a>。</p>
+<p></p>
+<div class="boxinfo">
+<p>
+<strong>“TherapyFormatsGeMTC” データセット</strong>
+</p>
+<p>
+<code>TherapyFormatsGeMTC</code> データセットは
+<strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+をインストールし、ライブラリからロードした後、
+<code>data(TherapyFormatsGeMTC)</code>
+を実行すると、自動的にデータセットが <em>R</em>
+環境にセーブされる。これでデータセットが利用できるようになる。もし、<strong>{dmetar}</strong>
+がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/TherapyFormatsGeMTC.rda">インターネット</a>
+から <em>.rda</em>
+ファイルとしてダウンロードし、作業ディレクトリに保存した後、R Studio
+のウィンドウでクリックするとインポートすることが可能である。
+</p>
+</div>
+<p><code>TherapyFormatsGeMTC</code> データセットは、2つの要素を持つリストで、そのうちの1つは <code>data</code> と呼ばれるものである。この要素は、モデルを適合させるために必要なデータフレームである。それでは、見ていこう。</p>
+<div class="sourceCode" id="cb410"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">TherapyFormatsGeMTC</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##          study   diff std.err treatment
+## 1 Ausbun, 1997  0.092   0.195       ind
+## 2 Ausbun, 1997     NA      NA       grp
+## 3 Crable, 1986 -0.675   0.350       ind
+## 4 Crable, 1986     NA      NA       grp
+## 5 Thiede, 2011 -0.107   0.198       ind
+## 6 Thiede, 2011     NA      NA       grp</code></pre>
+<p><strong>{gemtc}</strong> パッケージを使う際は、データフレームの列名を<strong>{gemtc}</strong> が指定する列名にする必要がある。連続的な結果 (平均差や標準化平均差など) に基づく効果量を使用する場合、以下の列名が必要である。</p>
+<ul>
+<li><p><strong><code>study</code></strong>. この列には、ネットワークに含まれる各研究の (ユニークな) ラベルが含まれ、<strong>{netmeta}</strong>で使用されている <code>studlab</code> 列と同じである。</p></li>
+<li><p><strong><code>treatment</code></strong>. この列は治療法のラベルまたは短縮コードを含む。</p></li>
+<li><p><strong><code>diff</code></strong>. この列には、比較のために計算された効果量 (例えば、標準化された平均差) が含まれる。<code>diff</code> 列には、比較で使用された参照治療の行は<code>NA</code> (欠損) とする必要がある。そして、参照治療が比較された治療の行には、この比較のために計算された実際の効果量が格納される。また、参照カテゴリは、<strong>比較単位</strong>ではなく、<strong>試験単位</strong>で定義されていることに留意されたい。これは、多群間試験において、他のすべての治療が比較される参照治療は1つしかないことを意味する。例えば、3群間研究では、2つの効果量を含める必要がある。1つは参照グループと比較した第一治療、もう1つは参照グループと比較した第二治療の効果量である。</p></li>
+<li><p><strong><code>std.err</code></strong>. この列は、効果量の標準誤差を含む。参照群では<code>NA</code>に設定され、参照群と比較された治療法の行でのみ定義される。</p></li>
+</ul>
+<p>２値アウトカムのデータなど、他のデータ入力フォーマットも可能である。効果量データの種類によって、データセットがどのように構成される必要があるかは、<strong>{gemtc}</strong> のドキュメントで詳しく説明されている。コンソールで <code><a href="https://rdrr.io/pkg/gemtc/man/mtc.model.html">?mtc.model</a></code> を実行し、“Details” セクションにスクロールすることでアクセスが可能である。</p>
+<p><br></p>
+</div>
+<div id="ネットワークグラフ-1" class="section level4" number="12.3.3.2">
+<h4>
+<span class="header-section-number">12.3.3.2</span> ネットワークグラフ<a class="anchor" aria-label="anchor" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B0%E3%83%A9%E3%83%95-1"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>さて、データの準備ができたので、これを <code>mtc.network</code> 関数に渡す。これにより、<code>mtc.network</code> クラスのオブジェクトが生成され、後のモデル作成段階で使用することが可能である。あらかじめ計算された効果量データを使用するため、<code>mtc.network</code> の <code>data.re</code> 引数でデータセットを指定する必要がある。生の効果量データ (例: 平均、標準偏差、サンプルサイズ) を使用する場合は、<code>data.ab</code> 引数を使用することになる。</p>
+<p>オプションの <code>treatments</code> 引数を使用すると、ネットワークに含まれるすべての治療の実際の名前を <strong>{gemtc}</strong> に提供することが可能である。この際、データフレームの列名は <code>id</code> と <code>description</code> でなければならない。ここでは事前にデータフレームを作成し、<code>TherapyFormatsGeMTC</code>に <code>treat.codes</code> として保存してある。</p>
+<div class="sourceCode" id="cb412"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">treat.codes</span></span></code></pre></div>
+<pre><code>##    id        description
+## 1 ind         Individual
+## 2 grp              Group
+## 3 gsh   Guided Self-Help
+## 4 tel          Telephone
+## 5 wlc           Waitlist
+## 6 cau      Care As Usual
+## 7 ush Unguided Self-Help</code></pre>
+<p>このデータフレームと <code>TherapyFormatsGeMTC</code> の効果量データを使って、 <code>mtc.network</code> オブジェクトを作成する。それを <code>network</code> という名前で保存する。</p>
+<div class="sourceCode" id="cb414"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">network</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.network.html">mtc.network</a></span><span class="op">(</span>data.re  <span class="op">=</span> <span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">data</span>,</span>
+<span>                       treatments <span class="op">=</span> <span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">treat.codes</span><span class="op">)</span></span></code></pre></div>
+<p>作成されたオブジェクトを <code>summary</code> 関数に代入すると、すでにネットワークに関する興味深い情報を得ることが可能である。</p>
+<div class="sourceCode" id="cb415"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">network</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## $Description
+## [1] "MTC dataset: Network"
+## 
+## $`Studies per treatment`
+## ind grp gsh tel wlc cau ush 
+##  62  52  57  11  83  74  26  
+## 
+## $`Number of n-arm studies`
+## 2-arm 3-arm 
+##   181     1 
+## 
+## $`Studies per treatment comparison`
+##     t1  t2 nr
+## 1  ind tel  4
+## 2  ind wlc 18
+## 3  grp ind  7
+## [...]</code></pre>
+<p></p>
+<p>また、<code>plot</code>関数を使用してネットワークプロットを生成することもが可能である。<strong>{netmeta}</strong> パッケージで生成されたネットワークと同様に、エッジの太さはその比較に含めた研究数に対応している。</p>
+<div class="sourceCode" id="cb417"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">network</span>, </span>
+<span>     use.description <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># 完全な治療名を使用</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-391-1.png" width="55%" style="display: block; margin: auto;"></div>
+<p>別の方法として、<strong>Fruchterman-Reingold アルゴリズム</strong>を用いて、ネットワークのより良い視覚化を作成できるかどうかを確認することもが可能である。このアルゴリズムには固有のランダム性があるため、結果を再現できるように seed を設定する必要がある。</p>
+<p>ネットワークプロットは <strong>{igraph}</strong> パッケージ <span class="citation">(<a href="references.html#ref-igraph">Csardi and Nepusz 2006</a>)</span> を使って作成される。このパッケージがインストールされ、ロードされたとき、プロットの外観を変えるために他の引数も使うことが可能である。異なるスタイルオプションの詳細な説明はオンラインの <strong>{igraph}</strong> <a href="https://igraph.org/r/doc/plot.common.html">manual</a> にある。</p>
+<div class="sourceCode" id="cb418"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/">igraph</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span> <span class="co"># 再現性のため seed を設定</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">network</span>, </span>
+<span>     use.description <span class="op">=</span> <span class="cn">TRUE</span>,            <span class="co"># 完全な治療名を使用</span></span>
+<span>     vertex.color <span class="op">=</span> <span class="st">"white"</span>,            <span class="co"># ノードの色</span></span>
+<span>     vertex.label.color <span class="op">=</span> <span class="st">"gray10"</span>,     <span class="co"># treatment ラベルの色</span></span>
+<span>     vertex.shape <span class="op">=</span> <span class="st">"sphere"</span>,           <span class="co"># ノードの形</span></span>
+<span>     vertex.label.family <span class="op">=</span> <span class="st">"Helvetica"</span>, <span class="co"># ラベルのフォント</span></span>
+<span>     vertex.size <span class="op">=</span> <span class="fl">20</span>,                  <span class="co"># ノードの大きさ</span></span>
+<span>     vertex.label.dist <span class="op">=</span> <span class="fl">2</span>,             <span class="co"># ラベルとノード中心の距離</span></span>
+<span>     vertex.label.cex <span class="op">=</span> <span class="fl">1.5</span>,            <span class="co"># ノードラベルの大きさ</span></span>
+<span>     edge.curved <span class="op">=</span> <span class="fl">0.2</span>,                 <span class="co"># エッジのカーブ</span></span>
+<span>     layout <span class="op">=</span> <span class="va">layout.fruchterman.reingold</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-393-1.png" width="55%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="モデルのコンパイル" class="section level4" number="12.3.3.3">
+<h4>
+<span class="header-section-number">12.3.3.3</span> モデルのコンパイル<a class="anchor" aria-label="anchor" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%AB"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p><code>mtc.network</code> オブジェクトを使用して、モデルの指定とコンパイルを開始することが可能である。<strong>{gemtc}</strong> パッケージの素晴らしいところは、ベイズ推定プロセスのほとんどの部分を自動化できることである。例えば、モデル中のすべてのパラメータに対して適切な事前分布を選択することが可能である。</p>
+<p></p>
+<p>このように、<code>mtc.model</code> 関数を用いてモデルをコンパイルする際に指定しなければならない引数はごくわずかである。まず、前に作成した <code>mtc.network</code> オブジェクトを指定する。さらに、<code>linearModel</code> 引数を用いて、ランダム効果モデルか固定効果モデルのどちらを使用するかを決定しなければならない。頻度論的分析では、かなりの異質性と非一貫性が見られたため (Chapter <a href="netwma.html#net-heat-plot">12.2.2.4.1</a> 参照)、<code>linearModel = "random"</code> を使用する。また、使用する<strong>マルコフ連鎖</strong>の数を指定する必要がある。ここでは、3から4の間の値が賢明で、<code>n.chain = 4</code> とする。</p>
+<p>さらに、オプションで <code>likelihood</code> と <code>link</code> という2つの引数を指定することが可能である。この2つの引数は、使用している効果量データの種類によって異なり、明示的に指定しない限りは <strong>{gemtc}</strong> によって自動的に推測される。我々は連続的な結果データ (SMD など) に基づく効果量を扱っているので、「正規」 (normal) の尤度と 「同一」 (indetity) のリンクを仮定している。</p>
+<p>２値アウトカム (対数オッズ比など) を使用していた場合、適切な尤度 (likelyhood) とリンク (link) はそれぞれ <code>"binom"</code> (二項) と <code>"logit"</code> である。これに関する詳細は <code>mtc.model</code> のドキュメントに記載されている。しかし、前のステップでデータが正しく準備されている場合には、通常 <code>mtc.model</code> は自動的に正しい設定を選択する。</p>
+<div class="sourceCode" id="cb419"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># コンパイル済みモデルを "model" と命名</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.model.html">mtc.model</a></span><span class="op">(</span><span class="va">network</span>,</span>
+<span>                   likelihood <span class="op">=</span> <span class="st">"normal"</span>,</span>
+<span>                   link <span class="op">=</span> <span class="st">"identity"</span>,</span>
+<span>                   linearModel <span class="op">=</span> <span class="st">"random"</span>,</span>
+<span>                   n.chain <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="マルコフ連鎖モンテカルロ法サンプリング" class="section level4" number="12.3.3.4">
+<h4>
+<span class="header-section-number">12.3.3.4</span> マルコフ連鎖モンテカルロ法サンプリング<a class="anchor" aria-label="anchor" href="#%E3%83%9E%E3%83%AB%E3%82%B3%E3%83%95%E9%80%A3%E9%8E%96%E3%83%A2%E3%83%B3%E3%83%86%E3%82%AB%E3%83%AB%E3%83%AD%E6%B3%95%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p></p>
+<p>さて、いよいよ分析の重要な部分であるマルコフ連鎖モンテカルロ法 (MCMC) サンプリングに入る。MCMCシミュレーションは、パラメータの事後分布を推定し、ネットワークメタ分析の結果を生成することが可能である。この手順で達成したい重要な望みが2つある。</p>
+<ul>
+<li><p>マルコフ連鎖モンテカルロ法の最初の数回の実行が、シミュレーションの結果に大きな影響を与えないようにしたい。</p></li>
+<li><p>マルコフ連鎖モンテカルロ法は、モデルパラメータの正確な推定値を得るために十分な時間実行する必要がある (すなわち、<strong>収束</strong>する必要がある)。</p></li>
+</ul>
+<p>これらの点を解決するために、マルコフ連鎖モンテカルロ法のアルゴリズムがモデル結果を推論するために反復する回数を<strong>2つのフェーズ</strong>に分割した: まず、<strong>burn-in</strong>反復回数 (<code>n.adapt</code>) を定義し、その結果は破棄される。次のフェーズでは、モデルパラメータの推定に実際に使用するシミュレーションの反復回数 (<code>n.iter</code>) を指定する。</p>
+<p>通常、多くの反復計算を行うため、<code>thin</code>引数を指定することで、<span class="math inline">\(i\)</span>番目の反復計算の値のみを抽出することもできる。これにより、必要なコンピュータのメモリを削減することが可能である。</p>
+<p>シミュレーションは <code>mtc.run</code> 関数を用いて行うことができる。この例では、異なる設定で2回実行し、どちらがより効果的かを比較する。コンパイルした <code>model</code> オブジェクトを関数に与え、先ほど説明したパラメータを指定する必要がある。</p>
+<p>まず、数回の繰り返しのシミュレーションをおこない、次に、大きな繰り返しのシミュレーションをおこなう。両方のオブジェクトをそれぞれ <code>mcmc1</code> と <code>mcmc2</code> という名前で保存する。ネットワークの大きさによっては、シミュレーションが終了するまでに時間がかかることがある。</p>
+<div class="sourceCode" id="cb420"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mcmc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.run.html">mtc.run</a></span><span class="op">(</span><span class="va">model</span>, n.adapt <span class="op">=</span> <span class="fl">50</span>, n.iter <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">mcmc2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.run.html">mtc.run</a></span><span class="op">(</span><span class="va">model</span>, n.adapt <span class="op">=</span> <span class="fl">5000</span>, n.iter <span class="op">=</span> <span class="fl">1e5</span>, thin <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="bayesian-model-convergence" class="section level4" number="12.3.3.5">
+<h4>
+<span class="header-section-number">12.3.3.5</span> モデルの収束を評価<a class="anchor" aria-label="anchor" href="#bayesian-model-convergence"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>シミュレーションの結果、アルゴリズムが収束したかどうか、また、どの設定が好ましいかを確認するために、<code>mcmc1</code> と <code>mcmc2</code> オブジェクトの出力をいくつか評価することが可能である。 <code>plot</code> 関数を使用することは、良いスタートである。これは、すべての反復における各治療比較について、一般的に<strong>trace plot</strong>と呼ばれる一種の 「時系列」を提供する。この例では、個人セラピー (<code>ind</code>) と待機者コントロール (<code>wlc</code>) の比較の推定値にのみ焦点を当てる。</p>
+<div class="sourceCode" id="cb421"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mcmc1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mcmc2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Doing_Meta_Analysis_in_R_files/figure-html/ch14-1353-1.png" width="50%" style="display: block; margin: auto;"><img src="Doing_Meta_Analysis_in_R_files/figure-html/ch14-1353-2.png" width="50%" style="display: block; margin: auto;"></p>
+<p><code>mcmc1</code> の前半と後半の繰り返しを比較すると、時系列全体のトレンドに若干の不連続性があることがわかる。4種類の連鎖の推定値 (4本の線) は、プロットの前半から後半に移るときに、そのコースがわずかに異なっている。一方、<code>mcmc2</code> のプロットでは、上下の変動はより急激であるが、長期的なトレンドは見られない。これは、<code>mcmc2</code> の設定がより適切であることを示す最初の兆候である<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;信頼性のため、推定パラメータのマルコフ連鎖は、シミュレーションの過程で&lt;strong&gt;静態性&lt;/strong&gt; (stationarity) に到達している必要がある。これはすべての線が共通の安定した平均値の周りにランダムに散らばることを意味する。このポイントに達すると、トレースプロットの鎖は典型的に “fat hairy caterpillar” &lt;span class="citation"&gt;(&lt;a href="references.html#ref-lunn2012bugs"&gt;Lunn et al. 2012, chap. 4.4.1&lt;/a&gt;)&lt;/span&gt; に類似する。&lt;/p&gt;'><sup>66</sup></a>。</p>
+<p>事後効果量推定値の密度プロットを見ることで、収束の評価を続けることが可能である。<code>mcmc1</code> の分布はまだ滑らかな正規分布から多少乖離しているが、<code>mcmc2</code> の結果は古典的なベルカーブに近づいていることがわかる。</p>
+<p><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-397-1.png" width="50%"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-397-2.png" width="50%"></p>
+<p></p>
+<p>収束を評価するのに非常に有用なもう一つの方法は、<strong>Gelman-Rubin プロット</strong>である。このプロットは、いわゆる<strong>潜在的スケール削減係数</strong> (Potential Scale Reduction Factor, PSRF) (訳注 PSRF の訳語はまだ定まっていない。) を示し、各チェーン内のばらつきとチェーン間のばらつきを比較し、両者が時間とともにどのように発展していくかを示している。収束した場合、PRSF は反復回数の増加とともに徐々にゼロまで縮小し、最終的には少なくとも 1.05 以下になるはずである。</p>
+<p>このプロットを作成するには、<code>mtc.run</code> オブジェクトを <code>gelman.plot</code> 関数に代入するだけでよい。両方のシミュレーションの結果を示す (ここでも <code>ind</code> と <code>wlc</code> の比較のみ)。</p>
+<div class="sourceCode" id="cb422"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/gelman.plot.html">gelman.plot</a></span><span class="op">(</span><span class="va">mcmc1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/gelman.plot.html">gelman.plot</a></span><span class="op">(</span><span class="va">mcmc2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-399-1.png" width="50%"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-399-2.png" width="50%"></p>
+<p>また、このコードを使って、モデルの<strong>全体的な</strong> PSRF に直接アクセスすることが可能である。</p>
+<div class="sourceCode" id="cb423"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/gelman.diag.html">gelman.diag</a></span><span class="op">(</span><span class="va">mcmc1</span><span class="op">)</span><span class="op">$</span><span class="va">mpsrf</span></span></code></pre></div>
+<pre><code>## [1] 1.034131</code></pre>
+<div class="sourceCode" id="cb425"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/gelman.diag.html">gelman.diag</a></span><span class="op">(</span><span class="va">mcmc2</span><span class="op">)</span><span class="op">$</span><span class="va">mpsrf</span></span></code></pre></div>
+<pre><code>## [1] 1.000351</code></pre>
+<p>両方のシミュレーションで PRSF は閾値を下回っているが、<code>mcmc2</code> の値はずっと低く、1に非常に近いことがわかる。これは、2番目のモデルを使用すべきことを示している。</p>
+<p><br></p>
+</div>
+<div id="非一貫性の評価-ノード分割法" class="section level4" number="12.3.3.6">
+<h4>
+<span class="header-section-number">12.3.3.6</span> 非一貫性の評価: ノード分割法<a class="anchor" aria-label="anchor" href="#%E9%9D%9E%E4%B8%80%E8%B2%AB%E6%80%A7%E3%81%AE%E8%A9%95%E4%BE%A1-%E3%83%8E%E3%83%BC%E3%83%89%E5%88%86%E5%89%B2%E6%B3%95"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p><strong>{netmeta}</strong> パッケージと同様に、<strong>{gemtc}</strong> パッケージもネットワークモデルの一貫性を評価する方法を提供している。すなわち、ノード分割 (<em>nodesplit</em>) 法である (Dias et al., 2010)。この手順の考え方は、以前説明した net splitting 法のものと似ている (Chapter <a href="netwma.html#net-splitting">12.2.2.4.2</a>)。ノード分割分析を行うには、<code>mtc.nodesplit</code> 関数を使用し、<code>mcmc2</code> と同じ設定を使用する。解析結果は <code>nodesplit</code> という名前で保存しよう。</p>
+<p><em>nodesplit</em> モデルの計算には、ネットワークの複雑さによっては数時間かかることがある。</p>
+<p>
+</p>
+<div class="sourceCode" id="cb427"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nodesplit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.nodesplit.html">mtc.nodesplit</a></span><span class="op">(</span><span class="va">network</span>, </span>
+<span>                           linearModel <span class="op">=</span> <span class="st">"random"</span>, </span>
+<span>                           likelihood <span class="op">=</span> <span class="st">"normal"</span>,</span>
+<span>                           link <span class="op">=</span> <span class="st">"identity"</span>,</span>
+<span>                           n.adapt <span class="op">=</span> <span class="fl">5000</span>, </span>
+<span>                           n.iter <span class="op">=</span> <span class="fl">1e5</span>, </span>
+<span>                           thin <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p><code>summary</code> 関数を使用すると、結果を表示することができる。</p>
+<div class="sourceCode" id="cb428"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">nodesplit</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Node-splitting analysis of inconsistency
+## ========================================
+## 
+##    comparison  p.value CrI                  
+## 1  d.ind.tel   0.62785                      
+## 2  -&gt; direct           0.13 (-0.39, 0.64)   
+## 3  -&gt; indirect         -0.037 (-0.46, 0.38) 
+## 4  -&gt; network          0.034 (-0.30, 0.36)  
+## 5  d.ind.wlc   0.87530                      
+## 6  -&gt; direct           1.0 (0.74, 1.3)      
+## 7  -&gt; indirect         0.97 (0.71, 1.2)     
+## 8  -&gt; network          0.98 (0.80, 1.2)     
+## 9  d.ind.grp   0.61380                      
+## 10 -&gt; direct           0.14 (-0.29, 0.57)   
+## 11 -&gt; indirect         0.26 (0.044, 0.48)   
+## 12 -&gt; network          0.24 (0.041, 0.43)   
+## [...]</code></pre>
+<p>この関数の出力は、直接証拠のみ、間接証拠のみ、利用可能なすべての証拠を用いた場合の、異なる比較の効果についての結果を示している。直接証拠と間接証拠を用いた異なる推定値は、非一貫性の存在を示唆する。ベイズの <code>p.value</code> 列を見ることによって、これをコントロールすることが可能である。<span class="math inline">\(p&lt;\)</span> 0.05の1つ以上の比較は、このネットワークに非一貫性があることを示すので、問題がある。出力から、この (ランダム効果モデルの) 例では非一貫ではないことがわかる。</p>
+<p>ノード分割法によって複数の推定値に非一貫性を示す場合、デザイン間の潜在的な差異について、含まれる<strong>すべての</strong>エビデンスを再度確認することが重要である。例えば、AとBを比較した研究では、Aを評価した他の研究とは系統的に異なる母集団が含まれている可能性がある。</p>
+<p>もう一つのアプローチは、研究の賢明な部分集合のみがネットワークに含まれる場合に、非一貫性が持続するかどうかを確認することである。最後に、後述するネットワークメタ回帰を実行することによって、非一貫性の理由を評価することも可能である。</p>
+<p></p>
+<p>ノードスプリットモデルに対して、<code>plot</code> 関数を用いてフォレストプロットを生成することも可能である。しかし、先に nodesplit オブジェクトを <code>summary</code> に代入後、フォレストプロットが生成される。</p>
+<div class="sourceCode" id="cb430"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">nodesplit</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
+<div class="inline-figure"><img src="images/nodesplit_forest_sep.png" width="90%" style="display: block; margin: auto;"></div>
+<p><br></p>
+</div>
+<div id="ネットワークメタ解析結果の生成" class="section level4" number="12.3.3.7">
+<h4>
+<span class="header-section-number">12.3.3.7</span> ネットワークメタ解析結果の生成<a class="anchor" aria-label="anchor" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E8%A7%A3%E6%9E%90%E7%B5%90%E6%9E%9C%E3%81%AE%E7%94%9F%E6%88%90"><i class="fas fa-link"></i></a>
+</h4>
+<hr>
+<p>さて、ネットワークメタ分析モデルを適合させ、それが信頼できるものであると確信したところで、いよいよ結果を出すときが来た。</p>
+<p>前に述べたように、ネットワークメタ分析で答えたい主な疑問は、どの治療が一番よく効くかということである。この質問に答えるために、まず <code>rank.probability</code> 関数を実行することが可能である。この関数は、ある治療法が最も良い選択である確率、2番目に良い選択である確率、3番目に良い選択である確率、などを計算する。この関数は入力として <code>mcmc2</code> オブジェクトを必要とし、さらに <code>preferredDirection</code> という引数を指定する。もし、より小さい (つまり、負の) 効果量がより良い結果を示すのであれば、この引数を <code>-1</code> に設定する。それ以外の場合は <code>1</code> を使用する。</p>
+<p>結果は <code>rank</code> という名前で保存され、いわゆる <strong>rankogram</strong> を用いて可視化される。</p>
+<div class="sourceCode" id="cb431"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rank</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/rank.probability.html">rank.probability</a></span><span class="op">(</span><span class="va">mcmc2</span>, preferredDirection <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">rank</span>, beside<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-408-1.png" width="65%" style="display: block; margin: auto;"></div>
+<p>このプロットでは、個人セラピー (ind) はおそらくこのネットワークで最良の治療オプションであることがわかる。なぜなら、ind の最初の棒 (1位を意味する) が最も大きいからである。この発見は、同じパターンを発見した頻度論的分析の結果と一致する。</p>
+<p>さらに、<code>forest</code> 関数を用いて、結果のフォレストプロットを作成することもできる。これを行うには、まず results オブジェクトを <code>relative.effect</code> 関数に入れ、参照治療である <code>t1</code> を指定する必要がある。ここでも参照群として care as usual (<code>"cau"</code>) を使用する。そして、結果に対して <code>forest</code> 関数を呼び出し、プロットを生成する。</p>
+<div class="sourceCode" id="cb432"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/blobbogram.html">forest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/relative.effect.html">relative.effect</a></span><span class="op">(</span><span class="va">mcmc2</span>, t1 <span class="op">=</span> <span class="st">"cau"</span><span class="op">)</span>, </span>
+<span>       use.description <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># 完全な治療名を使用</span></span>
+<span>       xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-410-1.png" width="80%" style="display: block; margin: auto;"></div>
+<p></p>
+<p>頻度論的ネットワークメタ分析の章では、ネットワーク内のどの治療が最も効果的であるかを評価するメトリックとして P-score をすでに取り上げた。P-スコアに相当するのは、<strong>Surface Under the Cumulative Ranking</strong> (SUCRA)スコアで、これは次のように計算が可能である <span class="citation">(<a href="references.html#ref-salanti2011graphical">Salanti, Ades, and Ioannidis 2011</a>)</span>。</p>
+<p><span class="math display" id="eq:nw16">\[\begin{equation}
+\text{SUCRA}_j = \frac{\sum_{b=1}^{a-1}\text{cum}_{jb}}{a-1}
+\tag{12.16}
+\end{equation}\]</span></p>
+<p>ここで、<span class="math inline">\(j\)</span> は何らかの治療法、<span class="math inline">\(a\)</span> は全ての競合する治療法、<span class="math inline">\(b\)</span> は <span class="math inline">\(b = 1, 2, \dots, a-1\)</span> の最良治療法、<span class="math inline">\(\text{cum}\)</span> はある治療法が <span class="math inline">\(b\)</span> 個の最良治療法の中にある<strong>累積確率</strong> を表す。 <em>R</em> で SUCRA スコアを計算するには、<code>sucra</code> 関数を使用する。</p>
+<p></p>
+<div class="boxdmetar">
+<p>
+<strong>“sucra” 関数</strong>
+</p>
+<p>
+<code>sucra</code> 関数は <strong>{dmetar}</strong>
+パッケージに含まれている。<strong>{dmetar}</strong>
+がインストールされ、コンピュータに読み込まれると、この関数を使用できるようになる。もし、<strong>{dmetar}</strong>
+をインストールしていない場合は、以下の手順でインストールできる。
+</p>
+<ol style="list-style-type: decimal">
+<li>
+関数の <a href="https://raw.githubusercontent.com/MathiasHarrer/dmetar/master/R/sucra.R">online</a>
+のソースコードにアクセスする。
+</li>
+<li>
+ソースコード全体をコンソール(R
+Studioの左下ペイン)にコピー＆ペーストし、「Enter」キーを押して、
+<em>R</em> に関数を「学習」させる。
+</li>
+<li>
+<strong>{ggplot2}</strong>
+パッケージがインストールされ、ロードされていることを確認する。
+</li>
+</ol>
+</div>
+<p><code>sucra</code> 関数は入力として <code>rank.probability</code> オブジェクトだけを必要とするが、ここでは値が小さいほど良い結果を示すかことを指定する必要がある。これは <code>lower.is.better</code> という引数を用いて行うことが可能である。どのような結果が得られるか見てみよう。</p>
+<div class="sourceCode" id="cb433"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
+<span><span class="va">rank.probability</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/rank.probability.html">rank.probability</a></span><span class="op">(</span><span class="va">mcmc2</span><span class="op">)</span></span>
+<span><span class="va">sucra</span> <span class="op">&lt;-</span> <span class="fu">dmetar</span><span class="fu">::</span><span class="fu"><a href="http://dmetar.protectlab.org/reference/sucra.html">sucra</a></span><span class="op">(</span><span class="va">rank.probability</span>, lower.is.better <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sucra</span></span></code></pre></div>
+<pre><code>##         SUCRA
+## ind 0.9225292
+## tel 0.8516583
+## gsh 0.6451292
+## [...]</code></pre>
+<div class="sourceCode" id="cb435"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sucra</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-414-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>各治療の SUCRA 値を見ると、やはり個別治療 (ind) が最も良い選択肢と思われ、次いで電話による治療 (tel)、ガイド付きセルフヘルプ (gsh) が続く。</p>
+<p>通常は、モデルに基づく各治療比較の効果量推定値を報告したい。治療効果表は、 <code>relative.effect.table</code> 関数を用いてエクスポートする。この関数の結果は <code>result</code> というオブジェクトに保存され、.csv ファイルとしてエクスポートすることも可能である。</p>
+<p><code>relative.effect.table</code> 関数は、推定効果と各比較の信頼区間を含む治療比較行列を自動的に作成する。</p>
+<div class="sourceCode" id="cb436"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/relative.effect.table.html">relative.effect.table</a></span><span class="op">(</span><span class="va">mcmc2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">results</span>, file <span class="op">=</span> <span class="st">"results.csv"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+</div>
+<div id="ネットワークメタ回帰" class="section level3" number="12.3.4">
+<h3>
+<span class="header-section-number">12.3.4</span> ネットワークメタ回帰<a class="anchor" aria-label="anchor" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%9B%9E%E5%B8%B0"><i class="fas fa-link"></i></a>
+</h3>
+<hr>
+<p>
+</p>
+<p><strong>{gemtc}</strong> パッケージの大きな特徴は、<strong>ネットワークメタ回帰</strong>を行うことができる点である。従来のメタ回帰と同様に、この機能を使って、特定の研究特性がネットワークで発見された効果量の大きさに影響を与えるかどうかを判断することが可能である。また、非一貫性を説明する可能性のある変数をチェックするのに便利なツールである。</p>
+<p></p>
+<p>研究のバイアスのリスクが、ネットワークメタ分析における効果に影響を与えるかどうかを評価したいとする。たとえば、バイアス・リスクの高い研究は、一般に、対照群または代替治療と比較して、より高い効果を報告することが考えられる。モデルに予測因子として偏りのリスクを含めることで、そのような関連をコントロールし、結果への影響を評価することが可能である。</p>
+<p><strong>{gemtc}</strong> でネットワークメタ回帰を実行するには、共変量なしのベイズネットワークメタ分析モデルを適合させたときと同様のステップを踏む必要がある。まず、<code>mtc.network</code> を使用してネットワークを設定する必要がある。しかし、今回は <code>studies</code> という追加の引数を指定する。この引数には、各研究の予測変数の情報を格納したデータフレームを指定する。<code>TherapyFormatsGeMTC</code> データセットには、<code>study.info</code> という要素があり、各研究のバイアスリスクが格納されている。</p>
+<p>それでは、データを簡単に見てみよう。</p>
+<div class="sourceCode" id="cb437"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">study.info</span></span></code></pre></div>
+<pre><code>##                        study rob
+## 1             Campbell, 2000   1
+## 2             Reynolds, 1989   1
+## 3            Carpenter, 1994   0
+## 4             Shrednik, 2000   1
+## [...]</code></pre>
+<p></p>
+<p>このデータセットには2つの列が含まれている。<code>study</code> はネットワークに含まれる研究の名前、<code>rob</code> はそのバイアスリスクである。study のラベルは、実際の効果量データセットで使用されているものと完全に同一である必要があることに注意する必要がある。<code>rob</code> 変数はダミーコードの予測変数で、<code>0</code> は低バイアスリスク、<code>1</code> は高バイアスリスクを示す。<code>study.info</code> データフレームを使用して、<code>mtc.network</code> でメタ回帰ネットワークを作成することが可能である。</p>
+<div class="sourceCode" id="cb439"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">network.mr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.network.html">mtc.network</a></span><span class="op">(</span>data.re <span class="op">=</span> <span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">data</span>,</span>
+<span>                          studies <span class="op">=</span> <span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">study.info</span>,</span>
+<span>                          treatments <span class="op">=</span> <span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">treat.codes</span><span class="op">)</span></span></code></pre></div>
+<p>ここで、ネットワークメタ分析モデルに含めたい<strong>回帰因子</strong>を定義する必要がある。これは、3つの要素を持つリストオブジェクトを生成することで行うことが可能である。</p>
+<ul>
+<li><p><strong><code>coefficient</code></strong>: この要素は、ネットワークメタ分析に含まれるすべての治療にわたる (高) バイアスリスクの効果について、1つの共有係数を推定したいので、<code>"shared"</code> に設定する。</p></li>
+<li><p><strong><code>variable</code></strong>: 予測変数として使用したい変数の名前を指定する (ここでは <code>"rob"</code>)。</p></li>
+<li><p><strong><code>control</code></strong>: 参照グループとして使用する治療法も指定しなければならない。この例では、<code>"cau"</code> (care as usual) を使用する。</p></li>
+</ul>
+<div class="sourceCode" id="cb440"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">regressor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>coefficient <span class="op">=</span> <span class="st">"shared"</span>,</span>
+<span>                  variable <span class="op">=</span> <span class="st">"rob"</span>,</span>
+<span>                  control <span class="op">=</span> <span class="st">"cau"</span><span class="op">)</span></span></code></pre></div>
+<p>次に、モデルをコンパイルする。先ほど生成したネットワークを <code>mtc.model</code> 関数に与え、モデルのタイプを <code>"regression"</code> に設定し、先ほど生成した <code>regressor</code> オブジェクトを関数の引数に与える。出力結果は <code>model.mr</code> という名前で保存される。</p>
+<div class="sourceCode" id="cb441"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model.mr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.model.html">mtc.model</a></span><span class="op">(</span><span class="va">network.mr</span>,</span>
+<span>                      likelihood <span class="op">=</span> <span class="st">"normal"</span>,</span>
+<span>                      link <span class="op">=</span> <span class="st">"identity"</span>,</span>
+<span>                      type <span class="op">=</span> <span class="st">"regression"</span>,</span>
+<span>                      regressor <span class="op">=</span> <span class="va">regressor</span><span class="op">)</span></span></code></pre></div>
+<p>このステップの後、<code>mtc.run</code>関数を用いてモデルを実行することが可能である。<code>mcmc2</code> モデルのフィッティングに使用したのと同じ仕様を使用する。結果は <code>mcmc3</code> として保存される。</p>
+<div class="sourceCode" id="cb442"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mcmc3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/mtc.run.html">mtc.run</a></span><span class="op">(</span><span class="va">model.mr</span>,</span>
+<span>                 n.adapt <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>                 n.iter <span class="op">=</span> <span class="fl">1e5</span>,</span>
+<span>                 thin <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p>では、<code>summary</code> 関数を使って結果を解析してみよう。</p>
+<div class="sourceCode" id="cb443"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mcmc3</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Results on the Mean Difference scale
+## [...]
+## 
+## 1. Empirical mean and standard deviation for each variable,
+##    plus standard error of the mean:
+## 
+##              Mean      SD  Naive SE Time-series SE
+## d.ind.cau  0.6992 0.07970 0.0003985      0.0004201
+## d.ind.grp  0.1933 0.10009 0.0005005      0.0005321
+## [...]
+## B         -0.3297 0.13047 0.0006523      0.0010379
+## 
+## 2. Quantiles for each variable:
+## 
+##                2.5%      25%      50%     75%    97.5%
+## d.ind.cau  0.542044  0.64602  0.69967  0.7529  0.85571
+## d.ind.grp -0.002622  0.12599  0.19353  0.2608  0.38962
+## [...]
+## B         -0.586266 -0.41790 -0.32957 -0.2417 -0.07455
+## 
+## [...]
+## -- Regression settings:
+## 
+## Regression on "rob", shared coefficients, "cau" as control
+## Input standardized: x' = (rob - 0.4340659) / 1
+## Estimates at the centering value: rob = 0.4340659</code></pre>
+<p>予測変数の結果は、<code>B</code>の隣に報告されている。予測変数はダミー・コード化されているので、 <code>B</code> の値は、バイアスの<strong>高い</strong>リスクを持つ研究の効果を表す。推定値は <span class="math inline">\(b=\)</span> -0.33 で、2番目の表 (<code>Quantiles for each variable</code>) を見ると、<span class="math inline">\(b\)</span> の95% 信頼区間が -0.59 から -0.08 までであることがわかる。信頼区間には0が含まれないので、バイアスのリスクは確かに結果に影響すると結論づけられるであろう。バイアスのリスクが高いとき (<code>rob</code> = 1)、より高い全体効果を予測が可能である (この例では、負の効果量は「より良い」結果を示している)。</p>
+<p>2つのフォレストプロットを生成することにより、予測変数の効果をさらに調査することができる。1つは、バイアスリスクが高いときの推定治療効果で、もう1つは、それが低いときのものである。これは <code>relative.effect</code> 関数を用いて行うことができ、ここで <code>covariate</code> 値を指定する。<code>covariate = 0</code> はバイアスリスクの低い研究を表し、<code>covariate = 1</code> はバイアスリスクの高い研究を表す。</p>
+<div class="sourceCode" id="cb445"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/blobbogram.html">forest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/relative.effect.html">relative.effect</a></span><span class="op">(</span><span class="va">mcmc3</span>, t1 <span class="op">=</span> <span class="st">"cau"</span>, covariate <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>       use.description <span class="op">=</span> <span class="cn">TRUE</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/title.html">title</a></span><span class="op">(</span><span class="st">"High Risk of Bias"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/blobbogram.html">forest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/relative.effect.html">relative.effect</a></span><span class="op">(</span><span class="va">mcmc3</span>, t1 <span class="op">=</span> <span class="st">"cau"</span>, covariate <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>       use.description <span class="op">=</span> <span class="cn">TRUE</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/title.html">title</a></span><span class="op">(</span><span class="st">"Low Risk of Bias"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-424-1.png" width="80%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-425-1.png" width="80%" style="display: block; margin: auto;"></div>
+<p>フォレストプロットを比較すると、あるパターンが見えてくる。すなわち、バイアスリスクの高い研究に基づく治療効果は、一般に高い (よりマイナスである)。これは、予測変数の推定値と一致している。</p>
+<p></p>
+<p>最後に、先ほど生成したネットワークメタ回帰モデルが、先ほどの「通常の」ネットワークメタ分析モデルよりもデータにフィットしているかどうかを調べることもが可能である。これを行うには、<strong>逸脱度情報量規準</strong> (Deviance Information Criteria, DIC) を比較する。これは、頻度論統計学における AIC および BIC 値に相当する。以下のコードを用いて、<code>mcmc3</code> と <code>mcmc2</code> の両方の DIC にアクセスすることが可能である。</p>
+<div class="sourceCode" id="cb446"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mcmc3</span><span class="op">)</span><span class="op">$</span><span class="va">DIC</span></span></code></pre></div>
+<pre><code>##        Dbar          pD         DIC data points 
+##   185.82124    75.36609   261.18733   183.00000</code></pre>
+<div class="sourceCode" id="cb448"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mcmc2</span><span class="op">)</span><span class="op">$</span><span class="va">DIC</span></span></code></pre></div>
+<pre><code>##        Dbar          pD         DIC data points 
+##    185.5705    138.0150    323.5854    183.0000</code></pre>
+<p>メタ回帰モデルの DIC 値 (261.19) は、バイアスリスクをコントロールしなかった以前のモデル (DIC = 323.6) より低いことが出力からわかる。DIC 値が低いほど、適合度が高いことを示している。この知見に基づき、このネットワークメタ回帰モデルは、共変量なしのモデルよりもデータによく適合していると結論づけることが可能である。</p>
+<p></p>
+<div class="boxinfo">
+<p>
+<strong>更なる学習</strong>
+</p>
+<p>
+以上、 <em>R</em>
+を使ったネットワークメタ分析の簡単な紹介をした。ネットワークメタ分析の背後にある一般的な考え方、それに関連する仮定といくつかの注意点、ネットワークメタ分析を行うことができる2つの異なる統計的アプローチ、およびそれらが
+<em>R</em> でどのように実装されているかを説明した。
+</p>
+<p>
+ここで取り上げたことは、あくまで大まかな概要として捉えていただきたい。主な落とし穴をいくつか取り上げたが、実際にネットワークメタ分析を始めると、やはり行き詰まる可能性がある。
+</p>
+<p>
+ネットワークメタ分析について、またそれをどのように実際に適用できるかを知るための優れたリソースが、Dias
+et al. によって書かれた <em>Network Meta-Analysis for
+Decision-Making</em> である <span class="citation"><span class="citation">(<a href="references.html#ref-dias2018network">2018</a>)</span></span>。この本では、いくつかの実践例も紹介されており、オープンソースのソフトウェア
+<em>WinBUGS</em>
+を使用してネットワークメタ分析モデルを実行する方法が紹介されている。ネットワークメタ分析の「最先端」の短い
+(そしてかなり技術的な) 概要は、Efthimiou et
+al. によるオープンアクセス論文<span class="citation"><span class="citation">(<a href="references.html#ref-efthimiou2016getreal">2016</a>)</span></span>で見ることが可能である。
+</p>
+</div>
+<p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
+<p><br></p>
+</div>
+</div>
+<div id="演習問題-11" class="section level2" number="12.4">
+<h2>
+<span class="header-section-number">12.4</span> 演習問題<a class="anchor" aria-label="anchor" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-11"><i class="fas fa-link"></i></a>
+</h2>
+<div class="boxquestion">
+<p>
+<strong>知識を試そう！</strong>
+</p>
+<ol style="list-style-type: decimal">
+<li>
+ネットワークメタ分析はどのような場合に有用か？標準的なメタ分析と比較して、どのような利点があるか？
+</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>
+治療ネットワークにおける直接エビデンスと間接エビデンスの違いは何か？間接エビデンスの生成に直接エビデンスをどのように利用できるのか？
+</li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>
+ネットワークメタ分析における推移性 (transitivity)
+の仮定の主な考え方は何か？
+</li>
+</ol>
+<ol start="4" style="list-style-type: decimal">
+<li>
+推移性 (transitivity) と一貫性 (consistency) の関係は？
+</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li>
+ネットワークメタ分析に使用できる2つのモデリングアプローチを挙げなさい。どちらか一方が優れているか？
+</li>
+</ol>
+<ol start="6" style="list-style-type: decimal">
+<li>
+1つの試験から複数の比較を含める場合
+(マルチアーム試験など)、どのような問題が発生するか？
+</li>
+</ol>
+<ol start="7" style="list-style-type: decimal">
+<li>
+異なる治療法の P-スコアまたは SUCRA
+スコアを解釈する際、どのような点に注意しなければならないか？
+</li>
+</ol>
+<p>
+<strong>問題の解答は、本書の巻末 <a href="https://bookdown.org/baba_yoshihiko/Doing_Meta_Analysis_in_R/qanda.html#qanda12">Appendix
+A</a> にある。</strong>
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="要約-8" class="section level2" number="12.5">
+<h2>
+<span class="header-section-number">12.5</span> 要約<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84-8"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>ネットワークメタ分析は、様々な治療や介入の<strong>相対的効果</strong>を共同で推定するのに有用なツールである。</p></li>
+<li><p>治療効果を推定するために、ネットワークメタ分析は、直接 (すなわち観察) 証拠と間接証拠の両方を<strong>結合</strong>する。ただし、これには「推移性 (交差性) 」という前提がある。推移性は、2つの比較の直接証拠を組み合わせて、3つ目の比較についての有効な間接証拠を導き出すことができるときに満たされる。</p></li>
+<li><p>推移性の<strong>統計的な現れ</strong>は一貫性 (consistency) であり、その反対は斐伊川 (inconsistency) である。非一貫性は、直接証拠に基づく比較の真の効果が、間接証拠に基づくものと一致しないときに生じるものである。</p></li>
+<li><p>ノードスプリッティングやネットヒートプロットなどの手法により、ネットワーク内の非一貫性を<strong>特定する</strong>ことができる。非一貫性が見つかると、結果全体の妥当性が脅かされることになる。このような場合、研究／デザイン間の系統的な差異を引き起こした可能性のある特性をネットワーク全体でチェックする必要がある。</p></li>
+<li><p>ネットワークメタ分析は、<strong>頻度論的</strong>または<strong>ベイズ的</strong>アプローチのいずれかを使用して可能である。実際には、これらの方法にはそれぞれ長所があるが、通常、全体的な結果は非常に似ている。</p></li>
+<li><p>ベイズ型階層モデルに基づくネットワークメタ分析では、効果量の差を予測する<strong>研究共変量</strong>を加えることもが可能である。この結果、ネットワークメタ回帰モデルになる。</p></li>
+<li><p>SUCRA や P-score などの指標は、このネットワークにおいて、どのタイプの治療が最も効果的であるかを調べるために使用することが可能である。しかし、意思決定プロセスに不確実性を組み込むことも重要である。異なる治療法の信頼区間は重なり合うこともよくあるので、1つの形式が他のすべての形式より本当に優れているかどうかは、あまり明確ではない。</p></li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="sem.html"><span class="header-section-number">11</span> 構造方程式モデリングメタ分析</a></div>
+<div class="next"><a href="bayesian-ma.html"><span class="header-section-number">13</span> ベイズメタ分析</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#netwma"><span class="header-section-number">12</span> ネットワークメタ分析</a></li>
+<li>
+<a class="nav-link" href="#what-is-net-ma"><span class="header-section-number">12.1</span> ネットワークメタ分析とは何か?</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#direct-indirect-evidence"><span class="header-section-number">12.1.1</span> 直接証拠と間接証拠</a></li>
+<li><a class="nav-link" href="#transitivity-consistency"><span class="header-section-number">12.1.2</span> 推移性と一貫性</a></li>
+<li><a class="nav-link" href="#netw-which-model"><span class="header-section-number">12.1.3</span> ネットワークメタ分析のモデル</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#frequentist-ma"><span class="header-section-number">12.2</span> 頻度論的ネットワークメタ分析</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E3%82%B0%E3%83%A9%E3%83%95%E7%90%86%E8%AB%96%E3%83%A2%E3%83%87%E3%83%AB"><span class="header-section-number">12.2.1</span> グラフ理論モデル</a></li>
+<li><a class="nav-link" href="#r-%E3%81%A7%E3%81%AE%E9%A0%BB%E5%BA%A6%E8%AB%96%E7%9A%84%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%88%86%E6%9E%90"><span class="header-section-number">12.2.2</span> R での頻度論的ネットワークメタ分析</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#bayesian-net-ma"><span class="header-section-number">12.3</span> ベイズ的ネットワークメタ分析</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#bayesian-inference"><span class="header-section-number">12.3.1</span> ベイズ推論</a></li>
+<li><a class="nav-link" href="#bayesian-net-ma-model"><span class="header-section-number">12.3.2</span> ベイズ的ネットワークメタ分析モデル</a></li>
+<li><a class="nav-link" href="#r-%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%83%99%E3%82%A4%E3%82%BA%E7%9A%84%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%88%86%E6%9E%90"><span class="header-section-number">12.3.3</span> R におけるベイズ的ネットワークメタ分析</a></li>
+<li><a class="nav-link" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%A1%E3%82%BF%E5%9B%9E%E5%B8%B0"><span class="header-section-number">12.3.4</span> ネットワークメタ回帰</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C-11"><span class="header-section-number">12.4</span> 演習問題</a></li>
+<li><a class="nav-link" href="#%E8%A6%81%E7%B4%84-8"><span class="header-section-number">12.5</span> 要約</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Doing Meta-Analysis in R</strong>: A Hands-on Guide" was written by Mathias Harrer, Pim Cuijpers, Toshi A. Furukawa, David D. Ebert. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
