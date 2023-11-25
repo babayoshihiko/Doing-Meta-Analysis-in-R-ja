@@ -526,7 +526,7 @@
 <li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
 <li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
 <li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
-<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="citing-this-guide-1.html">本書を引用</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -611,12 +611,12 @@ SE = \frac{s}{\sqrt{n}}
 <p>この値をサンプル分布のシミュレーションで求めた値と比較すると、ほぼ同じであることがわかる。この公式を使えば、手持ちのサンプルだけで、かなり正確に標準誤差を推定することができるのである。</p>
 <p>式 3.2 から、平均値の標準誤差は研究のサンプルサイズに依存することがわかる。<span class="math inline">\(n\)</span> が大きくなると標準誤差は小さくなり、真の母平均の推定値がより正確になることを意味している。</p>
 <p>この関係を説明するために、別のシミュレーションを行おう。ここでも、<code>rnorm</code> 関数を使用し、母集団の平均を <span class="math inline">\(\mu =\)</span> 10、<span class="math inline">\(\sigma =\)</span> 2 とする。しかし、今回は、<span class="math inline">\(n =\)</span> 2 から <span class="math inline">\(n =\)</span> 500 まで、サンプルサイズを変化させる。各シミュレーションについて、式 3.2 を用いて、平均と標準誤差を計算する。</p>
-<pre><code>## Warning: Using `size` aesthetic for lines was deprecated
-## in ggplot2 3.4.0.
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in
+## ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to
-## see where this warning was generated.</code></pre>
+## Call `lifecycle::last_lifecycle_warnings()` to see
+## where this warning was generated.</code></pre>
 <div class="figure">
 <span style="display:block;" id="fig:simulse"></span>
 <img src="Doing_Meta_Analysis_in_R_files/figure-html/simulse-1.png" alt="サンプルサイズの関数としてのサンプル平均とサンプル誤差。" width="672"><p class="caption">

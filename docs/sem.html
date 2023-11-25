@@ -526,7 +526,7 @@
 <li><a class="" href="symbollist.html"><span class="header-section-number">C</span> シンボルマーク一覧</a></li>
 <li><a class="" href="attr.html"><span class="header-section-number">D</span> R およびパッケージ情報</a></li>
 <li><a class="" href="corrections.html"><span class="header-section-number">E</span> 訂正・備考</a></li>
-<li><a class="" href="%E6%9C%AC%E6%9B%B8%E3%81%AE%E5%BC%95%E7%94%A8.html">本書の引用</a></li>
+<li><a class="" href="citing-this-guide-1.html">本書を引用</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -809,7 +809,7 @@ F_{\text{WLS}}(\hat\theta) =  (\boldsymbol{r} - \rho(\hat\theta))^\top \boldsymb
 <li><p><strong><code>v</code></strong>. 効果量の分散を含むデータセットの列。多変量メタ分析では、<code>cbind</code> を用いて、対象とする分散列を結合する必要がある。また、効果量間の共分散を含む列も含める必要がある。引数の構造は <code>cbind(variance_1, covariance, variance_2)</code> である。</p></li>
 <li><p><strong><code>data</code></strong>. 効果量と分散が格納されたデータセット。</p></li>
 </ul>
-<p>適合したモデルを <code>m.mv</code> という名前で保存する。ひとつ重要な点として、<code>meta</code> を実行する前に、<strong>{meta}</strong> パッケージがロードされて<strong>いない</strong>ことを確認しておこう。<strong>{meta}</strong> と <strong>{metaSEM}</strong> の関数は同じ名前を持って流物がいくつかあり、 <em>R</em> でコードを実行するときにエラーにつながる可能性がある。<code>detach</code> 関数を使ってパッケージを “unload” することが可能である。</p>
+<p>適合したモデルを <code>m.mv</code> という名前で保存する。ひとつ重要な点として、<code>meta</code> を実行する前に、<strong>{meta}</strong> パッケージがロードされて<strong>いない</strong>ことを確認しておこう。<strong>{meta}</strong> と <strong>{metaSEM}</strong> には同じ名前の関数がいくつかあり、 <em>R</em> でコードを実行するときにエラーにつながる可能性がある。<code>detach</code> 関数を使ってパッケージを “unload” することができる。</p>
 <p>結果として得られる <code>m.mv</code> オブジェクトは、<code>summary</code> を用いて検証したい。</p>
 <div class="sourceCode" id="cb344"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m.mv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/metaSEM/man/meta.html">meta</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">Stress</span>, <span class="va">Anxiety</span><span class="op">)</span>, </span>
