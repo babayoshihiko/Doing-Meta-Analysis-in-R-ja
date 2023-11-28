@@ -571,7 +571,7 @@
 <p>さて、別の試験 <span class="math inline">\(j\)</span> からもデータを得たとする。この試験でも対照条件Bを用いたが、Aを投与する代わりに別の治療法Cを用いた。</p>
 <div class="inline-figure"><img src="images/graph2_col_sep.png" width="75%" style="display: block; margin: auto;"></div>
 <p>これで最初の小さなネットワークができあがる。グラフに2つの効果量推定値が含まれていることがよくわかる。A と B を比較した <span class="math inline">\(\hat\theta_{i\text{,A,B}}\)</span> と、C と B を比較した <span class="math inline">\(\hat\theta_{j\text{,C,B}}\)</span> である。これらの効果量は両方とも「実際の」試験で直接観察されているので、我々はその情報を<strong>直接的証拠</strong>と呼んでいる。したがって、これらの効果量を <span class="math inline">\(\hat\theta^{\text{direct}}_{\text{B,A}}\)</span> と <span class="math inline">\(\hat\theta^{\text{direct}}_{\text{B,C}}\)</span> で表記する。この表記で条件 B が最初に来るのは、<strong>基準</strong>グループと決めたからである。B を参照条件としたのは、両試験で対照群として用いられていたからである。</p>
-<p>新しいグラフでは、すべてのノード (条件) は、<strong>直接的</strong>か、<strong>間接的</strong>に接続されている。B 条件 (対照群) は、他のすべてのノードに直接接続されている。B から他の2つのノード A、C に行くには、グラフ上で1つの「ステップ」しか必要ない: B <span class="math inline">\(\rightarrow\)</span> A, B <span class="math inline">\(\rightarrow\)</span> C。一方、A と C は1つの直接接続しかなく、両方とも B に接続する: A <span class="math inline">\(\rightarrow\)</span> B と C <span class="math inline">\(\rightarrow\)</span> B。</p>
+<p>新しいグラフでは、すべてのノード (条件) は、<strong>直接的</strong>か、<strong>間接的</strong>に接続されている。B 条件 (対照群) は、他のすべてのノードに直接接続されている。B から他の 2 つのノード A、C に行くには、グラフ上で1つの「ステップ」しか必要ない: B <span class="math inline">\(\rightarrow\)</span> A, B <span class="math inline">\(\rightarrow\)</span> C。一方、A と C は1つの直接接続しかなく、両方とも B に接続する: A <span class="math inline">\(\rightarrow\)</span> B と C <span class="math inline">\(\rightarrow\)</span> B。</p>
 <p>しかし、A と C の間には間接的なつながりがある。このつながりは、B が2つの条件 A <span class="math inline">\(\rightarrow\)</span> B と C <span class="math inline">\(\rightarrow\)</span> B の間のリンク、すなわち<strong>ブリッジ</strong>として機能するために存在する。その結果、ネットワークの構造から導き出される A と C の関係の<strong>間接的な証拠</strong>が存在する。</p>
 <div class="inline-figure"><img src="images/graph3_col_sep.png" width="75%" style="display: block; margin: auto;"></div>
 <p>直接観測されたエッジの情報を使って、<strong>間接的に</strong>観測されたAとCの比較の効果を計算することが可能である。この非観測、間接効果量を <span class="math inline">\(\hat\theta^{\text{indirect}}_{\text{A,C}}\)</span> と表記する。効果推定値は、次の式を用いて導出できる。 <span class="citation">(<a href="references.html#ref-dias2018network">Dias et al. 2018, chap. 1</a>)</span>:</p>
@@ -1604,7 +1604,7 @@ P(\boldsymbol{\theta} | {\boldsymbol{Y}} ) \propto P( {\boldsymbol{Y}} | \boldsy
 </h4>
 <hr>
 <p>さて、ネットワークメタ分析モデルを適合させ、それが信頼できるものであると確信したところで、いよいよ結果を出すときが来た。</p>
-<p>前に述べたように、ネットワークメタ分析で答えたい主な疑問は、どの治療が一番よく効くかということである。この質問に答えるために、まず <code>rank.probability</code> 関数を実行することが可能である。この関数は、ある治療法が最も良い選択である確率、2番目に良い選択である確率、3番目に良い選択である確率、などを計算する。この関数は入力として <code>mcmc2</code> オブジェクトを必要とし、さらに <code>preferredDirection</code> という引数を指定する。もし、より小さい (つまり、負の) 効果量がより良い結果を示すのであれば、この引数を <code>-1</code> に設定する。それ以外の場合は <code>1</code> を使用する。</p>
+<p>前に述べたように、ネットワークメタ分析で答えたい主な疑問は、どの治療が一番よく効くかということである。この質問に答えるために、まず <code>rank.probability</code> 関数を実行することが可能である。この関数は、ある治療法が最も良い選択である確率、2 番目に良い選択である確率、3 番目に良い選択である確率、などを計算する。この関数は入力として <code>mcmc2</code> オブジェクトを必要とし、さらに <code>preferredDirection</code> という引数を指定する。もし、より小さい (つまり、負の) 効果量がより良い結果を示すのであれば、この引数を <code>-1</code> に設定する。それ以外の場合は <code>1</code> を使用する。</p>
 <p>結果は <code>rank</code> という名前で保存され、いわゆる <strong>rankogram</strong> を用いて可視化される。</p>
 <div class="sourceCode" id="cb431"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rank</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/rank.probability.html">rank.probability</a></span><span class="op">(</span><span class="va">mcmc2</span>, preferredDirection <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
@@ -1641,9 +1641,9 @@ P(\boldsymbol{\theta} | {\boldsymbol{Y}} ) \propto P( {\boldsymbol{Y}} | \boldsy
 のソースコードにアクセスする。
 </li>
 <li>
-ソースコード全体をコンソール(R
-Studioの左下ペイン)にコピー＆ペーストし、「Enter」キーを押して、
-<em>R</em> に関数を「学習」させる。
+ソースコード全体をコンソール(R Studioの左下ペイン)
+にコピー＆ペーストし、「Enter」キーを押して、 <em>R</em>
+に関数を「学習」させる。
 </li>
 <li>
 <strong>{ggplot2}</strong>
@@ -1703,7 +1703,7 @@ Studioの左下ペイン)にコピー＆ペーストし、「Enter」キーを�
 <span>                          treatments <span class="op">=</span> <span class="va">TherapyFormatsGeMTC</span><span class="op">$</span><span class="va">treat.codes</span><span class="op">)</span></span></code></pre></div>
 <p>ここで、ネットワークメタ分析モデルに含めたい<strong>回帰因子</strong>を定義する必要がある。これは、3つの要素を持つリストオブジェクトを生成することで行うことが可能である。</p>
 <ul>
-<li><p><strong><code>coefficient</code></strong>: この要素は、ネットワークメタ分析に含まれるすべての治療にわたる (高) バイアスリスクの効果について、1つの共有係数を推定したいので、<code>"shared"</code> に設定する。</p></li>
+<li><p><strong><code>coefficient</code></strong>: この要素は、ネットワークメタ分析に含まれるすべての治療にわたる (高) バイアスリスクの効果について、1 つの共有係数を推定したいので、<code>"shared"</code> に設定する。</p></li>
 <li><p><strong><code>variable</code></strong>: 予測変数として使用したい変数の名前を指定する (ここでは <code>"rob"</code>)。</p></li>
 <li><p><strong><code>control</code></strong>: 参照グループとして使用する治療法も指定しなければならない。この例では、<code>"cau"</code> (care as usual) を使用する。</p></li>
 </ul>
@@ -1754,7 +1754,7 @@ Studioの左下ペイン)にコピー＆ペーストし、「Enter」キーを�
 ## Input standardized: x' = (rob - 0.4340659) / 1
 ## Estimates at the centering value: rob = 0.4340659</code></pre>
 <p>予測変数の結果は、<code>B</code>の隣に報告されている。予測変数はダミー・コード化されているので、 <code>B</code> の値は、バイアスの<strong>高い</strong>リスクを持つ研究の効果を表す。推定値は <span class="math inline">\(b=\)</span> -0.33 で、2番目の表 (<code>Quantiles for each variable</code>) を見ると、<span class="math inline">\(b\)</span> の95% 信頼区間が -0.59 から -0.08 までであることがわかる。信頼区間には0が含まれないので、バイアスのリスクは確かに結果に影響すると結論づけられるであろう。バイアスのリスクが高いとき (<code>rob</code> = 1)、より高い全体効果を予測が可能である (この例では、負の効果量は「より良い」結果を示している)。</p>
-<p>2つのフォレストプロットを生成することにより、予測変数の効果をさらに調査することができる。1つは、バイアスリスクが高いときの推定治療効果で、もう1つは、それが低いときのものである。これは <code>relative.effect</code> 関数を用いて行うことができ、ここで <code>covariate</code> 値を指定する。<code>covariate = 0</code> はバイアスリスクの低い研究を表し、<code>covariate = 1</code> はバイアスリスクの高い研究を表す。</p>
+<p>2 つのフォレストプロットを生成することにより、予測変数の効果をさらに調査することができる。1 つは、バイアスリスクが高いときの推定治療効果で、もう 1 つは、それが低いときのものである。これは <code>relative.effect</code> 関数を用いて行うことができ、ここで <code>covariate</code> 値を指定する。<code>covariate = 0</code> はバイアスリスクの低い研究を表し、<code>covariate = 1</code> はバイアスリスクの高い研究を表す。</p>
 <div class="sourceCode" id="cb445"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/blobbogram.html">forest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/gemtc/man/relative.effect.html">relative.effect</a></span><span class="op">(</span><span class="va">mcmc3</span>, t1 <span class="op">=</span> <span class="st">"cau"</span>, covariate <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       use.description <span class="op">=</span> <span class="cn">TRUE</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>

@@ -570,7 +570,7 @@
 <div class="inline-figure"><img src="images/rproj3_col.png" width="45%" style="display: block; margin: auto;"></div>
 <p>新しいプロジェクトに「Meta-Anallysis Project」という名前をつける。プロジェクトフォルダは、<strong>~Documents/R</strong> に格納される。</p>
 <div class="inline-figure"><img src="images/rproj4_col.png" width="45%" style="display: block; margin: auto;"></div>
-<p><strong>プロジェクトの作成</strong>をクリックすると、 <em>R</em> Project が設定される。 <em>R</em> Project の大きな特徴は、参照したいファイルへの<strong>絶対パス</strong>を使用する必要がないことである。ファイル名、またはファイルが (サブ) フォルダーにある場合は、フォルダー名とファイル名だけを使用する。例えば、データセット <strong>data.xlsx</strong> をサブフォルダー “data” に格納する。<strong>{openxlsx}</strong> パッケージ (Chapter <a href="discovering-R.html#data-prep-R">2.4</a>) を使用すると、相対パスでデータセットをインポートすることができる。</p>
+<p><strong>プロジェクトの作成</strong>をクリックすると、 <em>R</em> Project が設定される。 <em>R</em> Project の大きな特徴は、参照したいファイルへの<strong>絶対パス</strong>を使用する必要がないことである。ファイル名、またはファイルが (サブ) フォルダにある場合は、フォルダ名とファイル名だけを使用する。例えば、データセット <strong>data.xlsx</strong> をサブフォルダ “data” に格納する。<strong>{openxlsx}</strong> パッケージ (Chapter <a href="discovering-R.html#data-prep-R">2.4</a>) を使用すると、相対パスでデータセットをインポートすることができる。</p>
 <div class="sourceCode" id="cb505"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">read_excel</span><span class="op">(</span><span class="st">"data/data.xlsx"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -642,7 +642,7 @@ output: html_document
 <div class="sourceCode" id="cb509"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">osf_open</span><span class="op">(</span><span class="va">meta_analysis_project</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="images/osf3_col.png" width="60%" style="display: block; margin: auto;"></div>
-<p>リポジトリが作成されたので、次に <strong>コンポーネント</strong>を追加していく。OSF では、コンポーネントはコンピュータのフォルダのように動作した。例えば、データセット用のコンポーネントと R Markdown スクリプト用のコンポーネントの2つを作成したいとする。これを行うには、 <code>osf_create_component</code> 関数を使用することが可能である。この関数に <em>R</em> のリポジトリオブジェクト ( <code>meta_analysis_project</code> ) を渡し、新しいコンポーネントのタイトルを設定しなければならない。</p>
+<p>リポジトリが作成されたので、次に <strong>コンポーネント</strong>を追加していく。OSF では、コンポーネントはコンピュータのフォルダのように動作した。例えば、データセット用のコンポーネントと R Markdown スクリプト用のコンポーネントの 2 つを作成したいとする。これを行うには、<code>osf_create_component</code> 関数を使用することが可能である。この関数に <em>R</em> のリポジトリオブジェクト (<code>meta_analysis_project</code>) を渡し、新しいコンポーネントのタイトルを設定しなければならない。</p>
 <div class="sourceCode" id="cb510"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scripts</span> <span class="op">&lt;-</span> <span class="fu">osf_create_component</span><span class="op">(</span><span class="va">meta_analysis_project</span>, </span>
 <span>                                title <span class="op">=</span> <span class="st">"Analysis Scripts"</span><span class="op">)</span></span>
@@ -656,17 +656,17 @@ output: html_document
 <span class="header-section-number">16.3.4</span> アップロードとダウンロード<a class="anchor" aria-label="anchor" href="#%E3%82%A2%E3%83%83%E3%83%97%E3%83%AD%E3%83%BC%E3%83%89%E3%81%A8%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89"><i class="fas fa-link"></i></a>
 </h3>
 <hr>
-<p>OSF リポジトリにデータをアップロードするには、 <code>osf_upload</code> 関数を使用する。この関数では、ファイルを追加するコンポーネントと、アップロードするファイルのパスを指定する必要がある。例えば、“Analysis.rmd” というR Markdownスクリプトをアップロードしたい場合、現在 <em>R</em> プロジェクトのサブフォルダ “scripts” に保存されているものとする。アップロードするには、次のコードを使用する。</p>
+<p>OSF リポジトリにデータをアップロードするには、<code>osf_upload</code> 関数を使用する。この関数では、ファイルを追加するコンポーネントと、アップロードするファイルのパスを指定する必要がある。例えば、“Analysis.rmd” というR Markdownスクリプトをアップロードしたい場合、現在 <em>R</em> プロジェクトのサブフォルダ “scripts” に保存されているものとする。アップロードするには、次のコードを使用する。</p>
 <div class="sourceCode" id="cb511"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">osf_upload</span><span class="op">(</span><span class="va">scripts</span>, <span class="st">"scripts/Analysis.rmd"</span><span class="op">)</span></span></code></pre></div>
-<p>ファイルが正常にアップロードされたかどうかを確認するには、 <code>osf_ls_files</code> 関数を使用してコンポーネントのコンテンツにアクセスする。</p>
+<p>ファイルが正常にアップロードされたかどうかを確認するには、<code>osf_ls_files</code> 関数を使用してコンポーネントのコンテンツにアクセスする。</p>
 <div class="sourceCode" id="cb512"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">osf_ls_files</span><span class="op">(</span><span class="va">scripts</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## # A tibble: 2 x 3
 ##   name            id                       meta            
 ##   &lt;chr&gt;           &lt;chr&gt;                    &lt;list&gt;          
 ## 1 Analysis.rmd    1db74s7bfcf91f0012567572l &lt;named list [3]&gt;</code></pre>
-<p>アップロードが成功したことが出力で確認可能である。ファイルをダウンロードするには、 <code>osf_ls_files</code> 関数の出力から行を選択し、<code>osf_download</code> 関数でそれを使用して、ファイルをコンピュータのプロジェクトフォルダにダウンロードしなおせばよい。</p>
+<p>アップロードが成功したことが出力で確認可能である。ファイルをダウンロードするには、<code>osf_ls_files</code> 関数の出力から行を選択し、<code>osf_download</code> 関数でそれを使用して、ファイルをコンピュータのプロジェクトフォルダにダウンロードしなおせばよい。</p>
 <div class="sourceCode" id="cb514"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">osf_download</span><span class="op">(</span><span class="fu">osf_ls_files</span><span class="op">(</span><span class="va">scripts</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -677,7 +677,7 @@ output: html_document
 </h3>
 <hr>
 <p></p>
-<p>OSF のリポジトリサイトでは、<strong>Contributors</strong>という項目で共同研究者を追加することも可能である。</p>
+<p>OSF のリポジトリサイトでは、<strong>Contributors</strong> という項目で共同研究者を追加することも可能である。</p>
 <div class="inline-figure"><img src="images/osf4_col.png" width="65%" style="display: block; margin: auto;"></div>
 <p>ウェブサイト右上の <strong>Make Public</strong> ボタンをクリックすることで、いつでもリポジトリを <strong>public</strong> にすることが可能である。</p>
 <div class="inline-figure"><img src="images/osf5.png" width="40%" style="display: block; margin: auto;"></div>

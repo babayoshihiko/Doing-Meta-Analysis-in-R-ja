@@ -581,8 +581,8 @@ Q = \sum^K_{k=1}w_k(\hat\theta_k-\hat\theta)^2
 <p><span class="math inline">\(w_k\)</span> による重み付けのため、<span class="math inline">\(Q\)</span> の値は、<span class="math inline">\(\hat\theta_k\)</span> が <span class="math inline">\(\hat\theta\)</span> からどれだけ乖離しているかだけでなく、研究の精度にも依存する。効果量の標準誤差が非常に小さい (つまり精度が非常に高い) 場合、要約効果からの乖離が小さくても高い重みが与えられ、<span class="math inline">\(Q\)</span> の値が高くなる。</p>
 <p><span class="math inline">\(Q\)</span> の値は、データに<strong>過剰な変動</strong>があるかどうか、つまり、サンプル誤差だけから予想されるよりも多くの変動があるかどうかを確認するために使用することが可能である。もしそうであれば、残りの変動は研究間の異質性に起因すると考えることが可能である。このことをちょっとしたシミュレーションで説明しよう。</p>
 <p></p>
-<p>このシミュレーションでは、<span class="math inline">\(Q\)</span> が2つの異なるシナリオの下でどのように振る舞うかを検証したいと思われる: 研究間の異質性がない場合と、異質性がある場合である。まず、異質性がない場合から始めよう。これは、<span class="math inline">\(\zeta_k=0\)</span> 、残差 <span class="math inline">\(\hat\theta_k-\hat\theta\)</span> はサンプリング誤差 <span class="math inline">\(\epsilon_k\)</span> の積のみであることを意味する。ある平均効果量 <span class="math inline">\(\hat\theta\)</span> からの偏差をシミュレートするために、 <code>rnorm</code> 関数を使用することが可能である (正規分布に従うと仮定した)。それらは <span class="math inline">\(\hat\theta\)</span> を中心としているので、これらの「残差」の平均はゼロ ( <span class="math inline">\(\mu\)</span> = 0) であると期待可能である。この例では、母集団の標準偏差が <span class="math inline">\(\sigma=\)</span> 1 で、<strong>標準</strong>正規分布になると仮定しよう。</p>
-<p>正規分布は通常 <span class="math inline">\(\mathcal{N}\)</span> で示され、残差は <span class="math inline">\(\mu=\)</span> 0 と <span class="math inline">\(\sigma=\)</span> 1 の正規分布から得られることを次のように記号化することが可能である。</p>
+<p>このシミュレーションでは、<span class="math inline">\(Q\)</span> が2つの異なるシナリオの下でどのように振る舞うかを検証したいと思われる: 研究間の異質性がない場合と、異質性がある場合である。まず、異質性がない場合から始めよう。これは、<span class="math inline">\(\zeta_k=0\)</span> 、残差 <span class="math inline">\(\hat\theta_k-\hat\theta\)</span> はサンプリング誤差 <span class="math inline">\(\epsilon_k\)</span> の積のみであることを意味する。ある平均効果量 <span class="math inline">\(\hat\theta\)</span> からの偏差をシミュレートするために、<code>rnorm</code> 関数を使用することが可能である (正規分布に従うと仮定した)。それらは <span class="math inline">\(\hat\theta\)</span> を中心としているので、これらの「残差」の平均はゼロ ( <span class="math inline">\(\mu\)</span> = 0) であると期待可能である。この例では、母集団の標準偏差が <span class="math inline">\(\sigma =\)</span> 1 で、<strong>標準</strong>正規分布になると仮定しよう。</p>
+<p>正規分布は通常 <span class="math inline">\(\mathcal{N}\)</span> で示され、残差は <span class="math inline">\(\mu=\)</span> 0 と <span class="math inline">\(\sigma =\)</span> 1 の正規分布から得られることを次のように記号化することが可能である。</p>
 <p><span class="math display" id="eq:het2">\[\begin{equation}
 \hat\theta_k-\hat\theta \sim \mathcal{N}(0,1)
 \tag{5.2}
@@ -1053,8 +1053,8 @@ t_{k} = \frac{\hat\theta_{k}-\hat\mu_{\setminus k}}{\sqrt{\mathrm{Var}(\hat\mu_{
 \tag{5.8}
 \end{equation}\]</span></p>
 <p></p>
-<p>研究 <span class="math inline">\(k\)</span> がメタ分析にうまく適合すると仮定すると、分母の3つの項は、効果量が平均効果量からどれくらい異なるかを決定する変動源を捕捉した。これらの変動要因は、<span class="math inline">\(k\)</span> のサンプルエラー、真の効果量の分散、およびプール効果量の推定値の不正確さである。</p>
-<p>もし研究が全体の母集団に<strong>合わない</strong>ならば、残差は3つの分散項だけから予想されるよりも<strong>大きくなる</strong>と仮定可能である。これは、<span class="math inline">\(t_k\)</span> の値を高くし、その研究が「適合しない」影響力のあるケースであることを示している。</p>
+<p>研究 <span class="math inline">\(k\)</span> がメタ分析にうまく適合すると仮定すると、分母の 3 つの項は、効果量が平均効果量からどれくらい異なるかを決定する変動源を捕捉した。これらの変動要因は、<span class="math inline">\(k\)</span> のサンプルエラー、真の効果量の分散、およびプール効果量の推定値の不正確さである。</p>
+<p>もし研究が全体の母集団に<strong>合わない</strong>ならば、残差は 3 つの分散項だけから予想されるよりも<strong>大きくなる</strong>と仮定可能である。これは、<span class="math inline">\(t_k\)</span> の値を高くし、その研究が「適合しない」影響力のあるケースであることを示している。</p>
 <p><br></p>
 </div>
 <div id="mathrmdffits-値" class="section level5" number="5.4.2.2.2">
@@ -1062,12 +1062,12 @@ t_{k} = \frac{\hat\theta_{k}-\hat\mu_{\setminus k}}{\sqrt{\mathrm{Var}(\hat\mu_{
 <span class="header-section-number">5.4.2.2.2</span> <span class="math inline">\(\mathrm{DFFITS}\)</span> 値<a class="anchor" aria-label="anchor" href="#mathrmdffits-%E5%80%A4"><i class="fas fa-link"></i></a>
 </h5>
 <hr>
-<p><span class="math inline">\(\mathrm{DFFITS}\)</span> 量の計算は、外部標準化残差の計算と同様である。したがって、DFFITSと <span class="math inline">\(t_k\)</span> の値のパターンは、多くの場合、研究間で比較可能である。これが計算式である。</p>
+<p><span class="math inline">\(\mathrm{DFFITS}\)</span> 量の計算は、外部標準化残差の計算と同様である。したがって、DFFITS と <span class="math inline">\(t_k\)</span> の値のパターンは、多くの場合、研究間で比較可能である。これが計算式である。</p>
 <p><span class="math display">\[\begin{equation}
 \mathrm{DFFITS}_k =  \dfrac{\hat\mu-\hat\mu_{\setminus k}}{\sqrt{\dfrac{w_k^{(*)}}{\sum^{K}_{k=1}w_k^{(*)}}(s^2_k+\hat\tau^2_{\setminus k})}}
 \end{equation}\]</span></p>
-<p>計算には、研究 <span class="math inline">\(k\)</span> ( Chapter <a href="pooling-es.html#fem">4.1.1</a> ) の (ランダム効果) 重みである <span class="math inline">\(w_k^{(*)}\)</span> も必要で、これを重みの合計で割って研究の重みをパーセントで表現することになる。</p>
-<p>一般に、<span class="math inline">\(\mathrm{DFFITS}\)</span> の値は、ある研究 ( <span class="math inline">\(k\)</span> ) を削除したときに、プールされた効果がどの程度変化するかを示し、標準偏差で表される。ここでも、値が高いほど、平均効果への影響が大きいので、その研究が影響力のあるケースである可能性を示している。</p>
+<p>計算には、研究 <span class="math inline">\(k\)</span> (Chapter <a href="pooling-es.html#fem">4.1.1</a>) の (ランダム効果) 重みである <span class="math inline">\(w_k^{(*)}\)</span> も必要で、これを重みの合計で割って研究の重みをパーセントで表現することになる。</p>
+<p>一般に、<span class="math inline">\(\mathrm{DFFITS}\)</span> の値は、ある研究 (<span class="math inline">\(k\)</span>) を削除したときに、プールされた効果がどの程度変化するかを示し、標準偏差で表される。ここでも、値が高いほど、平均効果への影響が大きいので、その研究が影響力のあるケースである可能性を示している。</p>
 <p><br></p>
 </div>
 <div id="cook-距離" class="section level5" number="5.4.2.2.3">
@@ -1103,7 +1103,7 @@ D_k =  \frac{(\hat\mu-\hat\mu_{\setminus k})^2}{\sqrt{s^2_k+\hat\tau^2}}.
 </h5>
 <hr>
 <p></p>
-<p>この行の値は非常に簡単に解釈可能である。これらは単に、<span class="math inline">\(\tau^2\)</span> と Cochran’s <span class="math inline">\(Q\)</span>、研究 <span class="math inline">\(k\)</span> を削除した場合に測定される推定異質性を表示しているだけである。 <span class="math inline">\(Q\)</span> 値と <span class="math inline">\(\tau^2\)</span> 値、特に後者の値が低いほど異質性が低いことを意味するので、望ましい。</p>
+<p>この行の値は非常に簡単に解釈可能である。これらは単に、<span class="math inline">\(\tau^2\)</span> と Cochran’s <span class="math inline">\(Q\)</span>、研究 <span class="math inline">\(k\)</span> を削除した場合に測定される推定異質性を表示しているだけである。<span class="math inline">\(Q\)</span> 値と <span class="math inline">\(\tau^2\)</span> 値、特に後者の値が低いほど異質性が低いことを意味するので、望ましい。</p>
 <p><br></p>
 </div>
 <div id="ハット値と研究の重み" class="section level5" number="5.4.2.2.6">
@@ -1140,7 +1140,7 @@ D_k &gt; 0.45
 <hr>
 <p>
 </p>
-<p>最後に、leave-one-out 法を用いて実施されたすべてのメタ分析の全体効果および <span class="math inline">\(I^2\)</span> 異質性をプロットすることも可能である。1つはプール効果量、もう1つは leave-one-out メタ分析の <span class="math inline">\(I^2\)</span> 値でソートされた2つの<strong>フォレストプロット</strong> ( Chapter <a href="forest.html#forest-R">6.2</a> でもっと詳しく知ることになるプロットのタイプ) を表示すことが可能である。プロットを作成するコードは次のようなものである。</p>
+<p>最後に、leave-one-out 法を用いて実施されたすべてのメタ分析の全体効果および <span class="math inline">\(I^2\)</span> 異質性をプロットすることも可能である。1つはプール効果量、もう1つは leave-one-out メタ分析の <span class="math inline">\(I^2\)</span> 値でソートされた2つの<strong>フォレストプロット</strong> (Chapter <a href="forest.html#forest-R">6.2</a> でもっと詳しく知ることになるプロットのタイプ) を表示すことが可能である。プロットを作成するコードは次のようなものである。</p>
 <div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m.gen.inf</span>, <span class="st">"es"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m.gen.inf</span>, <span class="st">"i2"</span><span class="op">)</span></span></code></pre></div>
@@ -1148,7 +1148,7 @@ D_k &gt; 0.45
 <p>これらの2つのフォレストプロットでは、毎回1つの研究を省略して再計算されたプール効果を見ることが可能である。両方のプロットで、中央に破線のある陰影のある領域がある。これは、元のプール効果量の95%信頼区間と推定されたプール効果そのものを表している。</p>
 <p>最初のプロットは、効果量 (低から高) 順に並べたものである。ここでは、異なる研究を削除したときに、全体の効果推定値がどのように変化するかを見ている。“DanitzOrsillo”と “Shapiro et al.” の2つの研究は、非常に高い効果量を持っているので、それらを取り除くと、全体の効果量が最も小さくなることがわかる。</p>
 <p>2番目のプロットは、<span class="math inline">\(I^2\)</span> で測定された異質性 (低から高) 順に並んでいる。このプロットは、“DanitzOrsillo” と “Shapiro et al.” の研究を除外すると、<span class="math inline">\(I^2\)</span> 異質性が最も低くなることを示している。これは、この2つの研究がメタ分析で見られた研究間の異質性の主な「犯人」であるという私たちの発見を裏付けるものである。</p>
-<p>全体として、この例の外れ値解析と影響力解析の結果は同じ方向を向いている。影響力のある外れ値であると思われる研究が2つある。この2つの研究は、効果量の推定値だけでなく、その精度も歪めてしまうだろう。したがって、この2つの研究を除外した感度分析の結果も実施し、報告する必要がある。</p>
+<p>全体として、この例の外れ値解析と影響力解析の結果は同じ方向を向いている。影響力のある外れ値であると思われる研究が2つある。この 2 つの研究は、効果量の推定値だけでなく、その精度も歪めてしまうだろう。したがって、この2つの研究を除外した感度分析の結果も実施し、報告する必要がある。</p>
 <p><br></p>
 </div>
 </div>
@@ -1173,19 +1173,19 @@ D_k &gt; 0.45
 <span>             sei <span class="op">=</span> <span class="va">m.gen</span><span class="op">$</span><span class="va">seTE</span>,</span>
 <span>             method <span class="op">=</span> <span class="va">m.gen</span><span class="op">$</span><span class="va">method.tau</span>,</span>
 <span>             test <span class="op">=</span> <span class="st">"knha"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>{meta}</strong> で固定効果モデルを使用した場合、 <code>method.tau</code> を <code>rma</code> の呼び出しに単純にコピーすることはできないことに注意してみよう。代わりに、 <code>rma</code> の <code>method</code> 引数を <code>"FE"</code> に設定する必要がある。</p>
-<p>そして、 <code>m.rma</code> オブジェクトを使用して、GOSH プロットを生成することが可能である。解析の研究数にもよるが、これにはある程度の時間、最大で数時間かかることがある。その結果を <code>res.gosh</code> として保存する。</p>
+<p><strong>{meta}</strong> で固定効果モデルを使用した場合、<code>method.tau</code> を <code>rma</code> の呼び出しに単純にコピーすることはできないことに注意してみよう。代わりに、 <code>rma</code> の <code>method</code> 引数を <code>"FE"</code> に設定する必要がある。</p>
+<p>そして、<code>m.rma</code> オブジェクトを使用して、GOSH プロットを生成することが可能である。解析の研究数にもよるが、これにはある程度の時間、最大で数時間かかることがある。その結果を <code>res.gosh</code> として保存する。</p>
 <div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res.gosh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wviechtb.github.io/metafor/reference/gosh.html">gosh</a></span><span class="op">(</span><span class="va">m.rma</span><span class="op">)</span></span></code></pre></div>
-<p>そして、 <code>res.gosh</code> オブジェクトを <code>plot</code> 関数に代入することでプロットを表示すことが可能である。追加の <code>alpha</code> 引数は、グラフ内のドットがどの程度透明であるかを制御する。グラフにはたくさんのデータポイントがあるので、値が「積み重なる」場所を明確にするために小さなアルファ値を使用することは理にかなっている。</p>
+<p>そして、<code>res.gosh</code> オブジェクトを <code>plot</code> 関数に代入することでプロットを表示すことが可能である。追加の <code>alpha</code> 引数は、グラフ内のドットがどの程度透明であるかを制御する。グラフにはたくさんのデータポイントがあるので、値が「積み重なる」場所を明確にするために小さなアルファ値を使用することは理にかなっている。</p>
 <div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">res.gosh</span>, alpha <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="images/gosh0_sep.png" width="50%" style="display: block; margin: auto;"></div>
 <p>データには興味深いパターンが見られる。ほとんどの値が比較的高い効果と高い異質性を持つクラスターに集中している一方で、<span class="math inline">\(I^2\)</span> の値の分布は大きく右肩下がりの二峰性になっている。推定された異質性がかなり低く、プール効果量も小さい研究の組み合わせがあるようで、結果として「彗星のような」尾を持つ形状になっている。</p>
 <p>
 </p>
-<p>効果量 <span class="math inline">\(-\)</span> 異質性のパターンを見て、本当に重要な質問は、どの研究がこの形状を引き起こすのか、ということである。この質問に答えるために、 <code>gosh.diagnostics</code> 関数を使用することが可能である。</p>
-<p>この機能は、3つのクラスタリングまたは<strong>教師なし機械学習</strong>アルゴリズムを用いて、GOSH プロットデータからクラスタを検出する。特定されたクラスタに基づいて、この関数は自動的にどの研究が各クラスタに最も貢献しているかを決定する。例えば、異質性の高いクラスターに1つまたは複数の研究が過剰に存在することが分かった場合、これらの研究は単独または組み合わせで、高い異質性の<strong>原因</strong>である可能性があることを示す。</p>
+<p>効果量 <span class="math inline">\(-\)</span> 異質性のパターンを見て、本当に重要な質問は、どの研究がこの形状を引き起こすのか、ということである。この質問に答えるために、<code>gosh.diagnostics</code> 関数を使用することが可能である。</p>
+<p>この機能は、3 つのクラスタリングまたは<strong>教師なし機械学習</strong>アルゴリズムを用いて、GOSH プロットデータからクラスタを検出する。特定されたクラスタに基づいて、この関数は自動的にどの研究が各クラスタに最も貢献しているかを決定する。例えば、異質性の高いクラスターに1つまたは複数の研究が過剰に存在することが分かった場合、これらの研究は単独または組み合わせで、高い異質性の<strong>原因</strong>である可能性があることを示す。</p>
 <div class="boxdmetar">
 <p>
 <strong>“gosh.diagnostics” 関数</strong>
@@ -1215,7 +1215,7 @@ D_k &gt; 0.45
 <p>
 </p>
 <p><code>gosh.diagnostics</code> 関数は、<span class="math inline">\(k\)</span>-平均アルゴリズム <span class="citation">(<a href="references.html#ref-hartigan1979algorithm">Hartigan and Wong 1979</a>)</span>、<strong>密度到達性・接続性クラスタリング</strong> (density reachability and connectivity clustering)、あるいは DBSCAN <span class="citation">(<a href="references.html#ref-schubert2017dbscan">Schubert et al. 2017</a>)</span> および <strong>ガウス混合モデル</strong> (gaussian mixture models) <span class="citation">(<a href="references.html#ref-fraley2002model">Fraley and Raftery 2002</a>)</span> という3種類のクラスタアルゴリズムを使用してデータのパターンを検出している。</p>
-<p>これらのアルゴリズムのパラメータのいくつかを調整することが可能である。<code>km.params</code>、 <code>db.params</code>、<code>gmm.params</code> の引数に、各アルゴリズムの挙動を制御する仕様を記述したリスト要素を追加することができる。この例では、<span class="math inline">\(k\)</span>-means と DBSCAN アルゴリズムの細部を少し調整する。 <span class="math inline">\(k\)</span> -平均アルゴリズムは、データ中の2つのクラスタ (「中心」) を探索するよう指定する。<code>db.params</code> では、DBSCAN が使用する <code>eps</code>、つまり <span class="math inline">\(\epsilon\)</span> の値を変更する。また、各クラスタに必要な最小限のポイント数を決定する <code>MinPts</code> 値も指定する。</p>
+<p>これらのアルゴリズムのパラメータのいくつかを調整することが可能である。<code>km.params</code>、<code>db.params</code>、<code>gmm.params</code> の引数に、各アルゴリズムの挙動を制御する仕様を記述したリスト要素を追加することができる。この例では、<span class="math inline">\(k\)</span>-means と DBSCAN アルゴリズムの細部を少し調整する。 <span class="math inline">\(k\)</span> -平均アルゴリズムは、データ中の 2 つのクラスタ (「中心」) を探索するよう指定する。<code>db.params</code> では、DBSCAN が使用する <code>eps</code>、つまり <span class="math inline">\(\epsilon\)</span> の値を変更する。また、各クラスタに必要な最小限のポイント数を決定する <code>MinPts</code> 値も指定する。</p>
 <p>アルゴリズムのパラメータについては、<code>gosh.diagnostics</code> のドキュメントで詳しく説明されている。どのようなパラメータ指定が最適なのか明確なルールはないので、各アルゴリズムの詳細を何度か試してみて、それが結果にどのような影響を与えるかを確認するとよいだろう。</p>
 <p><code>gosh.diagnostics</code> を呼び出すコードは次のようになる。(訳注: 数分かかることがある。)</p>
 <div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
@@ -1238,14 +1238,14 @@ D_k &gt; 0.45
 ##  - DBSCAN: Study 3, Study 4, Study 16
 ##  - Gaussian Mixture Model: Study 3, Study 4, Study 11, Study 16</code></pre>
 <p>出力には、各アルゴリズムが検出したクラスタの数が表示される。各アプローチは異なる数学的戦略でデータを分割しているので、クラスタ数が同じでないのは当然である。</p>
-<p><code>Identification of potential outliers</code> では、この手順により、クラスタの構成に大きな影響を与える3つの研究 (研究3、研究4、研究16) を特定できたことがわかる。</p>
+<p><code>Identification of potential outliers</code> では、この手順により、クラスタの構成に大きな影響を与える 3 つの研究 (研究 3、研究 4、研究 16) を特定できたことがわかる。</p>
 <p>また、 <code>gosh.diagnostics</code> オブジェクトをプロットして、結果をもう少し詳しく調べることも可能である。</p>
 <div class="sourceCode" id="cb203"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">res.gosh.diag</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="images/gosh1_col_sep.png" width="100%" style="display: block; margin: auto;"></div>
 <div class="inline-figure"><img src="images/gosh2_col_sep.png" width="80%" style="display: block; margin: auto;"></div>
 <p></p>
-<p>これは、いくつかのプロットを生成した。最初の3つのプロットは、各アルゴリズムによって見つかったクラスタリングソリューションと、各クラスタ内の各研究に関連するクラスタインバランスの量を表している。この情報に基づいて、Cook 距離が各研究について計算され、これは、ある研究が検出されたクラスタに大きな影響を与えるかどうか (したがって、影響力のあるケースであるかもしれない) を判断するために使用される。</p>
+<p>これは、いくつかのプロットを生成した。最初の 3 つのプロットは、各アルゴリズムによって見つかったクラスタリングソリューションと、各クラスタ内の各研究に関連するクラスタインバランスの量を表している。この情報に基づいて、Cook 距離が各研究について計算され、これは、ある研究が検出されたクラスタに大きな影響を与えるかどうか (したがって、影響力のあるケースであるかもしれない) を判断するために使用される。</p>
 <p>他のプロットも GOSH プロットであるが、選択された研究が含まれる解析を表す陰影のついたポイントが表示された。例えば、研究 3 が含まれるほぼすべての結果は、高い異質性の値と高い効果量を持つクラスタに属していることがわかる。研究 4 が含まれる結果は、異質性にばらつきがあるが、一般的に平均効果がやや<strong>小さい</strong>ことがわかる。研究16の結果は、研究 3 の結果と似ているが、もう少し分散している。</p>
 <p><code>gosh.diagnostics</code> 関数が特定した3つの研究を削除して、メタ分析を再実行するとどうなるかを見てみよう。</p>
 <div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
@@ -1287,8 +1287,8 @@ D_k &gt; 0.45
 ##  14.67   14  0.4011
 ## [...]</code></pre>
 <p></p>
-<p>3 番と 16 番の研究が “DanitzOrsillo” と “Shapiro et al.” であることがわかる。この2つの研究は、以前の分析でも影響力があることが分かっている。研究番号 4 は “de Vibe” によるものである。この研究は、特に極端な効果量ではないが、観察された効果量が平均より小さいにもかかわらず、信頼区間が狭いことから、<strong>高い重み</strong>を持つことがわかる。このことは、この研究が影響力を持つ理由を説明できるだろう。</p>
-<p>この3つの研究を取り除くと、推定される異質性に大きな影響を与えることがわかる。<span class="math inline">\(\tau^2\)</span> の値はほぼゼロになり、<span class="math inline">\(I^2\)</span> の値も非常に低く、効果量の変動の 4.6% のみが真の効果量の差によるものであることを示している。プール効果 <span class="math inline">\(g\)</span> = 0.48 は、最初の推定値 <span class="math inline">\(g=\)</span> 0.58 よりは小さいが、それでも同じ桁の範囲内である。</p>
+<p>3 番と 16 番の研究が “DanitzOrsillo” と “Shapiro et al.” であることがわかる。この 2 つの研究は、以前の分析でも影響力があることが分かっている。研究番号 4 は “de Vibe” によるものである。この研究は、特に極端な効果量ではないが、観察された効果量が平均より小さいにもかかわらず、信頼区間が狭いことから、<strong>高い重み</strong>を持つことがわかる。このことは、この研究が影響力を持つ理由を説明できるだろう。</p>
+<p>この 3 つの研究を取り除くと、推定される異質性に大きな影響を与えることがわかる。<span class="math inline">\(\tau^2\)</span> の値はほぼゼロになり、<span class="math inline">\(I^2\)</span> の値も非常に低く、効果量の変動の 4.6% のみが真の効果量の差によるものであることを示している。プール効果 <span class="math inline">\(g\)</span> = 0.48 は、最初の推定値 <span class="math inline">\(g =\)</span> 0.58 よりは小さいが、それでも同じ桁の範囲内である。</p>
 <p>全体として、最初に計算した平均的な効果は、外れ値や影響力のある研究によって、<strong>あまり</strong>大きくバイアスされてはいないことを示している。</p>
 
 <div class="boxreport">
@@ -1340,7 +1340,7 @@ D_k &gt; 0.45
 </table></div>
 <p><sup>1</sup>Removed as outliers: DanitzOrsillo, de Vibe, Shapiro.</p>
 <p></p>
-<p>このような表は、他の感度解析の結果をさらに行に追加することができ、非常に便利である。例えば、バイアスリスクの低い研究 (Chapter <a href="intro.html#data-extraction">1.4.5</a>) のみを考慮した分析を行った場合、その結果を3行目に報告することができる。</p>
+<p>このような表は、他の感度解析の結果をさらに行に追加することができ、非常に便利である。例えば、バイアスリスクの低い研究 (Chapter <a href="intro.html#data-extraction">1.4.5</a>) のみを考慮した分析を行った場合、その結果を 3 行目に報告することができる。</p>
 </div>
 <p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
 <p><br></p>
@@ -1361,7 +1361,8 @@ D_k &gt; 0.45
 </ol>
 <ol start="2" style="list-style-type: decimal">
 <li>
-異質性の2つのタイプを挙げられるか？メタ分析の計算にはどちらが関係するか？
+異質性の 2
+つのタイプを挙げられるか？メタ分析の計算にはどちらが関係するか？
 </li>
 </ol>
 <ol start="3" style="list-style-type: decimal">

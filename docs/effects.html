@@ -580,7 +580,7 @@
 <p>研究 <span class="math inline">\(k\)</span> の効果量推定値 <span class="math inline">\(\hat\theta_k\)</span> が真の効果量にできるだけ近く、かつ <span class="math inline">\(\epsilon_k\)</span> が最小であることが望ましいのは明らかである。すべての条件が同じであれば、<span class="math inline">\(\epsilon\)</span> が小さい研究ほど、真の効果量の<strong>正確な</strong>推定値を提供すると考えることが可能である。メタ分析の手法では、効果量の推定値の精度を考慮する (Chapter <a href="pooling-es.html#pooling-es">4</a> 参照)。異なる研究の結果をプールする場合、精度が高い (サンプル誤差が少ない) 効果ほど、真の効果量の推定精度が高いため、高いウェイトを与える <span class="citation">(<a href="references.html#ref-hedges2014statistical">L. Hedges and Olkin 2014</a>)</span>。</p>
 <p>しかし、サンプル誤差の大きさはどのようにして知ることができるのだろうか。当然のことながら、研究の真の効果は <span class="math inline">\(\theta_k\)</span> なので、<span class="math inline">\(\epsilon_k\)</span> も不明である。しかし、多くの場合、統計理論を使ってサンプル誤差を近似的に求めることが可能である。一般に、<span class="math inline">\(\epsilon\)</span> を定量化する方法として、<strong>標準誤差</strong> (<span class="math inline">\(SE\)</span>) がある。標準誤差は、<strong>サンプル分布</strong>の標準偏差として定義される。サンプル分布とは、母集団から同じサンプルサイズ <span class="math inline">\(n\)</span> のサンプルを<strong>多数回</strong>無作為に抽出したときに得られる指標の分布のことである。</p>
 <p><em>R</em> でデータをシミュレートすることによって、これをより具体的に見てみよう。<code>rnorm</code> 関数を使って、より大きな母集団から無作為にサンプルを抽出しているようにしてみたい。この関数名は、正規 (<strong>norm</strong>al) 分布から 無作為 (<strong>r</strong>andom) サンプルを作成することからきている。<code>rnorm</code> 関数は、真の母集団で値がどのように分布しているかを<strong>知っている</strong>という「完璧な世界」をシミュレートし、サンプルを取ることを可能にする。</p>
-<p>この関数は、以下の3つの引数を取る。すなわち、<code>n</code>: サンプルとして取得したい観測数、 <code>mean</code>: 母集団の<strong>真の</strong>平均値、 <code>sd</code>: <strong>真の</strong>標準偏差である。<code>rnorm</code> 関数は乱数要素を持っているので、結果を再現するために、まず <strong>seed</strong> を設定する必要がある。これは <code>set.seed</code> 関数で行うことができるが、数値を指定する必要がある。この例では、<code>123</code> を seed に設定する。さらに、母集団の真の平均は <span class="math inline">\(\mu =\)</span> 10、真の標準偏差は <span class="math inline">\(\sigma =\)</span> 2、サンプルは <span class="math inline">\(n=\)</span> 50のランダムに選んだ観測からなり、これを <code>sample</code> という名前で保存するシミュレーションをしたい。</p>
+<p>この関数は、以下の3つの引数を取る。すなわち、<code>n</code>: サンプルとして取得したい観測数、<code>mean</code>: 母集団の<strong>真の</strong>平均値、<code>sd</code>: <strong>真の</strong>標準偏差である。<code>rnorm</code> 関数は乱数要素を持っているので、結果を再現するために、まず <strong>seed</strong> を設定する必要がある。これは <code>set.seed</code> 関数で行うことができるが、数値を指定する必要がある。この例では、<code>123</code> を seed に設定する。さらに、母集団の真の平均は <span class="math inline">\(\mu =\)</span> 10、真の標準偏差は <span class="math inline">\(\sigma =\)</span> 2、サンプルは <span class="math inline">\(n=\)</span> 50のランダムに選んだ観測からなり、これを <code>sample</code> という名前で保存するシミュレーションをしたい。</p>
 <p>このようなコードになる。</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
@@ -611,12 +611,11 @@ SE = \frac{s}{\sqrt{n}}
 <p>この値をサンプル分布のシミュレーションで求めた値と比較すると、ほぼ同じであることがわかる。この公式を使えば、手持ちのサンプルだけで、かなり正確に標準誤差を推定することができるのである。</p>
 <p>式 3.2 から、平均値の標準誤差は研究のサンプルサイズに依存することがわかる。<span class="math inline">\(n\)</span> が大きくなると標準誤差は小さくなり、真の母平均の推定値がより正確になることを意味している。</p>
 <p>この関係を説明するために、別のシミュレーションを行おう。ここでも、<code>rnorm</code> 関数を使用し、母集団の平均を <span class="math inline">\(\mu =\)</span> 10、<span class="math inline">\(\sigma =\)</span> 2 とする。しかし、今回は、<span class="math inline">\(n =\)</span> 2 から <span class="math inline">\(n =\)</span> 500 まで、サンプルサイズを変化させる。各シミュレーションについて、式 3.2 を用いて、平均と標準誤差を計算する。</p>
-<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in
-## ggplot2 3.4.0.
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see
-## where this warning was generated.</code></pre>
+## Call `lifecycle::last_lifecycle_warnings()` to see where this
+## warning was generated.</code></pre>
 <div class="figure">
 <span style="display:block;" id="fig:simulse"></span>
 <img src="Doing_Meta_Analysis_in_R_files/figure-html/simulse-1.png" alt="サンプルサイズの関数としてのサンプル平均とサンプル誤差。" width="672"><p class="caption">
@@ -1664,18 +1663,18 @@ Hunter and Schmidt の手法の多くは、<a href="https://psychmeta.com/"><str
 <p>メタ分析において、1つの研究が2つ以上の効果量に寄与することは珍しいことではない。特に、(1)ある研究が2つ以上のグループを含んでいる、(2)ある研究が2つ以上の道具を使って結果を測定している、などの場合がある。どちらの場合も問題がある。メタ分析において、研究が複数の効果量に寄与する場合、メタ分析における各効果量は<strong>独立</strong>であるという中核的な仮定の1つに違反することになる <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 6.2</a> と Chapter 23; <a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 25</a>)</span>。この仮定が満たされない場合、<strong>分析単位</strong> (unit of analysis) の問題を扱っていることになる。</p>
 <p></p>
 <p>例えば、治療 A を検査する群、治療 B を投与する群、そして対照群 C がある。この研究では、<strong>2</strong>個の効果量を計算することが可能である。結果のデータによって、これらはリスク比、オッズ比、または発生率比、あるいは標準化平均差になる。治療 A と対照を比較する効果量 <span class="math inline">\(\hat\theta_{\text{A-C}}\)</span> と、治療 B と対照を比較する効果量 <span class="math inline">\(\hat\theta_{\text{B-C}}\)</span> の2つがある。<span class="math inline">\(\hat\theta_{\text{A-C}}\)</span> と <span class="math inline">\(\hat\theta_{\text{B-C}}\)</span> の両方を同じメタ分析に含めると、C の情報が2回含まれているため、これらの効果量は独立したものではない。この問題は、<strong>二重カウント</strong>とも呼ばれる。</p>
-<p>C を二重カウントしたため、2つの効果量は<strong>相関</strong>がある。サンプルサイズが全群で等しい場合、この相関は <span class="math inline">\(r =\)</span> 0.5 であることがわかる <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 25</a>)</span>。これは、A と B が独立した群であるため、相関がないためである。しかし、両方の効果量における対照群は同一であるため、完全な相関は1となり、その中点は 0.5 となる。群の二重カウントは、影響を受ける効果量の精度 (すなわち、標準誤差) を過大評価することになる。これは、メタ分析でこれらの効果に与える重みを増大させ、最終的に結果を歪めることになる。この問題に対処するために、3つの方法がある。</p>
+<p>C を二重カウントしたため、2つの効果量は<strong>相関</strong>がある。サンプルサイズが全群で等しい場合、この相関は <span class="math inline">\(r =\)</span> 0.5 であることがわかる <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 25</a>)</span>。これは、A と B が独立した群であるため、相関がないためである。しかし、両方の効果量における対照群は同一であるため、完全な相関は 1 となり、その中点は 0.5 となる。群の二重カウントは、影響を受ける効果量の精度 (すなわち、標準誤差) を過大評価することになる。これは、メタ分析でこれらの効果に与える重みを増大させ、最終的に結果を歪めることになる。この問題に対処するために、3つの方法がある。</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>共有群のサンプルサイズを分割する</strong>。これは、効果量を計算するときに、C 群のサンプルサイズ (例えば <span class="math inline">\(n =\)</span> 200) を A との比較と C との比較で均等に分けることを意味する。二値結果のデータを扱う場合は、イベントの数も均等に分割する。この例では、先ほどと同じように2つの効果量を計算したが、今度は C が両方の計算で100人のみで構成されているように見せかける。このアプローチにより、効果量の精度がダブルカウントのために人為的に高くなるという問題が解決される。しかし、効果量が相関したままなので、まだ最適とは言えない <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, 23.3.4</a>)</span>。</p></li>
+<li><p><strong>共有群のサンプルサイズを分割する</strong>。これは、効果量を計算するときに、C 群のサンプルサイズ (例えば <span class="math inline">\(n =\)</span> 200) を A との比較と C との比較で均等に分けることを意味する。二値結果のデータを扱う場合は、イベントの数も均等に分割する。この例では、先ほどと同じように2つの効果量を計算したが、今度は C が両方の計算で 100 人のみで構成されているように見せかける。このアプローチにより、効果量の精度がダブルカウントのために人為的に高くなるという問題が解決される。しかし、効果量が相関したままなので、まだ最適とは言えない <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, 23.3.4</a>)</span>。</p></li>
 <li><p><strong>群を削除する</strong>。非常に腕力を使う手法は、単純に1つの比較、例えば <span class="math inline">\(\hat\theta_{\text{B-C}}\)</span> をメタ分析から完全に削除することである。これは分析単位の問題を解決するものの、新たな問題を引き起こす。効果量を1つ捨てるだけだと、関連する可能性のある情報を失ってしまうのである。</p></li>
-<li><p><strong>群を合体する</strong>。この手法は、2つの群の結果を組み合わせて、1つの比較しか残らないようにするものである。この例では、A と B のデータを組み合わせて、プールした結果を C と比較することを意味する。これは、両群の参加者数とイベント数を合計すればよい二値アウトカムデータでは比較的簡単なことである。しかし、平均値や標準偏差のような連続的なデータでは、少し複雑になる。「各種ツール」の Chapter <a href="es-calc.html#pool-groups">17.9</a> には、このようなデータを結合するための <em>R</em> 関数がある。群を合体することで、二重カウントや効果量の相関を回避することが可能である。そのため、この方法はコクランでも推奨されている <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 23.3.4</a>)</span>。とはいえ、この方法にも欠点がある。2群があまりにも異なり、実際には比較できないものを一緒にしてしまう可能性があるのである。A は最先端の介入、B はエビデンスベースの乏しい時代遅れのアプローチでなど、A 群と B 群の治療がまったく異なることもある。この2つの治療を組み合わせても効果が見られない場合、これが両方のタイプの介入に当てはまるのか、B の効果のなさが単に A の効果を希釈したのかを切り分けるのはほぼ不可能である。したがって、アプローチ (1) と (2) は、2群があまりにも異質な場合に使用される。</p></li>
+<li><p><strong>群を合体する</strong>。この手法は、2つの群の結果を組み合わせて、1つの比較しか残らないようにするものである。この例では、A と B のデータを組み合わせて、プールした結果を C と比較することを意味する。これは、両群の参加者数とイベント数を合計すればよい二値アウトカムデータでは比較的簡単なことである。しかし、平均値や標準偏差のような連続的なデータでは、少し複雑になる。「各種ツール」の Chapter <a href="es-calc.html#pool-groups">17.9</a> には、このようなデータを結合するための <em>R</em> 関数がある。群を合体することで、二重カウントや効果量の相関を回避することが可能である。そのため、この方法はコクランでも推奨されている <span class="citation">(<a href="references.html#ref-higgins2019cochrane">Julian Higgins et al. 2019, chap. 23.3.4</a>)</span>。とはいえ、この方法にも欠点がある。2 群があまりにも異なり、実際には比較できないものを一緒にしてしまう可能性があるのである。A は最先端の介入、B はエビデンスベースの乏しい時代遅れのアプローチでなど、A 群と B 群の治療がまったく異なることもある。この 2 つの治療を組み合わせても効果が見られない場合、これが両方のタイプの介入に当てはまるのか、B の効果のなさが単に A の効果を希釈したのかを切り分けるのはほぼ不可能である。したがって、アプローチ (1) と (2) は、2 群があまりにも異質な場合に使用される。</p></li>
 </ol>
 <p></p>
 <p>分析単位の問題は、ある研究が複数の測定器を用いて結果を測定した場合にも発生する。これは、解析したい変数をどのように選ぶべきかを決定する明確な「ゴールド・スタンダード」がない場合によくあることである。これらの測定のそれぞれについて効果量を計算しメタ分析に含めると、二重カウントになってしまう。さらに、効果の測定に同じサンプルが使用されるため、効果量には相関がある。この状況に対処するためには、3つのアプローチがある。</p>
 <ul>
 <li><p>まず、単純に1つの研究につき1つの測定器を選択する方法である。この選択は、体系的かつ再現可能な方法で行うことが重要である。できることといえば、解析計画書 (Chapter <a href="intro.html#analysis-plan">1.4.2</a>) において、メタ解析のための測定器の階層を定義しておくくらいである。この階層は、特定の測定器の信頼性に関する過去の証拠に基づくことも、どのタイプの測定器が研究課題の内容を最もよく反映しているかに基づくこともできる。そして、この階層によって、複数の測定器が利用可能な場合に、どの測定器を選択するかを明確に決定する。</p></li>
 <li><p>また、計算された効果量を用いてそれらを集約し、各研究が1つの効果量 (集約されたもの) しか提供しないようにすることも可能である。これはやや「総当り」的なアプローチである。この場合、効果量が研究内でどの程度強く相関しているかを特定する必要があるが、この値は通常知られていない。Chapter <a href="es-calc.html#aggregate-es">17.10</a> では、あらかじめ計算された効果量を、各研究について1つの推定値に集約できる関数を紹介する。</p></li>
-<li><p>第三のアプローチは、利用可能なすべての測定器からのデータを含み、メタ分析において研究が1つ以上の効果量に寄与するという事実を説明できるメタ分析モデルを使用することである。これは<strong>「３レベル」</strong>メタ分析モデルによって実現されるもので、Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で検討する。</p></li>
+<li><p>第三のアプローチは、利用可能なすべての測定器からのデータを含み、メタ分析において研究が1つ以上の効果量に寄与するという事実を説明できるメタ分析モデルを使用することである。これは<strong>「3 レベル」</strong>メタ分析モデルによって実現されるもので、Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で検討する。</p></li>
 </ul>
 <p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
 <p><br></p>
@@ -1745,7 +1744,7 @@ A</a> にある。</strong>
 <ul>
 <li><p>効果量は、メタ分析の構成要素である。メタ分析を行うには、少なくとも効果量とその標準誤差の推定値が必要である。</p></li>
 <li><p>効果量の標準誤差は、その研究による効果量の推定がどれだけ正確であるかを表している。メタ分析では、精度の高い効果量は、真の効果をより良く推定できるため、より高い重みが与えられる。</p></li>
-<li><p>メタ分析で使用する効果量には様々なものがある。一般的なものは、「1変数」の関係尺度 (平均や割合など)、相関、(標準化) 平均差、そしてリスク比、オッズ比、発生率比などである。</p></li>
+<li><p>メタ分析で使用する効果量には様々なものがある。一般的なものは、「1 変数」の関係尺度 (平均や割合など)、相関、(標準化) 平均差、そしてリスク比、オッズ比、発生率比などである。</p></li>
 <li><p>効果量には、測定誤差や範囲制限などによるバイアスが生じることがある。標準化平均差の小サンプルバイアス、信頼性の低さによる減衰、範囲制限の問題など、いくつかのバイアスを補正する公式がある。</p></li>
 <li><p>その他のよくある問題としては、効果量を計算するために必要なデータを異なる形式で報告している研究、また、複数の効果量を報告している研究で生じる分析単位の問題などがある。</p></li>
 </ul>

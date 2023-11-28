@@ -586,11 +586,11 @@ Figure 15.1: Example RevMan output.
 <p>プロットを作成するために、まず、<strong>Excel</strong> から <em>R</em> にバイアスリスク評価の結果をインポートする必要がある。なお、<strong>{robvis}</strong> はデータ作成方法について指定があり、Excel で表を設定する際には以下のガイダンスに必ず従わなければならない。</p>
 <ol style="list-style-type: decimal">
 <li>最初の列名は “Study” とし、研究識別子を記述する (例: <strong>Anthony et al, 2019</strong>)。</li>
-<li>最後から2番目の列名は “Overall” とする。全体のリスクオブバイアス判定を記載する。</li>
+<li>最後から 2 番目の列名は “Overall” とする。全体のリスクオブバイアス判定を記載する。</li>
 <li>最後の列名は “Weight” とし、研究の精度の指標 (例えば、メタ分析で各研究に割り当てられた重み、またはメタ分析が行われなかった場合は、各研究のサンプルサイズ) を記述する。詳しくは、Chapter <a href="pooling-es.html#fem">4.1.1</a> を参照。</li>
 <li>その他の列は、特定のドメインのバイアスリスク評価結果を含む。</li>
 </ol>
-<p>上記のガイダンスを詳しく説明するために、5つのドメインを持つ ROB2 ツールを例として考えてみよう。このツールで <strong>{robvis}</strong> が期待する結果のデータセットは8列である。</p>
+<p>上記のガイダンスを詳しく説明するために、5 つのドメインを持つ ROB2 ツールを例として考えてみよう。このツールで <strong>{robvis}</strong> が期待する結果のデータセットは 8 列である。</p>
 <ul>
 <li>
 <strong>列 1</strong>. 試験の識別子</li>
@@ -859,7 +859,7 @@ Figure 15.1: Example RevMan output.
 <span>                  tool <span class="op">=</span> <span class="st">"ROB2"</span>, </span>
 <span>                  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#f442c8"</span>,<span class="st">"#bef441"</span>,<span class="st">"#000000"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="Doing_Meta_Analysis_in_R_files/figure-html/unnamed-chunk-485-1.png" width="65%" style="display: block; margin: auto;"></div>
-<p>独自のカラースキームを定義する場合、離散判定 (例: “Low”、“Moderate”、“High”、“Critical”) の数と指定する色の数が同じであることを確認する必要がある。さらに、色はバイアスのリスクの昇順 (例: “Low”～“Critical”) で指定する必要があり、最初の16進数はバイアスのリスクが “Low” の色に対応する。</p>
+<p>独自のカラースキームを定義する場合、離散判定 (例: “Low”、“Moderate”、“High”、“Critical”) の数と指定する色の数が同じであることを確認する必要がある。さらに、色はバイアスのリスクの昇順 (例: “Low”～“Critical”) で指定する必要があり、最初の 16 進数はバイアスのリスクが “Low” の色に対応する。</p>
 <p><br></p>
 </div>
 <div id="ポイントサイズ" class="section level4" number="15.3.2.3">
@@ -899,7 +899,7 @@ Figure 15.1: Example RevMan output.
 <span class="header-section-number">15.4.2</span> ドメイン数の違い<a class="anchor" aria-label="anchor" href="#%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E6%95%B0%E3%81%AE%E9%81%95%E3%81%84"><i class="fas fa-link"></i></a>
 </h3>
 <hr>
-<p>“ROB1” テンプレート ( <code>tool = "ROB1"</code> ) は、さまざまな数の列を扱うことができる。これはもともとROB1アセスメントツールで使用するために設計されたが、頻繁にドメインが追加または削除されるようになった。<strong>このテンプレートは他のツール (ROB2、QUADAS-2、ROBINS-I) の調整版を使用して行われた評価の結果を提示すために使用できるが、これは勧めない</strong>。他の公表されているツールを使用する著者は、ガイダンスに適合することを確実にするために、前の章で示されたより厳格なテンプレートを使用する必要がある。</p>
+<p>“ROB1” テンプレート (<code>tool = "ROB1"</code>) は、さまざまな数の列を扱うことができる。これはもともとROB1アセスメントツールで使用するために設計されたが、頻繁にドメインが追加または削除されるようになった。<strong>このテンプレートは他のツール (ROB2、QUADAS-2、ROBINS-I) の調整版を使用して行われた評価の結果を提示すために使用できるが、これは勧めない</strong>。他の公表されているツールを使用する著者は、ガイダンスに適合することを確実にするために、前の章で示されたより厳格なテンプレートを使用する必要がある。</p>
 <p><br></p>
 </div>
 <div id="ドメイン名" class="section level3" number="15.4.3">
@@ -1234,7 +1234,7 @@ Weight
 <span class="header-section-number">15.6.3</span> 要約プロットページ<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E7%B4%84%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%83%9A%E3%83%BC%E3%82%B8"><i class="fas fa-link"></i></a>
 </h3>
 <hr>
-<p>3番目のタブをクリックすると、以下の画面が表示される。</p>
+<p>3 番目のタブをクリックすると、以下の画面が表示される。</p>
 <p><img src="images/robvis-app-summary-plot.png" width="45%" style="display: block; margin: auto;"><strong>このメニューは <code>rob_summary</code> 関数のグラフィカルインターフェイスとして機能する。</strong></p>
 <ul>
 <li>“Browse…” をクリックし、CSV ファイルを保存した場所に移動して、バイアスリスクの要約表をアップロードする。</li>

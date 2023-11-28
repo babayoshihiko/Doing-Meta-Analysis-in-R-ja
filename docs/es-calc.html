@@ -546,7 +546,7 @@
 <p>メタ分析が頻繁に直面する問題は、適切な「生の」効果量データが、含まれるすべての研究から抽出できるとは限らないことである。<code>metacont</code> (Chapter <a href="pooling-es.html#pooling-smd">4.2.2</a>) や <code>metabin</code> (Chapter <a href="pooling-es.html#pooling-or-rr">4.2.3.1</a>) などの <strong>{meta}</strong> パッケージのほとんどの関数は、生の効果量データが完全に利用可能な場合にのみ使用することができる。</p>
 <p>実際には、これは困難につながることも多い。出版された論文の中には、特に古いものでは、必要な (生の) 効果量データを抽出できるような方法で結果を報告していないものがある。<span class="math inline">\(t\)</span>-検定、one-way ANOVA、<span class="math inline">\(\chi^2\)</span>-検定 の結果は報告されていても、メタ分析に必要なグループごとの平均や標準偏差、研究条件におけるイベント数が報告されていないことはよくあることである。</p>
 <p></p>
-<p>幸いなことに、報告された情報を望ましい効果量フォーマットに<strong>変換</strong>できる場合がある。これにより、<code>metagen</code> を用いた<strong>事前計算</strong>データ (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a>) によるメタ分析で、影響を受けた研究を含めることができるようになる。例えば、2標本の <span class="math inline">\(t\)</span>-検定 の結果を標準化平均差 (SMD) とその標準誤差に変換し、<code>metagen</code> を用いて事前に計算された SMD のメタ分析を行うことができる。<strong>{esc}</strong> パッケージ <span class="citation">(<a href="references.html#ref-esc">Lüdecke 2019</a>)</span> には、このような変換を <em>R</em> 内で直接行うことができる便利な関数がいくつか用意されている。</p>
+<p>幸いなことに、報告された情報を望ましい効果量フォーマットに<strong>変換</strong>できる場合がある。これにより、<code>metagen</code> を用いた<strong>事前計算</strong>データ (Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a>) によるメタ分析で、影響を受けた研究を含めることができるようになる。例えば、2 標本の <span class="math inline">\(t\)</span>-検定の結果を標準化平均差 (SMD) とその標準誤差に変換し、<code>metagen</code> を用いて事前に計算された SMD のメタ分析を行うことができる。<strong>{esc}</strong> パッケージ <span class="citation">(<a href="references.html#ref-esc">Lüdecke 2019</a>)</span> には、このような変換を <em>R</em> 内で直接行うことができる便利な関数がいくつか用意されている。</p>
 <p><br></p>
 <div id="平均値および標準誤差" class="section level2" number="17.1">
 <h2>
@@ -560,7 +560,7 @@
 \text{SD} =\text{SE}\sqrt{n}
 \tag{17.1}
 \end{equation}\]</span></p>
-<p>SMD や Hedges’ <span class="math inline">\(g\)</span> は <code>esc_mean_se</code>関数を使って計算することができる。以下はその例である。</p>
+<p>SMD や Hedges’ <span class="math inline">\(g\)</span> は <code>esc_mean_se</code> 関数を使って計算することができる。以下はその例である。</p>
 <div class="sourceCode" id="cb515"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/esc">esc</a></span><span class="op">)</span></span>
 <span></span>
@@ -709,13 +709,13 @@ r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \n
 </h2>
 <hr>
 <p></p>
-<p>また、<strong>2群</strong>の一元配置 ANOVA の <span class="math inline">\(F\)</span>-値から SMD を導き出すこともできる。そのような ANOVA は、<strong>自由度</strong>を見ることで識別できる。2群の一元配置ANOVAでは、自由度は常に1から始まるはずである (例: <span class="math inline">\(F_{\text{1,147}}\)</span> =5.31)。</p>
+<p>また、<strong>2 群</strong>の一元配置 ANOVA の <span class="math inline">\(F\)</span>-値から SMD を導き出すこともできる。どの ANOVA が可能かは、<strong>自由度</strong>を見ることで識別できる。2 群の一元配置 ANOVA では、自由度は常に 1 から始まる (例: <span class="math inline">\(F_{\text{1,147}}\)</span> =5.31)。</p>
 <p>変換に使う式は次のようなものである <span class="citation">(<a href="references.html#ref-rosnow1996computing">Rosnow and Rosenthal 1996</a>; <a href="references.html#ref-rosnow2000contrasts">Rosnow, Rosenthal, and Rubin 2000</a>; <a href="references.html#ref-thalheimer2002calculate">Thalheimer and Cook 2002</a> を参照)</span>。</p>
 <p><span class="math display" id="eq:esc4">\[\begin{equation}
 \text{SMD} = \sqrt{  F\left(\frac{n_1+n_2}{n_1 n_2}\right)\left(\frac{n_1+n_2}{n_1+n_2-2}\right)}
 \tag{17.4}
 \end{equation}\]</span></p>
-<p><span class="math inline">\(F\)</span>-値 から SMD や Hedges’ <span class="math inline">\(g\)</span> を計算するには、<code>esc_f</code> 関数を使用する。以下はその例である。</p>
+<p><span class="math inline">\(F\)</span>-値から SMD や Hedges’ <span class="math inline">\(g\)</span> を計算するには、<code>esc_f</code> 関数を使用する。以下はその例である。</p>
 <div class="sourceCode" id="cb527"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://strengejacke.github.io/esc/reference/esc_f.html">esc_f</a></span><span class="op">(</span>f <span class="op">=</span> <span class="fl">5.04</span>,      <span class="co"># one-way anova の F-値</span></span>
 <span>      grp1n <span class="op">=</span> <span class="fl">519</span>,   <span class="co"># group 1 のサンプルサイズ </span></span>
@@ -735,11 +735,11 @@ r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \n
 </div>
 <div id="標本の-t-検定" class="section level2" number="17.5">
 <h2>
-<span class="header-section-number">17.5</span> 2標本の <span class="math inline">\(t\)</span> 検定<a class="anchor" aria-label="anchor" href="#%E6%A8%99%E6%9C%AC%E3%81%AE-t-%E6%A4%9C%E5%AE%9A"><i class="fas fa-link"></i></a>
+<span class="header-section-number">17.5</span> 2 標本の <span class="math inline">\(t\)</span> 検定<a class="anchor" aria-label="anchor" href="#%E6%A8%99%E6%9C%AC%E3%81%AE-t-%E6%A4%9C%E5%AE%9A"><i class="fas fa-link"></i></a>
 </h2>
 <hr>
 <p></p>
-<p>標準化平均差として表現される効果量は、以下の式 <span class="citation">(<a href="references.html#ref-rosnow2000contrasts">Rosnow, Rosenthal, and Rubin 2000</a>; <a href="references.html#ref-thalheimer2002calculate">Thalheimer and Cook 2002</a>)</span> を用いて、<strong>独立</strong>2標本 <span class="math inline">\(t\)</span> -検定値からも導き出すことができる。</p>
+<p>標準化平均差として表現される効果量は、以下の式 <span class="citation">(<a href="references.html#ref-rosnow2000contrasts">Rosnow, Rosenthal, and Rubin 2000</a>; <a href="references.html#ref-thalheimer2002calculate">Thalheimer and Cook 2002</a>)</span> を用いて、<strong>独立</strong> 2 標本 <span class="math inline">\(t\)</span>-検定値からも導き出すことができる。</p>
 <p><span class="math display" id="eq:esc5">\[\begin{equation}
 \text{SMD} = \frac {t(n_1+n_2)}{\sqrt{(n_1+n_2-2)(n_1n_2)}}
 \tag{17.5}
@@ -769,7 +769,7 @@ r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \n
 <hr>
 <p></p>
 <p>研究では、効果の大きさ (例えば、Cohen’s <span class="math inline">\(d\)</span> 値)、その効果の <span class="math inline">\(p\)</span> -値のみを報告し、それ以上のことは報告しないことがある。しかし、メタ分析で結果をプールするためには、効果量の<strong>精度</strong>の指標、できれば標準誤差が必要である。</p>
-<p>そのような場合、効果量の <span class="math inline">\(p\)</span> -値から標準誤差を推定しなければならない。これは、Altman and Bland <span class="citation">(<a href="references.html#ref-altman2011obtain">2011</a>)</span> による公式を用いれば、<strong>差分</strong> (すなわち SMD) または<strong>比</strong> (すなわちリスク比またはオッズ比) に基づく効果量に対して可能である。これらの公式は、 <em>R</em> の <code>se.from.p</code> 関数で実装されている。</p>
+<p>そのような場合、効果量の <span class="math inline">\(p\)</span>-値から標準誤差を推定しなければならない。これは、Altman and Bland <span class="citation">(<a href="references.html#ref-altman2011obtain">2011</a>)</span> による公式を用いれば、<strong>差分</strong> (すなわち SMD) または<strong>比</strong> (すなわちリスク比またはオッズ比) に基づく効果量に対して可能である。これらの公式は、 <em>R</em> の <code>se.from.p</code> 関数で実装されている。</p>
 <p></p>
 <div class="boxdmetar">
 <p>
@@ -793,7 +793,7 @@ r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \n
 </li>
 </ol>
 </div>
-<p><span class="math inline">\(N=\)</span> 71人の参加者を持つ研究で、<span class="math inline">\(d=\)</span> 0.71 の効果量を報告していると仮定すると、<span class="math inline">\(p=\)</span> 0.013 のように標準誤差を計算することができる。</p>
+<p><span class="math inline">\(N =\)</span> 71 人の参加者を持つ研究で、<span class="math inline">\(d =\)</span> 0.71 の効果量を報告していると仮定すると、<span class="math inline">\(p =\)</span> 0.013 のように標準誤差を計算することができる。</p>
 <div class="sourceCode" id="cb531"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dmetar.protectlab.org">dmetar</a></span><span class="op">)</span></span>
 <span></span>
@@ -803,7 +803,7 @@ r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \n
 <span>          effect.size.type <span class="op">=</span> <span class="st">"difference"</span><span class="op">)</span></span></code></pre></div>
 <pre><code>##   EffectSize StandardError StandardDeviation  LLCI  ULCI
 ## 1       0.71         0.286             2.410 0.149 1.270</code></pre>
-<p><span class="math inline">\(N=\)</span> 200人の参加者が、OR=0.91、<span class="math inline">\(p=\)</span> 0.38の効果量を報告した研究については、標準誤差はこのように計算される。</p>
+<p><span class="math inline">\(N =\)</span> 200人の参加者が、OR = 0.91、<span class="math inline">\(p =\)</span> 0.38 の効果量を報告した研究については、標準誤差はこのように計算される。</p>
 <div class="sourceCode" id="cb533"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span> <span class="co"># pipe を使う</span></span>
 <span></span>
@@ -857,7 +857,7 @@ r_{pb} &amp;= \frac{\text{SMD}}{\sqrt{\text{SMD}^2+\dfrac{(N^2-2N)}{n_1n_2}}} \n
 \text{NNT} = (p_{e_{\text{treat}}}-p_{e_{\text{control}}})^{-1}
 \tag{17.6}
 \end{equation}\]</span></p>
-<p>この式で、<span class="math inline">\(p_{e_{\text{treat}}}\)</span> と <span class="math inline">\(p_{e_{\text{control}}}\)</span> は、それぞれ治療群と対照群でイベントを経験した参加者の割合である。これらの割合は、リスク比 (Chapter <a href="effects.html#rr">3.3.2.1</a> ) を計算するのに使われる「リスク」と同じで、<strong>実験群イベント率</strong> (experimental group event rate, EER) および<strong>対照群イベント率</strong> (control group event rate, CER) としても知られている。この式から、NTT は (絶対) リスク差の逆数と表現することもできる。</p>
+<p>この式で、<span class="math inline">\(p_{e_{\text{treat}}}\)</span> と <span class="math inline">\(p_{e_{\text{control}}}\)</span> は、それぞれ治療群と対照群でイベントを経験した参加者の割合である。これらの割合は、リスク比 (Chapter <a href="effects.html#rr">3.3.2.1</a>) を計算するのに使われる「リスク」と同じで、<strong>実験群イベント率</strong> (experimental group event rate, EER) および<strong>対照群イベント率</strong> (control group event rate, CER) としても知られている。この式から、NTT は (絶対) リスク差の逆数と表現することもできる。</p>
 <p>標準化平均差または Hedges’ <span class="math inline">\(g\)</span> を NNT に変換するのはより複雑である。よく使われる方法は2つある。</p>
 <p></p>
 <ul>
@@ -960,7 +960,7 @@ NNT に変換することが可能である。
 </h2>
 <hr>
 <p></p>
-<p>解析単位誤差 (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a>) を避けるために、(標準化) 平均差を計算する前に、2つ以上の試験群の平均と標準偏差をプールする必要がある場合がある。2群の連続効果量データをプールするには、以下の式を用いることができる。</p>
+<p>解析単位誤差 (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a>) を避けるために、(標準化) 平均差を計算する前に、2 つ以上の試験群の平均と標準偏差をプールする必要がある場合がある。2群の連続効果量データをプールするには、以下の式を用いることができる。</p>
 <p><span class="math display">\[\begin{align}
 n_{\text{pooled}} &amp;= n_1 + n_2  \\
 m_{\text{pooled}} &amp;= \frac{n_1m_1+n_2m_2}{n_1+n_2} \\
@@ -984,7 +984,7 @@ SD_{\text{pooled}} &amp;= \sqrt{\frac{(n_1-1)SD^{2}_{1}+ (n_2-1)SD^{2}_{2}+\frac
 </li>
 <li>
 ソースコード全体をコンソール (R Studio の左下ペイン)
-にコピー＆ペーストし、Enterキーを押して、 <em>R</em>
+にコピー＆ペーストし、Enter キーを押して、 <em>R</em>
 に関数を「学習」させる。
 </li>
 </ol>
@@ -1008,7 +1008,7 @@ SD_{\text{pooled}} &amp;= \sqrt{\frac{(n_1-1)SD^{2}_{1}+ (n_2-1)SD^{2}_{2}+\frac
 <span class="header-section-number">17.10</span> 効果量の集約<a class="anchor" aria-label="anchor" href="#aggregate-es"><i class="fas fa-link"></i></a>
 </h2>
 <hr>
-<p><strong>{metafor}</strong> の <code>aggregate</code> 関数を使うと、例えば、同じ研究やクラスターの一部であるという理由で、いくつかの従属する <strong>事前に計算された効果量</strong> を一つの推定値に集約することが可能である。これは、<strong>解析単位エラー</strong> (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a> 参照) を回避する方法であるが、研究内相関の値を仮定する必要があり、これは通常未知である。効果量依存性を扱うもう一つの (そしてしばしば望ましい) 方法は、(相関) 階層モデルで、これは Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で説明されている。</p>
+<p><strong>{metafor}</strong> の <code>aggregate</code> 関数を使うと、例えば、同じ研究やクラスターの一部であるという理由で、いくつかの従属する<strong>事前に計算された効果量</strong>を一つの推定値に集約することが可能である。これは、<strong>解析単位エラー</strong> (Chapter <a href="effects.html#unit-of-analysis">3.5.2</a> 参照) を回避する方法であるが、研究内相関の値を仮定する必要があり、これは通常未知である。効果量依存性を扱うもう一つの (こちらの方が良いことも多い) 方法は、(相関) 階層モデルで、これは Chapter <a href="multilevel-ma.html#multilevel-ma">10</a> で説明している。</p>
 <p>この例では、<code>Chernobyl</code> データセット (Chapter <a href="multilevel-ma.html#multilevel-R">10.2</a> 参照) の効果量を集約し、各研究が1つの効果量のみを提供するようにする。</p>
 <div class="sourceCode" id="cb547"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.metafor-project.org">metafor</a></span><span class="op">)</span></span>
@@ -1054,7 +1054,7 @@ SD_{\text{pooled}} &amp;= \sqrt{\frac{(n_1-1)SD^{2}_{1}+ (n_2-1)SD^{2}_{2}+\frac
 <li><a class="nav-link" href="#%E5%9B%9E%E5%B8%B0%E4%BF%82%E6%95%B0"><span class="header-section-number">17.2</span> 回帰係数</a></li>
 <li><a class="nav-link" href="#convert-corr"><span class="header-section-number">17.3</span> 相関関係</a></li>
 <li><a class="nav-link" href="#%E4%B8%80%E5%85%83%E9%85%8D%E7%BD%AE%E5%88%86%E6%95%A3%E5%88%86%E6%9E%90"><span class="header-section-number">17.4</span> 一元配置分散分析</a></li>
-<li><a class="nav-link" href="#%E6%A8%99%E6%9C%AC%E3%81%AE-t-%E6%A4%9C%E5%AE%9A"><span class="header-section-number">17.5</span> 2標本の \(t\) 検定</a></li>
+<li><a class="nav-link" href="#%E6%A8%99%E6%9C%AC%E3%81%AE-t-%E6%A4%9C%E5%AE%9A"><span class="header-section-number">17.5</span> 2 標本の \(t\) 検定</a></li>
 <li><a class="nav-link" href="#p-%E5%80%A4"><span class="header-section-number">17.6</span> \(p\) 値</a></li>
 <li><a class="nav-link" href="#chi2-%E6%A4%9C%E5%AE%9A"><span class="header-section-number">17.7</span> \(\chi^2\) 検定</a></li>
 <li><a class="nav-link" href="#nnt"><span class="header-section-number">17.8</span> 治療必要例数</a></li>

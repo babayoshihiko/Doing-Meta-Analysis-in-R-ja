@@ -700,8 +700,8 @@ w_k = \frac{1}{s^2_k}
 \theta_k  = \mu + \zeta_k
 \tag{4.5}
 \end{equation}\]</span></p>
-<p>ランダム効果モデルは、ブラックボックス <span class="citation">(<a href="references.html#ref-thompson2001multilevel">S. G. Thompson, Turner, and Warn 2001</a>)</span> の内部で、2つのプロセスの階層が起こっていることを教えてくれる: 研究の観察された効果量は、サンプル誤差のためにその真の値から逸脱している。しかし、真の効果量でさえも、真の効果の宇宙からの引き出しに過ぎず、その平均 <span class="math inline">\(\mu\)</span> を、メタ分析のプール効果として推定したい。</p>
-<p>2番目の式を1番目の式にあてじはめる (つまり、<span class="math inline">\(\theta_k\)</span> を2番目の式の定義に置き換える) ことで、ランダム効果モデルを1行で表現可能である <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 12</a>)</span>。</p>
+<p>ランダム効果モデルは、ブラックボックス <span class="citation">(<a href="references.html#ref-thompson2001multilevel">S. G. Thompson, Turner, and Warn 2001</a>)</span> の内部で、2 つのプロセスの階層が起こっていることを教えてくれる: 研究の観察された効果量は、サンプル誤差のためにその真の値から逸脱している。しかし、真の効果量でさえも、真の効果の宇宙からの引き出しに過ぎず、その平均 <span class="math inline">\(\mu\)</span> を、メタ分析のプール効果として推定したい。</p>
+<p>2 番目の式を 1 番目の式にあてじはめる (つまり、<span class="math inline">\(\theta_k\)</span> を2番目の式の定義に置き換える) ことで、ランダム効果モデルを1行で表現可能である <span class="citation">(<a href="references.html#ref-borenstein2011introduction">Borenstein et al. 2011, chap. 12</a>)</span>。</p>
 <p><span class="math display" id="eq:pes6">\[\begin{equation}
 \hat\theta_k = \mu + \zeta_k + \epsilon_k
 \tag{4.6}
@@ -810,8 +810,8 @@ calculate the confidence interval around the pooled effect.”</em>
 </p>
 </blockquote>
 </div>
-<p>Knapp-Hartung調整を適用することは通常賢明である。いくつかの研究 <span class="citation">(<a href="references.html#ref-inthout2014hartung">IntHout, Ioannidis, and Borm 2014</a>; <a href="references.html#ref-langan2019comparison">Langan et al. 2019</a>)</span> は、特に研究数が少ない場合に、これらの調整によって偽陽性の可能性を減らすことができることを示す。</p>
-<p>しかし、Knapp-Hartung調整の使用は議論の余地がないわけではない。例えば、Wiksten ら <span class="citation">(<a href="references.html#ref-wiksten2016hartung">2016</a>)</span> は、効果が非常に均質な場合、この方法は (滅多にない) 反保守的な結果を引き起こすことがあると論じている。</p>
+<p>Knapp-Hartung 調整を適用することは通常賢明である。いくつかの研究 <span class="citation">(<a href="references.html#ref-inthout2014hartung">IntHout, Ioannidis, and Borm 2014</a>; <a href="references.html#ref-langan2019comparison">Langan et al. 2019</a>)</span> は、特に研究数が少ない場合に、これらの調整によって偽陽性の可能性を減らすことができることを示す。</p>
+<p>しかし、Knapp-Hartung 調整の使用は議論の余地がないわけではない。例えば、Wiksten ら <span class="citation">(<a href="references.html#ref-wiksten2016hartung">2016</a>)</span> は、効果が非常に均質な場合、この方法は (滅多にない) 反保守的な結果を引き起こすことがあると論じている。</p>
 <p><br></p>
 </div>
 </div>
@@ -822,7 +822,7 @@ calculate the confidence interval around the pooled effect.”</em>
 </h2>
 <p></p>
 <p>学んだことを実践する時が来た。この章の残りの部分では、 <em>R</em> で直接、異なる効果量のメタ分析を実行する方法を探る。このために使用する <strong>{meta}</strong> パッケージは特別な構造を持っている。メタ分析関数がいくつか含まれており、それぞれが効果量のデータの1つのタイプに焦点を当てている。例えば、固定効果モデルかランダム効果モデルか、どの <span class="math inline">\(\tau^2\)</span> 推定量を使うか、などである。それとは別に、特定の種類のデータにのみ関連するメタ分析の詳細を調整することができる<strong>関数固有の</strong>引数がある。</p>
-<p>Figure <a href="pooling-es.html#fig:metaflow">4.3</a> は、 <strong>{meta}</strong> の構造を概観したものである。どの関数を使うかを決めるには、まず、どのような効果量データを合成したいのかを明確にする必要がある。最も基本的な区別は、<strong>生</strong> (raw) と <strong>事前計算済み</strong> (pre-calculated) 効果量データの間のものである。「生」のデータとは、目的の効果量を計算するために必要なすべての情報がデータフレームに格納されているが、実際の効果量はまだ計算されていない場合を指す。先ほど使用した <code>SuicidePrevention</code> データセットには、標準化平均差を計算するために必要な2つのグループの平均、標準偏差、サンプルサイズという生データが含まれている。</p>
+<p>Figure <a href="pooling-es.html#fig:metaflow">4.3</a> は、 <strong>{meta}</strong> の構造を概観したものである。どの関数を使うかを決めるには、まず、どのような効果量データを合成したいのかを明確にする必要がある。最も基本的な区別は、<strong>生</strong> (raw) と<strong>事前計算済み</strong> (pre-calculated) 効果量データの間のものである。「生」のデータとは、目的の効果量を計算するために必要なすべての情報がデータフレームに格納されているが、実際の効果量はまだ計算されていない場合を指す。先ほど使用した <code>SuicidePrevention</code> データセットには、標準化平均差を計算するために必要な2つのグループの平均、標準偏差、サンプルサイズという生データが含まれている。</p>
 <p>一方、効果量データには、各研究の最終的な効果量と標準誤差がすでに含まれており、これを「事前計算済み」と呼んでいる。効果指標の補正版 (例えば、Hedges’ <span class="math inline">\(g\)</span>、Chapter <a href="effects.html#hedges-g">3.4.1</a>) を使用したい場合、プールを始める前に、既に計算済みの効果量データにこの補正が適用されていることが必要である。</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:metaflow"></span>
@@ -832,8 +832,8 @@ Figure 4.3: メタ分析に関する関数の概略図
 </div>
 <p>可能であれば、メタ分析には生データを使用することが望ましい。そうすれば、他の人が効果量の計算方法を理解し、結果を再現することが容易になる。しかし、研究結果は異なる方法で報告されることが多いため、実際には生データを使用できないことが多い (Chapter <a href="effects.html#es-formats-different">3.5.1</a>)。</p>
 <p>このため、各研究の望ましい効果量をすぐに事前計算して、すべての形式が同じになるようにする以外に方法がない。本書の「各種ツール」の Chapter <a href="es-calc.html#es-calc">17</a> では、報告された効果量を目的のメトリックに変換するのに役立つ公式を紹介している。</p>
-<p>あらかじめ計算された効果量に対応する関数として、 <code>metagen</code> がある。この名前は、 <strong>gen</strong>eric inverse variance meta-analysis の略である。もし、二値データ (割合、リスク比、オッズ比など) で <code>metagen</code> を使用する場合は、 Chapter <a href="effects.html#ratios">3.3.2</a> で説明したように、この関数を使用する前に効果量を対数変換しておくことが重要である。</p>
-<p>生の効果量データに頼ることができる場合、 <strong>{meta}</strong> はそれぞれの効果量タイプに特化した関数を提供する。平均、(標準化) 平均差、相関には、それぞれ <code>metamean</code> , <code>metacont</code> , <code>metacor</code> 関数を使用可能である。 <code>metarate</code> , <code>metaprop</code> , <code>metainc</code> 関数を用いて、(発生) 率、割合、発生率比をプールすることが可能である。 <code>metabin</code> 関数は、リスク比やオッズ比を扱うときに使用する。</p>
+<p>あらかじめ計算された効果量に対応する関数として、<code>metagen</code> がある。この名前は、<strong>gen</strong>eric inverse variance meta-analysis の略である。もし、二値データ (割合、リスク比、オッズ比など) で <code>metagen</code> を使用する場合は、 Chapter <a href="effects.html#ratios">3.3.2</a> で説明したように、この関数を使用する前に効果量を対数変換しておくことが重要である。</p>
+<p>生の効果量データに頼ることができる場合、<strong>{meta}</strong> はそれぞれの効果量タイプに特化した関数を提供する。平均、(標準化) 平均差、相関には、それぞれ <code>metamean</code> , <code>metacont</code>、<code>metacor</code> 関数を使用可能である。<code>metarate</code>、<code>metaprop</code>、<code>metainc</code> 関数を用いて、(発生) 率、割合、発生率比をプールすることが可能である。<code>metabin</code> 関数は、リスク比やオッズ比を扱うときに使用する。</p>
 <p><strong>{meta}</strong> のメタ分析関数はすべて同じ構造を持っている。効果量のデータ (生データまたは計算済みデータ) と、解析の詳細を制御するための引数を関数に与えなければならない。各関数で指定可能なコア引数は6つである。</p>
 <ul>
 <li>
@@ -877,7 +877,7 @@ Figure 4.3: メタ分析に関する関数の概略図
 パッケージには <code>gs</code>
 という便利な関数があり、これを使うことで特定の引数に使われるデフォルト値を確認することができる。例えば、
 <code>gs(“method.tau”)</code>
-を実行してみよう。もし、デフォルト値がなければ、 <code>gs</code> は
+を実行してみよう。もし、デフォルト値がなければ、<code>gs</code> は
 <code>NULL</code> を返す。
 </p>
 <p>
@@ -910,8 +910,8 @@ Figure 4.3: メタ分析に関する関数の概略図
 <p>
 <code>ThirdWave</code> のデータセットも <strong>{dmetar}</strong>
 パッケージに直接含まれている。<strong>{dmetar}</strong>
-をインストールし、ライブラリからロードした後、
-<code>data(SuicidePrevention)</code> を実行すると、自動的に <em>R</em>
+をインストールし、ライブラリからロードした後、<code>data(SuicidePrevention)</code>
+を実行すると、自動的に <em>R</em>
 環境にデータセットが保存される。これでデータセットが利用できる。もし、<strong>{dmetar}</strong>
 がインストールされていない場合は、<a href="https://www.protectlab.org/meta-analysis-in-r/data/thirdwave.rda">インターネット</a>から
 <em>.rda</em>
@@ -936,9 +936,9 @@ Studio ウィンドウでクリックするとインポートすることがで�
 ## $ InterventionDuration &lt;chr&gt; "short", "short", "short", "short", "short", "sho…
 ## $ InterventionType     &lt;chr&gt; "mindfulness", "mindfulness", "ACT", "mindfulness…
 ## $ ModeOfDelivery       &lt;chr&gt; "group", "online", "group", "group", "online", "g…</code></pre>
-<p>このデータセットには8つの列があり、そのうち最も重要なのは <code>Author</code>、<code>TE</code> 、<code>seTE</code> であることがわかる。<code>TE</code> 列は各研究の <span class="math inline">\(g\)</span> 値、 <code>seTE</code> は <span class="math inline">\(g\)</span> の標準誤差を表している。その他の列は、各研究が該当するサブグループカテゴリを記述する変数を表す。これらの変数は今のところ関係ない。</p>
+<p>このデータセットには8つの列があり、そのうち最も重要なのは <code>Author</code>、<code>TE</code> 、<code>seTE</code> であることがわかる。<code>TE</code> 列は各研究の <span class="math inline">\(g\)</span> 値、<code>seTE</code> は <span class="math inline">\(g\)</span> の標準誤差を表している。その他の列は、各研究が該当するサブグループカテゴリを記述する変数を表す。これらの変数は今のところ関係ない。</p>
 <p>これで、どのようなメタ分析を行いたいかを考え始めることが可能である。サブグループの列を見ると、少なくともバイアスリスク、対照群、介入期間、介入タイプ、実施形態に関して研究が異なっていることがわかる。</p>
-<p>このことから、研究間の異質性が予想され、すべての研究の真の効果が一定であると仮定することは意味がないことがよくわかる。したがって、私たちはプールのためにランダム効果モデルを使用することができる。連続アウトカムデータでのロバストなパフォーマンスから、この例では制限付き最尤推定量(<code>"REML"</code>) を選択する。また、偽陽性結果のリスクを減らすために Knapp-Hartung 調整を使用する。</p>
+<p>このことから、研究間の異質性が予想され、すべての研究の真の効果が一定であると仮定することは意味がないことがよくわかる。したがって、私たちはプールのためにランダム効果モデルを使用することができる。連続アウトカムデータでのロバストなパフォーマンスから、この例では制限付き最尤推定量 (<code>"REML"</code>) を選択する。また、偽陽性結果のリスクを減らすために Knapp-Hartung 調整を使用する。</p>
 <p>基本的な疑問が解決されたので、<code>metagen</code> の呼び出し方法もかなり簡単になる。この関数を使用する際には、必ず指定しなければならない関数固有の引数が2つある。</p>
 <ul>
 <li><p><strong><code>TE</code></strong>. 計算された効果量が含まれるデータセットの列の名前である。</p></li>
@@ -1006,15 +1006,15 @@ Studio ウィンドウでクリックするとインポートすることがで�
 <li><p>出力の最初の部分には、個々の研究、その効果量と信頼区間が含まれている。効果は事前に計算されているので、ここで見るべき新しいものはあまりない。<code>%W(random)</code> 列は、ランダム効果モデルが各研究に帰着させた重み (パーセント) を示している。メタ分析では、de Vibe の研究が 7.9% と最も大きな重みを占めていることがわかる。最小の重みは Ratanasiripong による研究に与えられている。この研究の信頼区間を見ると、なぜこのような結果になったのかがわかる。プールされた効果の信頼区間は非常に広く、標準誤差が非常に大きく、したがってこの研究の効果量の推定はあまり正確ではないことを意味している。</p></li>
 <li><p>さらに、メタ分析に含まれる研究の総数も出力される。<span class="math inline">\(K=\)</span> 18件の研究が組み合わされたことがわかる。</p></li>
 <li><p>次節では、その中核となるプール効果量を示す。推定値は約 0.58 であり、95%信頼区間は約 0.38～0.78 であることがわかる。また、効果量が有意であるかどうかの検定結果も示されている。その結果、<span class="math inline">\(p&lt;\)</span> 0.001 となった。重要なのは、関連する検定統計量も表示されることで、これは <code>t</code> で表示される。これは、<span class="math inline">\(t\)</span> 分布に基づく Knapp-Hartung 調整を適用する。</p></li>
-<li><p>その下に、研究間異質性に関する結果が表示されている。ここで表示される結果のいくつかについては、後の章で詳しく説明するので、ここでは <span class="math inline">\(\tau^2\)</span> にのみ注目しよう。<span class="math inline">\(\tau^2\)</span> の横には、真の効果の分散の推定値 <span class="math inline">\(\tau^2\)</span> = 0.08 が表示されている。<span class="math inline">\(\tau^2\)</span> の信頼区間は0を含まないので (0.03–0.35)、<span class="math inline">\(\tau^2\)</span> は0より有意に大きいことがわかる。これらのことから、私たちのデータには研究間の異質性が存在し、ランダム効果モデルが良い選択であったことがわかる。</p></li>
+<li><p>その下に、研究間異質性に関する結果が表示されている。ここで表示される結果のいくつかについては、後の章で詳しく説明するので、ここでは <span class="math inline">\(\tau^2\)</span> にのみ注目しよう。<span class="math inline">\(\tau^2\)</span> の横には、真の効果の分散の推定値 <span class="math inline">\(\tau^2\)</span> = 0.08 が表示されている。<span class="math inline">\(\tau^2\)</span> の信頼区間は 0 を含まないので (0.03–0.35)、<span class="math inline">\(\tau^2\)</span> は0より有意に大きいことがわかる。これらのことから、私たちのデータには研究間の異質性が存在し、ランダム効果モデルが良い選択であったことがわかる。</p></li>
 <li><p>最後のセクションは、メタ分析についての詳細である。逆分散法を用いて効果をプールしたこと、制限付き最尤推定量を用いたこと、Knapp-Hartung 調整を適用したことなどがわかる。</p></li>
 </ul>
-<p>また、 <code>m.gen</code> に格納されている情報にも直接アクセス可能である。メタ分析の結果である <strong>{meta}</strong> には、たくさんのオブジェクトがデフォルトで格納されており、ドキュメントの “value” セクションを見れば、これが何を意味しているかが分かる。また、 <code>$</code> 演算子を使って、特定の分析結果を表示すことが可能である。例えば、プール効果は <code>TE.random</code> として格納される。</p>
+<p>また、<code>m.gen</code> に格納されている情報にも直接アクセス可能である。メタ分析の結果である <strong>{meta}</strong> には、たくさんのオブジェクトがデフォルトで格納されており、ドキュメントの “value” セクションを見れば、これが何を意味しているかが分かる。また、 <code>$</code> 演算子を使って、特定の分析結果を表示すことが可能である。例えば、プール効果は <code>TE.random</code> として格納される。</p>
 <div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m.gen</span><span class="op">$</span><span class="va">TE.random</span></span></code></pre></div>
 <pre><code>## [1] 0.5771158</code></pre>
 <p></p>
-<p><code>fixed =  FALSE</code> を指定した場合でも、 <strong>{meta}</strong> の関数は常に内部で固定効果モデルの結果も計算している。そのため、固定効果モデルを仮定したプール効果にもアクセスすることが可能である。</p>
+<p><code>fixed =  FALSE</code> を指定した場合でも、<strong>{meta}</strong> の関数は常に内部で固定効果モデルの結果も計算している。そのため、固定効果モデルを仮定したプール効果にもアクセスすることが可能である。</p>
 <div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m.gen</span><span class="op">$</span><span class="va">TE.fixed</span></span></code></pre></div>
 <pre><code>## [1] 0.4805045</code></pre>
@@ -1031,8 +1031,8 @@ Studio ウィンドウでクリックするとインポートすることがで�
 <code class="sourceCode R"><span><span class="co"># Get tau^2 estimate</span></span>
 <span><span class="va">m.gen_update</span><span class="op">$</span><span class="va">tau2</span></span></code></pre></div>
 <pre><code>## [1] 0.1104957</code></pre>
-<p>プール効果はあまり変わらないが、Paule-Mandel 推定量では、<span class="math inline">\(\tau^2\)</span>の近似値がやや大きくなることがわかる。</p>
-<p>最後に、結果を保存しておくと後々便利である。 <strong>{meta}</strong> で生成されたオブジェクトは、<code>save</code> 関数を使って簡単に <em>.rda</em> ( <em>R</em> data) ファイルとして保存することが可能である。</p>
+<p>プール効果はあまり変わらないが、Paule-Mandel 推定量では、<span class="math inline">\(\tau^2\)</span> の近似値がやや大きくなることがわかる。</p>
+<p>最後に、結果を保存しておくと後々便利である。<strong>{meta}</strong> で生成されたオブジェクトは、<code>save</code> 関数を使って簡単に <em>.rda</em> ( <em>R</em> data) ファイルとして保存することが可能である。</p>
 <div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">m.gen</span>, file <span class="op">=</span> <span class="st">"path/to/my/meta-analysis.rda"</span><span class="op">)</span> <span class="co"># example path</span></span></code></pre></div>
 <p><br></p>
@@ -1051,10 +1051,10 @@ Studio ウィンドウでクリックするとインポートすることがで�
 <li><p><strong><code>n.c</code></strong>. 対照群の観測数。</p></li>
 <li><p><strong><code>mean.c</code></strong>. 対照群の平均値。</p></li>
 <li><p><strong><code>sd.c</code></strong>. 対照群の標準偏差。</p></li>
-<li><p><strong><code>method.smd</code></strong>. これは <code>sm = "SMD"</code> のときのみ関係する。 <code>metacont</code> 関数では、3種類の標準化平均差を計算することが可能である。 <code>metacont</code> 関数では、3種類の標準化平均差を計算することが可能である。 <code>method.smd = "Cohen"</code> と設定すると、補正されていない標準化平均差 (Cohen’s <span class="math inline">\(d\)</span>) が効果量指標として使用される。他の2つのオプションは、Hedges’ <span class="math inline">\(g\)</span> を計算する <code>"Hedges"</code> (デフォルトと推奨) と、Glass’ <span class="math inline">\(\Delta\)</span> (「デルタ」と読む) を計算する <code>"Glass"</code> である。Glass’ <span class="math inline">\(\Delta\)</span>は、平均差を標準化するために、プールされた標準偏差の代わりに対照群の標準偏差を使用する。この効果量は、一次研究で複数の治療群がある場合に使われることがあるが、通常、メタ分析では好まれない指標である。</p></li>
+<li><p><strong><code>method.smd</code></strong>. これは <code>sm = "SMD"</code> のときのみ関係する。<code>metacont</code> 関数では、3種類の標準化平均差を計算することが可能である。<code>metacont</code> 関数では、3種類の標準化平均差を計算することが可能である。<code>method.smd = "Cohen"</code> と設定すると、補正されていない標準化平均差 (Cohen’s <span class="math inline">\(d\)</span>) が効果量指標として使用される。他の2つのオプションは、Hedges’ <span class="math inline">\(g\)</span> を計算する <code>"Hedges"</code> (デフォルトと推奨) と、Glass’ <span class="math inline">\(\Delta\)</span> (「デルタ」と読む) を計算する <code>"Glass"</code> である。Glass’ <span class="math inline">\(\Delta\)</span> は、平均差を標準化するために、プールされた標準偏差の代わりに対照群の標準偏差を使用する。この効果量は、一次研究で複数の治療群がある場合に使われることがあるが、通常、メタ分析では好まれない指標である。</p></li>
 </ul>
 <p></p>
-<p>今回の分析例では、Chapter <a href="discovering-R.html#data-prep-R">2.4</a> と Chapter <a href="pooling-es.html#fem">4.1.1</a> で扱った “SuicidePrevention” データセットを再利用している。サンプルに含まれるすべての研究が完全に同一ではないので、ランダム効果モデルを使用することが保証される。また、Knapp-Hartung 調整と<span class="math inline">\(\tau^2\)</span>の制限付き最尤推定量も再び使用する予定である。 <code>metacont</code> にスモールサンプルバイアスを補正するように指示し、効果量のメトリックとしてHedges’ <span class="math inline">\(g\)</span> を生成する。結果はオブジェクトに保存され、 <code>m.cont</code> と名付ける。</p>
+<p>今回の分析例では、Chapter <a href="discovering-R.html#data-prep-R">2.4</a> と Chapter <a href="pooling-es.html#fem">4.1.1</a> で扱った “SuicidePrevention” データセットを再利用している。サンプルに含まれるすべての研究が完全に同一ではないので、ランダム効果モデルを使用することが保証される。また、Knapp-Hartung 調整と <span class="math inline">\(\tau^2\)</span> の制限付き最尤推定量も再び使用する予定である。 <code>metacont</code> にスモールサンプルバイアスを補正するように指示し、効果量のメトリックとしてHedges’ <span class="math inline">\(g\)</span> を生成する。結果はオブジェクトに保存され、<code>m.cont</code> と名付ける。</p>
 <p>全体としては、このようなコードになる。</p>
 <div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># meta と dmetar がロードされていることを確認</span></span>
@@ -1117,7 +1117,7 @@ Studio ウィンドウでクリックするとインポートすることがで�
 ## - Q-Profile method for confidence interval of tau^2 and tau
 ## - Hartung-Knapp adjustment for random effects model (df = 8)
 ## - Hedges' g (bias corrected standardised mean difference; using exact formulae)</code></pre>
-<p>この出力を見て、Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a> で受け取った出力と比較すると、すでに <strong>{meta}</strong> の最大の資産の1つが見えている。すなわち、<code>metagen</code> や <code>metacont</code> とは異なるデータ型を必要とする異なる関数であるが、出力の構造はほぼ同じように読むことができる。このため、結果の解釈は非常に容易である。ランダム効果モデルによるプール効果は <span class="math inline">\(g=\)</span> -0.23 であり、95%信頼区間は -0.09 から -0.37 の範囲であることがわかる。この効果は有意である (<span class="math inline">\(p=\)</span> 0.006)。</p>
+<p>この出力を見て、Chapter <a href="pooling-es.html#pre-calculated-es">4.2.1</a> で受け取った出力と比較すると、すでに <strong>{meta}</strong> の最大の資産の1つが見えている。すなわち、<code>metagen</code> や <code>metacont</code> とは異なるデータ型を必要とする異なる関数であるが、出力の構造はほぼ同じように読むことができる。このため、結果の解釈は非常に容易である。ランダム効果モデルによるプール効果は <span class="math inline">\(g =\)</span> -0.23 であり、95%信頼区間は -0.09 から -0.37 の範囲であることがわかる。この効果は有意である (<span class="math inline">\(p=\)</span> 0.006)。</p>
 <p>効果量が負の符号を持つことがわかる。このメタ分析の文脈では、好ましいアウトカムであることを表し、対照群と比較して治療群で自殺念慮がより低かったことを意味する。これを他の人にわかりやすくするために、効果量の符号を一貫して逆にし (たとえば、代わりに <span class="math inline">\(g=\)</span> 0.23 と書く)、正の効果量が常に「正の」結果を表すようにしてもよいだろう。</p>
 <p>制限付き最尤法では、研究間の異質性分散は <span class="math inline">\(\tau^2\)</span> = 0.004と推定される。<span class="math inline">\(\tau^2\)</span> 値を見ると、信頼区間は0を含んでおり、真の効果量の分散は0より有意に大きくないことがわかる。</p>
 <p>詳細では、効果量の指標としてHedges’ <span class="math inline">\(g\)</span> が使われたことが示されている。</p>
@@ -1186,7 +1186,7 @@ V_k = \frac{(a_k+b_k)(c_k+d_k)(a_k+c_k)(b_k+d_k)}{{(a_k+b_k+c_k+d_k)}^2(a_k+b_k+
 <h5>
 <span class="header-section-number">4.2.3.1.3</span> Bakbergenuly-サンプルサイズ法<a class="anchor" aria-label="anchor" href="#bakbergenuly-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%82%B5%E3%82%A4%E3%82%BA%E6%B3%95"><i class="fas fa-link"></i></a>
 </h5>
-<p>最近、Bakbergenuly ら <span class="citation">(<a href="references.html#ref-bakbergenuly2020methods">2020</a>)</span> は、効果の重みが研究のサンプルサイズだけで決まる別の方法を提案し、この方法が Mantel and Haenszel による方法より望ましい可能性があることを示している。これを<strong>サンプルサイズ法</strong>と呼ぶことにする。この方法の計算式はとても簡単である。治療群と対照群のサンプルサイズ <span class="math inline">\(n_{\text{treat}_k}\)</span> と <span class="math inline">\(n_{\text{control}_k}\)</span> だけ分かれば良い。</p>
+<p>最近、Bakbergenuly et al. <span class="citation">(<a href="references.html#ref-bakbergenuly2020methods">2020</a>)</span> は、効果の重みが研究のサンプルサイズだけで決まる別の方法を提案し、この方法が Mantel and Haenszel による方法より望ましい可能性があることを示している。これを<strong>サンプルサイズ法</strong>と呼ぶことにする。この方法の計算式はとても簡単である。治療群と対照群のサンプルサイズ <span class="math inline">\(n_{\text{treat}_k}\)</span> と <span class="math inline">\(n_{\text{control}_k}\)</span> だけ分かれば良い。</p>
 <p><span class="math display" id="eq:pes15">\[\begin{equation}
 w_k = \frac{n_{\text{treat}_k}n_{\text{control}_k}}{n_{\text{treat}_k} + n_{\text{control}_k} }
 \tag{4.15}
@@ -1211,7 +1211,7 @@ w_k = \frac{n_{\text{treat}_k}n_{\text{control}_k}}{n_{\text{treat}_k} + n_{\tex
 <h5>
 <span class="header-section-number">4.2.3.1.4</span> <em>R</em> における二値効果量のプール<a class="anchor" aria-label="anchor" href="#ppoolbin"><i class="fas fa-link"></i></a>
 </h5>
-<p><code>metabin</code> には、8つの重要な関数固有の引数がある。</p>
+<p><code>metabin</code> には、8 つの重要な関数固有の引数がある。</p>
 <ul>
 <li><p><strong><code>event.e</code></strong>. 治療・実験群におけるイベント数。</p></li>
 <li><p><strong><code>n.e</code></strong>. 治療/実験群の観測数。</p></li>
@@ -1754,7 +1754,7 @@ Studio ウィンドウでクリックするとインポートすることがで�
 <p>メタ分析は、このモデルの特殊なタイプで、<span class="math inline">\(\beta_1x_i\)</span> 項が存在しないものと見なすことができる。このモデルは切片 <span class="math inline">\(\beta_0\)</span> のみを含み、これはランダム効果モデルにおける全体の効果量 <span class="math inline">\(\mu\)</span> に相当する。<span class="math inline">\(u_i\)</span> と <span class="math inline">\(\epsilon_i\)</span> の部分は、メタ分析における <span class="math inline">\(\zeta_k\)</span> と <span class="math inline">\(\epsilon_k\)</span> の誤差項に相当する。このことから、メタ分析は混合効果回帰モデルと等価であることがわかる。しかし、この混合効果モデルには切片とそれに連なるランダム効果しか含まれていない。二項ロジットリンクを用いると<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;研究 &lt;span class="math inline"&gt;\(k\)&lt;/span&gt; の logit 変換は、&lt;span class="math inline"&gt;\(\theta_k^{\text{LO}}=\log_e\left(\frac{p_k}{1-p_k}\right)\)&lt;/span&gt;と定義される。&lt;span class="math inline"&gt;\(u_k \sim \mathcal{N}(0, \tau^2)\)&lt;/span&gt;　を用いて、&lt;span class="math inline"&gt;\(\theta_k^{\text{LO}} \sim \theta+u_k\)&lt;/span&gt; と導かれる。割合のメタ分析 GLMM では、ある研究のイベント数 (&lt;span class="math inline"&gt;\(a_k\)&lt;/span&gt;) が二項分布に従うと仮定する: &lt;span class="math inline"&gt;\(a_k \sim \text{B}\left(n_k, \frac{\exp(\theta_k^{\text{LO}})}{1+ \exp(\theta_k^{\text{LO}})}\right)\)&lt;/span&gt;。より詳しい説明は &lt;span class="citation"&gt;Schwarzer et al. (&lt;a href="references.html#ref-schwarzer2019seriously"&gt;2019&lt;/a&gt;)&lt;/span&gt;, A.2.2. を参照&lt;/p&gt;'><sup>26</sup></a>、したがって、(一般化) ロジスティック混合効果モデルを適用してプール効果を推定することが可能である。</p>
 <p>GLMM は割合だけでなく、オッズ比や発生率比のような二値やカウントデータに基づく他のアウトカム指標にも適用できる <span class="citation">(<a href="references.html#ref-stijnen2010random">Stijnen, Hamza, and Özdemir 2010</a>)</span> 。GLMMは二値アウトカムデータのメタ分析に普遍的に推奨されているわけではないが <span class="citation">(<a href="references.html#ref-bakbergenuly2018meta">Bakbergenuly and Kulinskaya 2018</a>)</span> 、割合についてはその使用が提唱されている <span class="citation">(<a href="references.html#ref-schwarzer2019seriously">Schwarzer et al. 2019</a>)</span>。</p>
 <p></p>
-<p>GLMM を <code>metaprop</code> の一部として使用すると、次の3つの意味がある: (1) 出力は、各効果のメタ分析重みを表示しない、(2) <span class="math inline">\(\tau^2\)</span>推定量は <code>"ML"</code> にしか設定できない (最尤法を使用してGLMMを推定するので)、(3) <span class="math inline">\(\tau^2\)</span> の推定量の信頼区間が存在しなくなる。この情報が必要な場合は、逆分散メタ分析の実行に切り替えることが可能である。 <code>metaprop</code> には、5つの関数固有の引数がある。</p>
+<p>GLMM を <code>metaprop</code> の一部として使用すると、次の3つの意味がある: (1) 出力は、各効果のメタ分析重みを表示しない、(2) <span class="math inline">\(\tau^2\)</span> 推定量は <code>"ML"</code> にしか設定できない (最尤法を使用して GLMM を推定するので)、(3) <span class="math inline">\(\tau^2\)</span> の推定量の信頼区間が存在しなくなる。この情報が必要な場合は、逆分散メタ分析の実行に切り替えることが可能である。 <code>metaprop</code> には、5 つの関数固有の引数がある。</p>
 <ul>
 <li><p><strong><code>event</code></strong>. イベント数。</p></li>
 <li><p><strong><code>n</code></strong>. 観測数。</p></li>
@@ -1837,7 +1837,7 @@ Studio ウィンドウでクリックするとインポートすることがで�
 ## - Hartung-Knapp adjustment for random effects model
 ## - Logit transformation
 ## - Clopper-Pearson confidence interval for individual studies</code></pre>
-<p>出力では、選択された研究における処方オピオイドの誤用のプールされた12ヶ月の有病率は9.4％であり、信頼区間の範囲は8.36から10.66％であることがわかる。</p>
+<p>出力では、選択された研究における処方オピオイドの誤用のプールされた 12 ヶ月の有病率は 9.4% であり、信頼区間の範囲は 8.36% から 10.66% であることがわかる。</p>
 <p>前述したように、この出力には各効果の個別の重みが表示されていない。同じように、研究間の異質性の推定値 (<span class="math inline">\(\tau^2 =\)</span> 0.056) が得られるが、その周りの信頼区間はない。</p>
 <p><span class="math display">\[\tag*{$\blacksquare$}\]</span>
 <br></p>

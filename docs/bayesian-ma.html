@@ -845,7 +845,7 @@
 <p>ここで一つ、非常に重要なことを述べておこう。フォレストプロットに表示されている効果量は、元の研究の<strong>観測</strong>された効果量では<strong>なく</strong>、ベイズモデルに基づいた研究の効果量 (<span class="math inline">\(\theta_k\)</span>) の推定値である。フォレストプロットで示された点は、<code>ranef</code> を用いてランダム効果を抽出した際に見た研究ごとの推定値と同等である (ただし、これらの値はプールされた効果を中心にしたもの)。</p>
 <p>さらに、効果量が非常に大きい研究 (例えば、“DanitzOrsillo” や “Shapiro et al.” などの外れ値) の値を見ると、モデルベースの効果量は、最初の観測値よりも<strong>全体効果 <span class="math inline">\(\hat\mu\)</span> に 近いことがわかる</strong><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;例えば、“DanitzOrsillo” の観測効果は 1.79 で、モデル内の推定効果は 1.05&lt;/p&gt;"><sup>71</sup></a>。</p>
 <p>この<strong>平均への縮小</strong>は、メタ分析的ランダム効果モデルのような共通の包括的分布を持つ階層的モデルに典型的なものである。推定プロセスにおいて、ベイズモデルは、メタ分析におけるすべての効果量 <span class="math inline">\(k\)</span> によって共同推定される真の効果量の<strong>全体的</strong>分布に関する情報で、<strong>ある</strong>研究 <span class="math inline">\(k\)</span> の効果に関する情報を「補完」する。</p>
-<p>このような<strong>「強さの借用」</strong>は、極端な効果を持つ研究の値が平均値に向かって引っ張られることを意味する <span class="citation">(<a href="references.html#ref-lunn2012bugs">Lunn et al. 2012, chap. 10.1</a>)</span>。この挙動は、比較的少ない情報を提供する研究 (つまり、大きな標準誤差を持つ研究) においてより顕著になる。</p>
+<p>このような<strong>「説得力の借用」</strong> (Borrowing of Strength) は、極端な効果を持つ研究の値が平均値に向かって引っ張られることを意味する <span class="citation">(<a href="references.html#ref-lunn2012bugs">Lunn et al. 2012, chap. 10.1</a>)</span>。この挙動は、比較的少ない情報を提供する研究 (つまり、大きな標準誤差を持つ研究) においてより顕著になる。</p>
 </div>
 <p><span class="math display">\[\tag*{$\blacksquare$}\]</span></p>
 <p><br></p>
@@ -866,7 +866,7 @@
 </ol>
 <ol start="2" style="list-style-type: decimal">
 <li>
-ベイズメタ分析の頻度論的な利点と比較した場合の利点を3つ挙げよ。
+頻度論的な利点と比較し、ベイズメタ分析の利点を 3 つ挙げよ。
 </li>
 </ol>
 <ol start="3" style="list-style-type: decimal">
